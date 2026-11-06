@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=27">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -59,6 +59,14 @@
 
         <h2>Dein Lernbereich</h2>
 
+        <div class="card xp-card">
+            <h3>Dein Lernfortschritt</h3>
+            <div class="xp-summary"><strong id="xpTotal">0 XP</strong><span id="xpLevel">Anfänger</span></div>
+            <div class="xp-progress-track"><div id="xpProgressBar" class="xp-progress-bar"></div></div>
+            <p id="xpProgressText" class="xp-progress-text">Noch 100 XP bis zum nächsten Level</p>
+            <div id="xpBadges" class="xp-badges"></div>
+        </div>
+
         <div class="stats">
             <div class="stat">
                 <strong id="wordCount">0</strong>
@@ -94,7 +102,10 @@
 
             <button type="button" id="speakSpanishCard" class="speech-button">🔊 Spanisch vorlesen</button>
             <button type="button" id="speakGermanCard" class="speech-button">🔊 Deutsch vorlesen</button>
+            <button type="button" onclick="markCurrentCardLearned()">Karte gelernt (+5 XP)</button>
             <button class="secondary" onclick="nextCard()">Nächste Vokabel</button>
+            <p id="cardSessionStatus" class="xp-session-status">Lerne 5 Karten oder beantworte 5 Quizfragen, um eine Lerneinheit abzuschließen.</p>
+            <button type="button" id="cardFinishSession" class="xp-finish-button" onclick="finishLearningSession()" disabled>Lerneinheit abschließen (+20 XP)</button>
         </div>
 
     </section>
@@ -114,6 +125,8 @@
             <div id="answers"></div>
 
             <div id="quizResult"></div>
+            <p id="quizSessionStatus" class="xp-session-status">Lernaktionen: 0/5</p>
+            <button type="button" id="quizFinishSession" class="xp-finish-button" onclick="finishLearningSession()" disabled>Lerneinheit abschließen (+20 XP)</button>
 
         </div>
 
@@ -296,7 +309,7 @@
 
 </main>
 
-<script src="script.js?v=23"></script>
+<script src="script.js?v=24"></script>
 
 </body>
 </html>

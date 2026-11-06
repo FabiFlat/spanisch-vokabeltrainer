@@ -1,12 +1,12 @@
 
-* {
-    box-sizing: border-box;
-}
+/* GOOGLE FONT */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
+
+/* FARBEN */
 :root {
     --background: #f4f0e7;
     --surface: #fffdf7;
-    --surface-dark: #e9e4d8;
     --sage: #9aaa87;
     --sage-dark: #718466;
     --brown: #756653;
@@ -14,68 +14,149 @@
     --muted: #9b9283;
     --border: #e5dfd2;
     --danger: #bd786d;
-    --shadow: 0 5px 20px rgba(94, 82, 62, 0.07);
+}
+
+
+/* GRUNDEINSTELLUNGEN */
+* {
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: "Trebuchet MS", Arial, sans-serif;
+    padding: 0;
     background: var(--background);
     color: var(--text);
-    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.2px;
     line-height: 1.6;
 }
 
-/* HEADER */
+h1, h2, h3, h4 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
 
+p, span, label, input, textarea, button {
+    font-family: 'Nunito', sans-serif;
+}
+
+
+/* HEADER */
 header {
-    padding: 45px 20px 35px;
-    background: #e9e3d5;
-    border-bottom: 1px solid var(--border);
+    text-align: center;
+    padding: 35px 20px 25px;
 }
 
 header h1 {
-    font-family: Georgia, serif;
-    font-size: 42px;
-    font-weight: normal;
-    letter-spacing: 2px;
-    color: var(--sage-dark);
     margin: 0;
+    color: var(--sage-dark);
+    font-size: 38px;
 }
 
 header p {
-    color: var(--muted);
-    font-size: 14px;
     margin-top: 5px;
+    color: var(--muted);
 }
 
-/* NAVIGATION */
 
+/* NAVIGATION */
 nav {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    padding: 22px 15px;
-    max-width: 850px;
-    margin: auto;
+    padding: 15px;
 }
 
-button {
+nav button {
     background: var(--surface);
-    color: var(--text);
+    color: var(--brown);
     border: 1px solid var(--border);
-    padding: 12px 19px;
-    border-radius: 12px;
+    border-radius: 20px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s ease;
+    transition: 0.2s;
 }
 
-button:hover {
+nav button:hover {
     background: var(--sage);
     color: white;
-    transform: translateY(-2px);
+}
+
+
+/* HAUPTBEREICH */
+main {
+    width: 90%;
+    max-width: 750px;
+    margin: 20px auto;
+}
+
+.page {
+    background: var(--surface);
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: 0 5px 20px rgba(90, 75, 55, 0.05);
+}
+
+.hidden {
+    display: none !important;
+}
+
+h2 {
+    color: var(--sage-dark);
+    margin-top: 0;
+}
+
+
+/* STATISTIKEN */
+.stats {
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.stat {
+    flex: 1;
+    text-align: center;
+    background: #f3f1e8;
+    padding: 20px;
+    border-radius: 18px;
+}
+
+.stat h3 {
+    font-size: 28px;
+    color: var(--sage-dark);
+    margin: 0;
+}
+
+.stat p {
+    color: var(--muted);
+    margin-bottom: 0;
+}
+
+
+/* BUTTONS */
+button,
+.upload-button {
+    background: var(--sage);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover,
+.upload-button:hover {
+    background: var(--sage-dark);
+    transform: translateY(-1px);
 }
 
 button:disabled {
@@ -85,113 +166,53 @@ button:disabled {
 }
 
 .primary {
-    background: var(--sage);
-    color: white;
-    border: none;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.primary:hover {
-    background: var(--sage-dark);
-}
 
-/* MAIN */
-
-main {
-    max-width: 780px;
-    margin: 20px auto;
-    padding: 15px;
-}
-
-.page {
-    background: var(--surface);
+/* KARTEIKARTEN */
+.flashcard {
+    background: #f3f1e8;
     border: 1px solid var(--border);
     border-radius: 22px;
-    padding: 35px 25px;
-    margin-bottom: 25px;
-    box-shadow: var(--shadow);
-    animation: appear 0.3s ease;
-}
-
-.hidden {
-    display: none !important;
-}
-
-h2 {
-    font-family: Georgia, serif;
-    font-weight: normal;
-    font-size: 29px;
-    color: var(--sage-dark);
-    margin-top: 0;
-}
-
-h3 {
-    color: var(--brown);
-}
-
-/* STATS */
-
-.stats {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin: 30px 0;
-}
-
-.stat {
-    background: #f0eee4;
-    border: 1px solid var(--border);
-    padding: 20px;
-    border-radius: 17px;
-    min-width: 140px;
-}
-
-.stat h3 {
-    font-family: Georgia, serif;
-    font-size: 32px;
-    color: var(--sage-dark);
-    margin: 0;
-}
-
-.stat p {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 5px 0 0;
-}
-
-/* FLASHCARDS */
-
-.flashcard {
-    background: #eeebdf;
-    border: 1px solid var(--border);
-    padding: 65px 20px;
-    border-radius: 20px;
-    margin: 25px 0;
+    padding: 45px 20px;
+    text-align: center;
+    margin: 20px 0;
 }
 
 .flashcard h3 {
-    font-family: Georgia, serif;
-    font-size: 36px;
-    font-weight: normal;
-    color: var(--sage-dark);
-}
-
-#translation {
-    font-size: 23px;
+    font-size: 32px;
     color: var(--brown);
+    margin: 0;
 }
 
-/* QUIZ */
+.flashcard p {
+    font-size: 24px;
+    color: var(--sage-dark);
+    font-weight: 700;
+}
 
-#answers {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+
+/* VOKABELTEST */
+#quizWord {
+    text-align: center;
+    font-size: 30px;
+    color: var(--brown);
     margin: 25px 0;
 }
 
+#answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 #answers button {
-    background: #eeebdf;
+    width: 100%;
+    background: #f3f1e8;
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
 #answers button:hover:not(:disabled) {
@@ -199,210 +220,156 @@ h3 {
     color: white;
 }
 
-/* RICHTIGE ANTWORT BEI FEHLER */
-
-.wrong-answer {
-    width: 100%;
+#quizResult {
     text-align: center;
-    padding: 22px 15px;
-    margin: 15px 0;
-    background: #e9e4d8;
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+
+/* FALSCHE ANTWORT */
+.wrong-answer {
+    background: #f3f1e8;
     border: 1px solid var(--border);
-    border-radius: 16px;
-    animation: appear 0.3s ease;
+    border-radius: 18px;
+    padding: 25px;
+    margin: 15px 0;
+    text-align: center;
 }
 
 .wrong-label {
-    font-size: 15px;
     color: var(--muted);
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
 .wrong-word {
-    font-family: Georgia, serif;
-    font-size: 32px;
-    font-weight: bold;
     color: var(--sage-dark);
-    line-height: 1.3;
-    overflow-wrap: anywhere;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 10px 0;
 }
-
-/* NÄCHSTE FRAGE BUTTON */
 
 .next-question-button {
     width: 100%;
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 12px;
-    background: var(--sage);
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
+    margin-top: 10px;
 }
 
-.next-question-button:hover {
-    background: var(--sage-dark);
-}
 
-/* INPUTS */
-
+/* EINGABEFELDER */
 input,
 textarea {
     width: 100%;
-    padding: 14px;
+    padding: 13px 15px;
     margin: 8px 0;
-    border-radius: 12px;
     border: 1px solid var(--border);
-    background: #faf8f2;
+    border-radius: 13px;
+    background: #fffefa;
     color: var(--text);
-    font-family: inherit;
-    font-size: 15px;
+    font-size: 16px;
     outline: none;
 }
 
 input:focus,
 textarea:focus {
     border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(154, 170, 135, 0.15);
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* FOTO-SCAN */
+.upload-button {
+    display: block;
+    text-align: center;
+    margin: 15px 0;
 }
 
 #scanImage {
     display: none;
 }
 
-#scanText {
-    min-height: 180px;
-    resize: vertical;
-}
-
-.upload-button {
-    display: inline-block;
-    background: #e7ebdf;
-    color: var(--sage-dark);
-    padding: 15px 22px;
-    border: 1px dashed var(--sage);
-    border-radius: 13px;
-    cursor: pointer;
-    margin: 15px 0;
-}
-
-.upload-button:hover {
-    background: #dce5d4;
-}
-
 #scanStatus {
-    color: var(--sage-dark);
-    font-size: 14px;
-    margin: 15px;
+    color: var(--muted);
+    text-align: center;
 }
 
-/* WORD LIST */
 
+/* VOKABELLISTE */
 .word-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    flex-wrap: wrap;
-    background: #f4f1e9;
-    padding: 14px 17px;
-    margin: 10px 0;
+    background: #f3f1e8;
     border: 1px solid var(--border);
-    border-radius: 13px;
-    text-align: left;
+    border-radius: 14px;
+    padding: 12px 15px;
+    margin: 10px 0;
+}
+
+.word-item span {
+    overflow-wrap: anywhere;
 }
 
 .word-item button {
-    background: #f0dfd9;
-    color: var(--danger);
-    border: none;
+    background: var(--danger);
     padding: 8px 12px;
+    flex-shrink: 0;
 }
 
-/* DIVIDERS */
-
-hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 30px 0;
-}
 
 /* FOOTER */
-
 footer {
-    padding: 25px;
+    text-align: center;
     color: var(--muted);
-    font-size: 13px;
+    padding: 25px;
+    font-size: 14px;
 }
 
-/* ANIMATION */
-
-@keyframes appear {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* MOBILE */
-
 @media (max-width: 600px) {
     header {
-        padding: 30px 15px;
+        padding: 25px 15px;
     }
 
     header h1 {
-        font-size: 34px;
+        font-size: 32px;
     }
 
     nav {
         gap: 7px;
-        padding: 15px 8px;
     }
 
     nav button {
-        padding: 10px 12px;
-        font-size: 12px;
+        padding: 9px 13px;
+        font-size: 13px;
     }
 
     main {
-        padding: 8px;
+        width: 94%;
+        margin: 12px auto;
     }
 
     .page {
-        padding: 25px 15px;
-        border-radius: 17px;
+        padding: 20px;
+        border-radius: 20px;
     }
 
     .stats {
-        gap: 10px;
+        gap: 8px;
     }
 
     .stat {
-        min-width: 115px;
-        padding: 15px;
+        padding: 15px 8px;
     }
 
-    #answers {
-        grid-template-columns: 1fr;
-    }
-
-    .flashcard {
-        padding: 45px 15px;
-    }
-
-    .wrong-word {
-        font-size: 28px;
-    }
-
-    .next-question-button {
-        font-size: 16px;
-        padding: 14px;
+    .word-item {
+        align-items: flex-start;
     }
 }

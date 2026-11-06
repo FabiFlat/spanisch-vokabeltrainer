@@ -607,6 +607,63 @@ function escapeHTML(text) {
 
 
 /* ==========================================
+   RECHTSCHREIBUNG BEI VOKABELN
+========================================== */
+
+// Häufige spanische Schreibfehler und fehlende Akzente.
+// Mehrdeutige Wörter wie "si/sí" werden absichtlich nicht automatisch geändert.
+function correctKnownSpelling(value, language) {
+    let result = String(value || "").normalize("NFC").trim().replace(/\\s+/g, " ");
+
+    if (language === "es") {
+        const corrections = {
+            "adios": "adiós",
+            "dias": "días",
+            "buenos dias": "buenos días",
+            "sinco": "cinco",
+            "holá": "hola",
+            "gracías": "gracias",
+            "tambien": "también",
+            "despues": "después",
+            "ingles": "inglés",
+            "telefono": "teléfono",
+            "facil": "fácil",
+            "ultimo": "último",
+            "numero": "número",
+            "arbol": "árbol",
+            "corazon": "corazón",
+            "cancion": "canción",
+            "accion": "acción",
+            "jovenes": "jóvenes",
+            "lapiz": "lápiz"
+        };
+
+        const corrected = corrections[result.toLocaleLowerCase("es")];
+        if (corrected) result = corrected;
+    }
+
+    if (language === "de" && result) {
+        result = result.charAt(0).toLocaleUpperCase("de") + result.slice(1);
+    }
+
+    return result;
+}
+
+function prepareVocabularyEntry(spanishValue, germanValue) {
+    const originalSpanish = String(spanishValue || "").trim();
+    const originalGerman = String(germanValue || "").trim();
+
+    const spanish = correctKnownSpelling(originalSpanish, "es");
+    const german = correctKnownSpelling(originalGerman, "de");
+
+    const changes = [];
+    if (spanish !== originalSpanish) changes.push("Spanisch: " + originalSpanish + " → " + spanish);
+    if (german !== originalGerman) changes.push("Deutsch: " + originalGerman + " → " + german);
+
+    return { spanish, german, changes };
+}
+
+/* ==========================================
    VOKABEL HINZUFÜGEN
 ========================================== */
 
@@ -614,12 +671,25 @@ function addWord() {
     const spanishInput = document.getElementById("newSpanish");
     const germanInput = document.getElementById("newGerman");
 
-    const spanish = spanishInput.value.trim();
-    const german = germanInput.value.trim();
+    const entry = prepareVocabularyEntry(spanishInput.value, germanInput.value);
+    const { spanish, german, changes } = entry;
 
     if (!spanish || !german) {
         alert("Bitte beide Felder ausfüllen.");
         return;
+    }
+
+    const duplicate = words.some(word =>
+        word.spanish.normalize("NFC").toLocaleLowerCase("es") === spanish.toLocaleLowerCase("es")
+    );
+    if (duplicate) {
+        alert("Diese spanische Vokabel ist bereits vorhanden.");
+        return;
+    }
+
+    if (changes.length) {
+        alert("Ich habe diese eindeutigen Schreibweisen korrigiert:\n\n" + changes.join("\n") +
+            "\n\nBitte prüfe die Vokabel vor dem Speichern.");
     }
 
     words.push({
@@ -739,12 +809,17 @@ function editWord(index) {
     save.type = "button";
     save.textContent = "Speichern";
     save.onclick = () => {
-        const spanish = spanishInput.value.trim();
-        const german = germanInput.value.trim();
+        const entry = prepareVocabularyEntry(spanishInput.value, germanInput.value);
+        const { spanish, german, changes } = entry;
 
         if (!spanish || !german) {
             alert("Bitte beide Felder ausfüllen.");
             return;
+        }
+
+        if (changes.length) {
+            alert("Ich habe diese eindeutigen Schreibweisen korrigiert:\n\n" + changes.join("\n") +
+                "\n\nBitte prüfe die Vokabel vor dem Speichern.");
         }
 
         words[index] = { spanish, german };

@@ -469,7 +469,7 @@ const xpLevels = [
     { name: "Wortsammler", min: 500, badge: "Wortsammler" },
     { name: "Sprachentdecker", min: 1500, badge: "Sprachentdecker" },
     { name: "Sprachprofi", min: 2500, badge: "Sprachprofi" },
-    { name: "Spanisch-Meister", min: 3500, badge: "Spanisch-Meister" }
+    { name: "Spanisch-Meister", min: 4500, badge: "Spanisch-Meister" }
 ];
 
 function getXPLevel() {
@@ -1563,7 +1563,7 @@ function isThemeUnlocked(themeName) {
     const themeNames = Object.keys(colorThemes);
     const themeIndex = themeNames.indexOf(themeName);
     if (themeIndex < 0) return false;
-    return themeIndex === 0 || xp >= themeIndex * 200 ||
+    return themeIndex === 0 || xp >= themeIndex * 250 ||
         userUnlocks.all_designs || userUnlocks.beta_tester;
 }
 
@@ -1572,7 +1572,7 @@ function updateThemeUnlocks() {
         const themeName = button.dataset.themeChoice;
         const unlocked = isThemeUnlocked(themeName);
         const themeIndex = Object.keys(colorThemes).indexOf(themeName);
-        const requiredXP = themeIndex * 200;
+        const requiredXP = themeIndex * 250;
         button.disabled = !unlocked;
         button.classList.toggle("theme-locked", !unlocked);
         button.dataset.unlockLabel = unlocked
@@ -1588,7 +1588,7 @@ function setColorTheme(themeName) {
     if (!theme || !isThemeUnlocked(themeName)) {
         const status = document.getElementById("themeStatus");
         if (status) status.textContent = "Dieses Design wird bei " +
-            (Object.keys(colorThemes).indexOf(themeName) * 200).toLocaleString("de-DE") + " XP freigeschaltet.";
+            (Object.keys(colorThemes).indexOf(themeName) * 250).toLocaleString("de-DE") + " XP freigeschaltet.";
         return;
     }
 

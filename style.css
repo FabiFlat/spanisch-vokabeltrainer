@@ -643,7 +643,7 @@ nav button,
 .word-item button,
 .word-item button.edit-word-button,
 .theme-option {
-    background: var(--sage) !important;
+    background: var(--button-bg, var(--sage)) !important;
     color: var(--button-text, var(--text)) !important;
     border: none !important;
     border-radius: 14px !important;
@@ -660,7 +660,7 @@ nav button:hover,
 .word-item button:hover,
 .word-item button.edit-word-button:hover,
 .theme-option:hover {
-    background: var(--sage-dark) !important;
+    background: var(--button-hover, var(--sage-dark)) !important;
     color: var(--button-text, var(--text)) !important;
     filter: none !important;
     transform: translateY(-1px);

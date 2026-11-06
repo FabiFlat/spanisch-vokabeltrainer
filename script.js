@@ -1598,7 +1598,13 @@ function setColorTheme(themeName) {
         }
     });
 
-    localStorage.setItem("vocabColorTheme", themeName);
+    // Gewähltes Design dauerhaft im Browser speichern.
+    try {
+        localStorage.setItem("vocabColorTheme", themeName);
+        localStorage.setItem("vocabThemeLastSaved", String(Date.now()));
+    } catch (error) {
+        console.error("Das Design konnte nicht im Browserspeicher gespeichert werden:", error);
+    }
 
     document.querySelectorAll(".theme-option").forEach(button => {
         button.classList.toggle("active", button.dataset.themeChoice === themeName);
@@ -1644,7 +1650,12 @@ function syncCustomColorInputs() {
 
 function loadColorTheme() {
     updateThemeUnlocks();
-    const savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
+    let savedTheme = "sage";
+    try {
+        savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
+    } catch (error) {
+        console.error("Das gespeicherte Design konnte nicht gelesen werden:", error);
+    }
 
     if (savedTheme === "custom") {
         try {

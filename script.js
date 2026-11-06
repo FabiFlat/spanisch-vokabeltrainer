@@ -50,6 +50,7 @@ let currentUser = null;
 let syncReady = false;
 let quizTimer = null;
 let questionLocked = false;
+let quizAnswerLanguage = "de";
 
 
 /* ==========================================
@@ -362,6 +363,7 @@ function nextQuestion() {
      * false = Deutsch nach Spanisch
      */
     const spanishToGerman = Math.random() < 0.5;
+    quizAnswerLanguage = spanishToGerman ? "de" : "es";
 
     const question = spanishToGerman
         ? word.spanish
@@ -476,6 +478,9 @@ function createWrittenAnswer(
     input.id = "writtenAnswer";
     input.placeholder = "Deine Übersetzung ...";
     input.autocomplete = "off";
+    input.lang = quizAnswerLanguage;
+    input.spellcheck = true;
+    input.setAttribute("autocorrect", "on");
 
     const button = document.createElement("button");
     button.textContent = "Antwort überprüfen";

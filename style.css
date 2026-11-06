@@ -1,7 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
-/* FARBEN */
 :root {
     --background: #f4f1e9;
     --surface: #fffdf7;
@@ -14,7 +13,6 @@
     --wrong: #c77d70;
 }
 
-/* GRUNDEINSTELLUNGEN */
 * {
     box-sizing: border-box;
 }
@@ -28,7 +26,6 @@ body {
     font-size: 16px;
 }
 
-/* HEADER */
 header {
     text-align: center;
     padding: 35px 15px 20px;
@@ -46,7 +43,6 @@ header p {
     color: var(--muted);
 }
 
-/* NAVIGATION */
 nav {
     display: flex;
     justify-content: center;
@@ -71,7 +67,6 @@ nav button:hover {
     color: white;
 }
 
-/* HAUPTBEREICH */
 main {
     width: 100%;
     max-width: 680px;
@@ -79,7 +74,6 @@ main {
     padding: 0 18px 50px;
 }
 
-/* SEITEN */
 .page {
     display: block;
     animation: fadeIn 0.3s ease;
@@ -105,7 +99,6 @@ main {
     }
 }
 
-/* ÜBERSCHRIFTEN */
 h2 {
     color: var(--brown);
     text-align: center;
@@ -118,7 +111,6 @@ h3 {
     margin-top: 0;
 }
 
-/* BOXEN */
 .card,
 .flashcard,
 .quiz-box,
@@ -151,6 +143,25 @@ h3 {
     margin-top: 16px;
     font-size: 14px;
     overflow-wrap: anywhere;
+}
+
+/* ANGEMELDETER ZUSTAND */
+.auth-panel.logged-in {
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+}
+
+.auth-panel.logged-in h2 {
+    display: none;
+}
+
+.auth-panel.logged-in p {
+    margin: 5px 0;
+}
+
+.auth-panel.logged-in button {
+    margin-top: 5px;
 }
 
 /* STARTSEITE */
@@ -242,7 +253,6 @@ h3 {
     text-align: center;
 }
 
-/* FALSCHE ANTWORT */
 .wrong-answer {
     padding: 22px;
     margin-top: 15px;
@@ -429,4 +439,3 @@ input:disabled {
         align-items: flex-start;
     }
 }
-

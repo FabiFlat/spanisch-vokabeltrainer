@@ -46,6 +46,13 @@ let currentCard = 0;
 let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
 
+// XP-Fortschritt
+let xp = Number(localStorage.getItem("vocabXP")) || 0;
+let flashcardsLearned = Number(localStorage.getItem("flashcardsLearned")) || 0;
+let sessionsCompleted = Number(localStorage.getItem("sessionsCompleted")) || 0;
+let sessionActions = 0;
+let learnedCardsThisSession = new Set();
+
 let currentUser = null;
 let syncReady = false;
 let quizTimer = null;
@@ -214,6 +221,7 @@ async function loadUserUnlocks() {
         all_designs: Boolean(data?.all_designs)
     };
     renderUnlockStatus();
+    updateXPDisplay();
 }
 
 async function redeemUnlockCode() {
@@ -258,7 +266,7 @@ async function loadUserData() {
 
     const { data, error } = await supabaseClient
         .from("vocab_data")
-        .select("words, correct")
+        .select("words, correct, xp, flashcards_learned, sessions_completed")
         .eq("user_id", currentUser.id)
         .maybeSingle();
 
@@ -275,6 +283,9 @@ async function loadUserData() {
             : [...defaultWords];
 
         correct = Number(data.correct) || 0;
+        xp = Number(data.xp) || 0;
+        flashcardsLearned = Number(data.flashcards_learned) || 0;
+        sessionsCompleted = Number(data.sessions_completed) || 0;
 
         syncReady = true;
 
@@ -289,8 +300,12 @@ async function loadUserData() {
 
     localStorage.setItem("words", JSON.stringify(words));
     localStorage.setItem("correct", String(correct));
+    localStorage.setItem("vocabXP", String(xp));
+    localStorage.setItem("flashcardsLearned", String(flashcardsLearned));
+    localStorage.setItem("sessionsCompleted", String(sessionsCompleted));
 
     updateStats();
+    updateXPDisplay();
     showCard();
     showWordList();
     updateAuthPanel();
@@ -305,6 +320,9 @@ async function saveDataToCloud() {
             user_id: currentUser.id,
             words: words,
             correct: correct,
+            xp: xp,
+            flashcards_learned: flashcardsLearned,
+            sessions_completed: sessionsCompleted,
             updated_at: new Date().toISOString()
         }, {
             onConflict: "user_id"
@@ -334,6 +352,103 @@ function saveData() {
 function updateStats() {
     document.getElementById("wordCount").textContent = words.length;
     document.getElementById("correctCount").textContent = correct;
+    updateXPDisplay();
+}
+
+/* XP, LEVEL UND LERNEINHEITEN */
+const xpLevels = [
+    { name: "Anfänger", min: 0, badge: "Erster Schritt" },
+    { name: "Wortsammler", min: 100, badge: "Wortsammler" },
+    { name: "Sprachentdecker", min: 250, badge: "Sprachentdecker" },
+    { name: "Sprachprofi", min: 500, badge: "Sprachprofi" },
+    { name: "Spanisch-Meister", min: 1000, badge: "Spanisch-Meister" }
+];
+
+function getXPLevel() {
+    let index = xpLevels.findIndex((level, i) =>
+        xp >= level.min && (!xpLevels[i + 1] || xp < xpLevels[i + 1].min)
+    );
+    if (index < 0) index = xpLevels.length - 1;
+    if (userUnlocks.beta_tester) index = xpLevels.length - 1;
+    return { ...xpLevels[index], index, next: xpLevels[index + 1] || null };
+}
+
+function updateXPDisplay() {
+    const total = document.getElementById("xpTotal");
+    if (!total) return;
+    const level = getXPLevel();
+    const previous = level.min;
+    const next = level.next;
+    const progress = next
+        ? Math.max(0, Math.min(100, ((xp - previous) / (next.min - previous)) * 100))
+        : 100;
+    total.textContent = xp + " XP";
+    document.getElementById("xpLevel").textContent =
+        userUnlocks.beta_tester ? "Beta-Tester · alle Level" : level.name;
+    document.getElementById("xpProgressBar").style.width = progress + "%";
+    document.getElementById("xpProgressText").textContent = next
+        ? (next.min - xp) + " XP bis Level " + next.name
+        : "Höchstes Level erreicht";
+    const badges = document.getElementById("xpBadges");
+    const earned = xpLevels.filter(item => xp >= item.min);
+    const visible = userUnlocks.beta_tester ? xpLevels : earned;
+    badges.innerHTML = visible.map(item =>
+        '<span class="xp-badge' + (xp >= item.min || userUnlocks.beta_tester ? ' earned' : '') + '">' +
+        escapeHTML(item.badge) + '</span>'
+    ).join("");
+    updateSessionControls();
+}
+
+function persistXP() {
+    localStorage.setItem("vocabXP", String(xp));
+    localStorage.setItem("flashcardsLearned", String(flashcardsLearned));
+    localStorage.setItem("sessionsCompleted", String(sessionsCompleted));
+    saveDataToCloud();
+    updateXPDisplay();
+}
+
+function addXP(amount) {
+    xp += amount;
+    persistXP();
+}
+
+function updateSessionControls() {
+    const ready = sessionActions >= 5;
+    ["card", "quiz"].forEach(prefix => {
+        const status = document.getElementById(prefix + "SessionStatus");
+        const button = document.getElementById(prefix + "FinishSession");
+        if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
+        if (button) button.disabled = !ready;
+    });
+}
+
+function markCurrentCardLearned() {
+    if (!words.length) return;
+    if (learnedCardsThisSession.has(currentCard)) {
+        const status = document.getElementById("cardSessionStatus");
+        if (status) status.textContent = "Diese Karte wurde in dieser Lerneinheit bereits gewertet.";
+        return;
+    }
+    learnedCardsThisSession.add(currentCard);
+    flashcardsLearned++;
+    sessionActions++;
+    addXP(5);
+    updateSessionControls();
+    const status = document.getElementById("cardSessionStatus");
+    if (status) status.textContent = "Karte gelernt! +5 XP · " + sessionActions + "/5 Lernaktionen";
+}
+
+function finishLearningSession() {
+    if (sessionActions < 5) return;
+    sessionsCompleted++;
+    addXP(20);
+    sessionActions = 0;
+    learnedCardsThisSession.clear();
+    updateSessionControls();
+    const status = document.getElementById("quizSessionStatus");
+    const cardStatus = document.getElementById("cardSessionStatus");
+    if (status) status.textContent = "Lerneinheit abgeschlossen! +20 XP";
+    if (cardStatus) cardStatus.textContent = "Lerneinheit abgeschlossen! +20 XP";
 }
 
 
@@ -709,8 +824,12 @@ function checkQuizAnswer(
         control.disabled = true;
     });
 
+    sessionActions++;
+    updateSessionControls();
+
     if (isCorrect) {
         result.textContent = "Richtig!";
+        addXP(10);
         result.style.color = "#718466";
 
         correct++;

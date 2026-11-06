@@ -1,4 +1,5 @@
 
+
 // VOKABELN LADEN
 let words = JSON.parse(localStorage.getItem("words")) || [
     { spanish: "Hola", german: "Hallo" },
@@ -123,9 +124,7 @@ function nextQuestion() {
             if (button.disabled) return;
 
             answers.querySelectorAll("button").forEach(b => {
-                if (b.id !== "nextQuestionButton") {
-                    b.disabled = true;
-                }
+                b.disabled = true;
             });
 
             if (option === correctAnswer) {
@@ -136,7 +135,7 @@ function nextQuestion() {
                 saveData();
                 updateStats();
 
-                // Bei richtiger Antwort automatisch weiter
+                // AUTOMATISCH WEITER BEI RICHTIGER ANTWORT
                 setTimeout(() => {
                     if (!document.getElementById("quiz").classList.contains("hidden")) {
                         nextQuestion();
@@ -144,7 +143,7 @@ function nextQuestion() {
                 }, 1200);
 
             } else {
-                // Richtige Antwort groß anzeigen
+                // RICHTIGE ANTWORT GROSS ANZEIGEN
                 result.innerHTML = `
                     <div class="wrong-answer">
                         <div class="wrong-label">Richtige Antwort:</div>
@@ -152,7 +151,7 @@ function nextQuestion() {
                     </div>
                 `;
 
-                // Button zum manuellen Weitergehen
+                // BUTTON NUR BEI FALSCHER ANTWORT
                 const nextButton = document.createElement("button");
                 nextButton.id = "nextQuestionButton";
                 nextButton.textContent = "Nächste Frage";

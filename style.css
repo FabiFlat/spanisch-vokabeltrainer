@@ -1,21 +1,30 @@
-.hidden {
-    display: none !important;
+
+/* GEMISCHTER VOKABELTEST */
+
+.quiz-direction {
+    color: #718466;
+    font-weight: 800;
+    margin-bottom: 8px;
 }
 
-.auth-panel.logged-in {
-    padding: 12px 20px;
-    margin-bottom: 20px;
-    border-radius: 15px;
+.quiz-type {
+    color: #77766d;
+    margin-bottom: 15px;
 }
 
-.auth-panel.logged-in h2 {
-    display: none;
+#writtenAnswer {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    border: 1px solid #d8d5c8;
+    border-radius: 12px;
+    background: #fffdf7;
+    font-family: inherit;
+    font-size: 17px;
+    margin-bottom: 12px;
 }
 
-.auth-panel.logged-in p {
-    margin: 5px 0;
-}
-
-.auth-panel.logged-in button {
-    margin-top: 5px;
+#writtenAnswer:focus {
+    outline: 2px solid #a4b394;
+    border-color: #a4b394;
 }

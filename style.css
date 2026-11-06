@@ -657,3 +657,24 @@ input:disabled {
 #quizResult .wrong-answer .wrong-word {
     color: #ffffff !important;
 }
+
+/* FREISCHALTCODES */
+.unlock-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.unlock-badge {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #26334d;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+}
+.unlock-muted {
+    color: var(--muted);
+    font-size: 14px;
+}

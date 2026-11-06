@@ -140,7 +140,7 @@ function nextQuestion() {
                     if (!document.getElementById("quiz").classList.contains("hidden")) {
                         nextQuestion();
                     }
-                }, 1200);
+                }, 700);
 
             } else {
                 // RICHTIGE ANTWORT GROSS ANZEIGEN

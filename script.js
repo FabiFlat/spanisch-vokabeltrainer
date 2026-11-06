@@ -1,4 +1,5 @@
-// Vokabeln laden
+
+// VOKABELN LADEN
 let words = JSON.parse(localStorage.getItem("words")) || [
     { spanish: "Hola", german: "Hallo" },
     { spanish: "Gracias", german: "Danke" },
@@ -15,27 +16,31 @@ let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
 
 
-// Daten speichern
+// DATEN SPEICHERN
 function saveData() {
     localStorage.setItem("words", JSON.stringify(words));
     localStorage.setItem("correct", correct);
 }
 
 
-// Statistiken aktualisieren
+// STATISTIKEN
 function updateStats() {
     document.getElementById("wordCount").textContent = words.length;
     document.getElementById("correctCount").textContent = correct;
 }
 
 
-// Seiten wechseln
+// SEITEN WECHSELN
 function showPage(page) {
     document.querySelectorAll(".page").forEach(section => {
         section.classList.add("hidden");
     });
 
-    document.getElementById(page).classList.remove("hidden");
+    const selectedPage = document.getElementById(page);
+
+    if (!selectedPage) return;
+
+    selectedPage.classList.remove("hidden");
 
     if (page === "cards") showCard();
     if (page === "quiz") nextQuestion();
@@ -45,7 +50,7 @@ function showPage(page) {
 }
 
 
-// Karteikarten
+// KARTEIKARTEN
 function showCard() {
     if (words.length === 0) {
         document.getElementById("spanishWord").textContent =
@@ -78,23 +83,17 @@ function nextCard() {
 }
 
 
-// Vokabeltest
-
-// Vokabeltest
+// VOKABELTEST
 function nextQuestion() {
     const answers = document.getElementById("answers");
     const result = document.getElementById("quizResult");
+    const quizWord = document.getElementById("quizWord");
 
     answers.innerHTML = "";
-    result.textContent = "";
-
-    // Alten Button entfernen
-    const oldNextButton = document.getElementById("nextQuestionButton");
-    if (oldNextButton) oldNextButton.remove();
+    result.innerHTML = "";
 
     if (words.length < 2) {
-        document.getElementById("quizWord").textContent =
-            "Du benötigst mindestens zwei Vokabeln.";
+        quizWord.textContent = "Du benötigst mindestens zwei Vokabeln.";
         return;
     }
 
@@ -102,8 +101,7 @@ function nextQuestion() {
 
     const correctAnswer = words[currentQuestion].german;
 
-    document.getElementById("quizWord").textContent =
-        words[currentQuestion].spanish;
+    quizWord.textContent = words[currentQuestion].spanish;
 
     let options = [correctAnswer];
 
@@ -122,9 +120,12 @@ function nextQuestion() {
         button.textContent = option;
 
         button.onclick = () => {
-            // Alle Antwortmöglichkeiten deaktivieren
+            if (button.disabled) return;
+
             answers.querySelectorAll("button").forEach(b => {
-                b.disabled = true;
+                if (b.id !== "nextQuestionButton") {
+                    b.disabled = true;
+                }
             });
 
             if (option === correctAnswer) {
@@ -137,18 +138,19 @@ function nextQuestion() {
 
                 // Bei richtiger Antwort automatisch weiter
                 setTimeout(() => {
-                    nextQuestion();
+                    if (!document.getElementById("quiz").classList.contains("hidden")) {
+                        nextQuestion();
+                    }
                 }, 1200);
 
             } else {
+                // Richtige Antwort groß anzeigen
                 result.innerHTML = `
                     <div class="wrong-answer">
                         <div class="wrong-label">Richtige Antwort:</div>
-                        <div class="wrong-word">${correctAnswer}</div>
+                        <div class="wrong-word">${escapeHTML(correctAnswer)}</div>
                     </div>
                 `;
-
-                result.style.color = "#514b40";
 
                 // Button zum manuellen Weitergehen
                 const nextButton = document.createElement("button");
@@ -165,13 +167,26 @@ function nextQuestion() {
     });
 }
 
+
+// HTML-SONDERZEICHEN SICHER DARSTELLEN
+function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
 }
 
 
-// Manuelle Vokabeleingabe
+// VOKABEL HINZUFÜGEN
 function addWord() {
-    const spanish = document.getElementById("newSpanish").value.trim();
-    const german = document.getElementById("newGerman").value.trim();
+    const spanishInput = document.getElementById("newSpanish");
+    const germanInput = document.getElementById("newGerman");
+
+    const spanish = spanishInput.value.trim();
+    const german = germanInput.value.trim();
 
     if (!spanish || !german) {
         alert("Bitte beide Felder ausfüllen.");
@@ -182,17 +197,18 @@ function addWord() {
 
     saveData();
 
-    document.getElementById("newSpanish").value = "";
-    document.getElementById("newGerman").value = "";
+    spanishInput.value = "";
+    germanInput.value = "";
 
     showWordList();
     updateStats();
 }
 
 
-// Vokabelliste anzeigen
+// VOKABELLISTE
 function showWordList() {
     const list = document.getElementById("wordList");
+
     list.innerHTML = "";
 
     if (words.length === 0) {
@@ -238,7 +254,9 @@ async function scanVocabulary(event) {
     status.textContent = "Bild wird vorbereitet ...";
 
     if (!window.Tesseract) {
-        status.textContent = "Texterkennung konnte nicht geladen werden. Bitte Internetverbindung prüfen.";
+        status.textContent =
+            "Texterkennung konnte nicht geladen werden. Bitte Internetverbindung prüfen.";
+        event.target.value = "";
         return;
     }
 
@@ -260,7 +278,6 @@ async function scanVocabulary(event) {
         );
 
         scanText.value = result.data.text;
-
         editor.classList.remove("hidden");
 
         status.textContent =
@@ -273,12 +290,11 @@ async function scanVocabulary(event) {
             "Scan fehlgeschlagen. Bitte versuche ein anderes Foto.";
     }
 
-    // Damit dasselbe Foto erneut ausgewählt werden kann
     event.target.value = "";
 }
 
 
-// Erkannte Vokabeln übernehmen
+// ERKANNTE VOKABELN ÜBERNEHMEN
 function importScannedWords() {
     const text = document.getElementById("scanText").value;
 
@@ -295,7 +311,6 @@ function importScannedWords() {
 
         if (!line) return;
 
-        // Trenner: =, |, ; oder Tabulator
         const parts = line.split(/\s*(?:=|\||;|\t)\s*/);
 
         if (parts.length < 2) return;
@@ -305,17 +320,12 @@ function importScannedWords() {
 
         if (!spanish || !german) return;
 
-        // Doppelte Vokabeln vermeiden
         const exists = words.some(word =>
             word.spanish.toLowerCase() === spanish.toLowerCase()
         );
 
         if (!exists) {
-            words.push({
-                spanish: spanish,
-                german: german
-            });
-
+            words.push({ spanish, german });
             imported++;
         }
     });
@@ -334,5 +344,8 @@ function importScannedWords() {
 }
 
 
-// Beim Öffnen der Website
-updateStats();
+// WEBSITE INITIALISIEREN
+document.addEventListener("DOMContentLoaded", () => {
+    updateStats();
+    showWordList();
+});

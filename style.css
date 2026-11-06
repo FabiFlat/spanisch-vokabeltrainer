@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
 }
@@ -193,9 +194,57 @@ h3 {
     background: #eeebdf;
 }
 
-#answers button:hover {
+#answers button:hover:not(:disabled) {
     background: var(--sage);
     color: white;
+}
+
+/* RICHTIGE ANTWORT BEI FEHLER */
+
+.wrong-answer {
+    width: 100%;
+    text-align: center;
+    padding: 22px 15px;
+    margin: 15px 0;
+    background: #e9e4d8;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    animation: appear 0.3s ease;
+}
+
+.wrong-label {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.wrong-word {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--sage-dark);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+/* NÄCHSTE FRAGE BUTTON */
+
+.next-question-button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    background: var(--sage);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.next-question-button:hover {
+    background: var(--sage-dark);
 }
 
 /* INPUTS */
@@ -346,5 +395,14 @@ footer {
 
     .flashcard {
         padding: 45px 15px;
+    }
+
+    .wrong-word {
+        font-size: 28px;
+    }
+
+    .next-question-button {
+        font-size: 16px;
+        padding: 14px;
     }
 }

@@ -708,3 +708,19 @@ button:disabled,
     background: color-mix(in srgb, var(--sage) 35%, #080808) !important;
     color: #ffffff !important;
 }
+
+
+/* FESTE QUIZ-FARBE: unabhängig vom ausgewählten Farbschema */
+#quiz button,
+#quiz button:visited {
+    background: #26334d !important;
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border-color: #1b263d !important;
+    opacity: 1 !important;
+}
+#quiz button:hover:not(:disabled) {
+    background: #1b263d !important;
+    background-color: #1b263d !important;
+    color: #ffffff !important;
+}

@@ -79,12 +79,18 @@ function nextCard() {
 
 
 // Vokabeltest
+
+// Vokabeltest
 function nextQuestion() {
     const answers = document.getElementById("answers");
     const result = document.getElementById("quizResult");
 
     answers.innerHTML = "";
     result.textContent = "";
+
+    // Alten Button entfernen
+    const oldNextButton = document.getElementById("nextQuestionButton");
+    if (oldNextButton) oldNextButton.remove();
 
     if (words.length < 2) {
         document.getElementById("quizWord").textContent =
@@ -116,23 +122,49 @@ function nextQuestion() {
         button.textContent = option;
 
         button.onclick = () => {
-            if (option === correctAnswer) {
-                result.textContent = "Richtig!";
-                correct++;
-                saveData();
-                updateStats();
-            } else {
-                result.textContent =
-                    "Leider falsch. Richtig wäre: " + correctAnswer;
-            }
-
+            // Alle Antwortmöglichkeiten deaktivieren
             answers.querySelectorAll("button").forEach(b => {
                 b.disabled = true;
             });
+
+            if (option === correctAnswer) {
+                result.textContent = "Richtig!";
+                result.style.color = "#718466";
+
+                correct++;
+                saveData();
+                updateStats();
+
+                // Bei richtiger Antwort automatisch weiter
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1200);
+
+            } else {
+                result.innerHTML = `
+                    <div class="wrong-answer">
+                        <div class="wrong-label">Richtige Antwort:</div>
+                        <div class="wrong-word">${correctAnswer}</div>
+                    </div>
+                `;
+
+                result.style.color = "#514b40";
+
+                // Button zum manuellen Weitergehen
+                const nextButton = document.createElement("button");
+                nextButton.id = "nextQuestionButton";
+                nextButton.textContent = "Nächste Frage";
+                nextButton.className = "next-question-button";
+                nextButton.onclick = nextQuestion;
+
+                answers.appendChild(nextButton);
+            }
         };
 
         answers.appendChild(button);
     });
+}
+
 }
 
 

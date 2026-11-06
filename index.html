@@ -4,187 +4,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Texterkennung -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
 
-    <header>
-        <h1>Español</h1>
-        <p>Dein persönlicher Spanisch-Vokabeltrainer</p>
-    </header>
+<header>
+    <h1>Español</h1>
+    <p>Dein persönlicher Spanisch-Vokabeltrainer</p>
+</header>
+
+<main>
 
     <!-- ANMELDUNG -->
-    <main>
+    <section class="auth-panel" id="account">
 
-        <section id="account" class="auth-panel">
+        <div id="authControls">
+            <h2>Willkommen zurück</h2>
+            <p>Melde dich an, um deine Vokabeln auf allen Geräten zu synchronisieren.</p>
 
-            <h2>Dein Konto</h2>
+            <input type="email" id="authEmail" placeholder="E-Mail-Adresse">
 
-            <div id="authControls">
-                <input
-                    type="email"
-                    id="authEmail"
-                    placeholder="E-Mail-Adresse"
-                    autocomplete="email"
-                >
+            <input type="password" id="authPassword" placeholder="Passwort">
 
-                <input
-                    type="password"
-                    id="authPassword"
-                    placeholder="Passwort"
-                    autocomplete="current-password"
-                >
+            <button onclick="signIn()">Anmelden</button>
+            <button class="secondary" onclick="signUp()">Konto erstellen</button>
+        </div>
 
-                <button onclick="signIn()">Anmelden</button>
-                <button class="secondary" onclick="signUp()">
-                    Konto erstellen
-                </button>
+        <p id="authStatus">Du bist nicht angemeldet.</p>
+
+        <button id="signOutButton" class="secondary hidden" onclick="signOut()">
+            Abmelden
+        </button>
+
+    </section>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <button onclick="showPage('home')">Startseite</button>
+        <button onclick="showPage('cards')">Lernkarten</button>
+        <button onclick="showPage('quiz')">Quiz</button>
+        <button onclick="showPage('manage')">Vokabeln</button>
+        <button onclick="showPage('scan')">Scanner</button>
+    </nav>
+
+    <!-- STARTSEITE -->
+    <section id="home" class="page active">
+
+        <h2>Dein Lernbereich</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <strong id="wordCount">0</strong>
+                <span>Vokabeln</span>
             </div>
 
-            <p id="authStatus">Du bist nicht angemeldet.</p>
-
-            <button
-                id="signOutButton"
-                class="danger hidden"
-                onclick="signOut()"
-            >
-                Abmelden
-            </button>
-
-        </section>
-
-        <!-- NAVIGATION -->
-        <nav>
-            <button onclick="showPage('home')">Startseite</button>
-            <button onclick="showPage('cards')">Karteikarten</button>
-            <button onclick="showPage('quiz')">Vokabeltest</button>
-            <button onclick="showPage('manage')">Vokabeln</button>
-            <button onclick="showPage('scan')">Foto-Scan</button>
-        </nav>
-
-        <!-- STARTSEITE -->
-        <section id="home" class="page">
-
-            <h2>Willkommen!</h2>
-            <p>Bereit, Spanisch zu lernen?</p>
-
-            <div class="stats">
-
-                <div class="stat-card">
-                    <h2 id="wordCount">0</h2>
-                    <p>Vokabeln</p>
-                </div>
-
-                <div class="stat-card">
-                    <h2 id="correctCount">0</h2>
-                    <p>Richtige Antworten</p>
-                </div>
-
+            <div class="stat">
+                <strong id="correctCount">0</strong>
+                <span>Richtige Antworten</span>
             </div>
+        </div>
 
-            <button onclick="showPage('quiz')">
-                Jetzt lernen
-            </button>
+        <div class="card">
+            <h3>Weiterlernen</h3>
+            <p>Übe deine Spanisch-Vokabeln mit Lernkarten oder teste dein Wissen im Quiz.</p>
 
-        </section>
+            <button onclick="showPage('quiz')">Quiz starten</button>
+            <button class="secondary" onclick="showPage('cards')">Lernkarten öffnen</button>
+        </div>
 
-        <!-- KARTEIKARTEN -->
-        <section id="cards" class="page hidden">
+    </section>
 
-            <h2>Karteikarten</h2>
+    <!-- LERNKARTEN -->
+    <section id="cards" class="page hidden">
 
-            <p>Übersetze die spanische Vokabel.</p>
+        <h2>Lernkarten</h2>
 
-            <div id="spanishWord">
-                Hola
-            </div>
+        <div class="flashcard">
+            <div id="spanishWord">Bereit?</div>
 
-            <div id="translation" class="hidden">
-                Hallo
-            </div>
+            <div id="translation" class="hidden"></div>
 
-            <button onclick="revealWord()">
-                Übersetzung anzeigen
-            </button>
+            <button onclick="revealWord()">Übersetzung anzeigen</button>
+            <button class="secondary" onclick="nextCard()">Nächste Vokabel</button>
+        </div>
 
-            <button onclick="nextCard()">
-                Nächste Vokabel
-            </button>
+    </section>
 
-        </section>
+    <!-- QUIZ -->
+    <section id="quiz" class="page hidden">
 
-        <!-- VOKABELTEST -->
-        <section id="quiz" class="page hidden">
+        <h2>Vokabel-Quiz</h2>
 
-            <h2>Vokabeltest</h2>
+        <div class="quiz-box">
 
-            <p>
-                Übersetze die Vokabel. Die Fragen wechseln
-                zwischen Deutsch und Spanisch.
-            </p>
+            <p id="quizDirection">Übersetze die Vokabel</p>
 
-            <div id="quizWord">
-                Hola
-            </div>
+            <div id="quizWord">Bereit?</div>
 
             <div id="answers"></div>
 
             <div id="quizResult"></div>
 
-        </section>
+        </div>
 
-        <!-- VOKABELN VERWALTEN -->
-        <section id="manage" class="page hidden">
+    </section>
 
-            <h2>Vokabeln verwalten</h2>
+    <!-- VOKABELVERWALTUNG -->
+    <section id="manage" class="page hidden">
 
-            <p>Füge neue Vokabeln hinzu.</p>
+        <h2>Meine Vokabeln</h2>
 
-            <input
-                type="text"
-                id="newSpanish"
-                placeholder="Spanisches Wort"
-            >
+        <div class="card">
 
-            <input
-                type="text"
-                id="newGerman"
-                placeholder="Deutsche Übersetzung"
-            >
+            <h3>Neue Vokabel hinzufügen</h3>
 
-            <button onclick="addWord()">
-                Vokabel hinzufügen
-            </button>
+            <input type="text" id="newSpanish" placeholder="Spanisches Wort">
 
-            <h3>Deine Vokabelliste</h3>
+            <input type="text" id="newGerman" placeholder="Deutsche Übersetzung">
 
-            <div id="wordList"></div>
+            <button onclick="addWord()">Vokabel hinzufügen</button>
 
-        </section>
+        </div>
 
-        <!-- FOTO-SCAN -->
-        <section id="scan" class="page hidden">
+        <div id="wordList"></div>
 
-            <h2>Vokabeln einscannen</h2>
+    </section>
 
-            <p>
-                Lade ein Foto deiner Vokabelliste hoch.
-                Die Wörter werden automatisch erkannt.
-            </p>
+    <!-- SCANNER -->
+    <section id="scan" class="page hidden">
+
+        <h2>Vokabel-Scanner</h2>
+
+        <div class="card">
+
+            <p>Lade ein Foto deiner Vokabelliste hoch.</p>
 
             <input
                 type="file"
-                id="scanFile"
+                id="scanImage"
                 accept="image/*"
                 onchange="scanVocabulary(event)"
             >
@@ -193,35 +156,27 @@
 
             <div id="scanEditor" class="hidden">
 
-                <h3>Erkannte Wörter</h3>
+                <h3>Erkannte Vokabeln</h3>
 
-                <p>
-                    Überprüfe die erkannten Wörter.
-                    Verwende das Format Spanisch = Deutsch.
-                </p>
+                <p>Format: Spanisch = Deutsch</p>
 
                 <textarea
                     id="scanText"
                     rows="10"
-                    placeholder="Hola = Hallo&#10;Gracias = Danke"
+                    placeholder="Erkannte Vokabeln erscheinen hier..."
                 ></textarea>
 
-                <button onclick="importScannedWords()">
-                    Vokabeln übernehmen
-                </button>
+                <button onclick="importScannedWords()">Vokabeln importieren</button>
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+    </section>
 
-    <footer>
-        <p>Español – Dein persönlicher Vokabeltrainer</p>
-    </footer>
+</main>
 
-    <!-- JavaScript -->
-    <script src="script.js"></script>
+<script src="script.js?v=4"></script>
 
 </body>
 </html>

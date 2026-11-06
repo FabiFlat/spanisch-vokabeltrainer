@@ -415,6 +415,7 @@ function updateXPDisplay() {
             '</div>';
     }).join("");
     updateSessionControls();
+    updateThemeUnlocks();
 }
 
 function persistXP() {
@@ -1389,9 +1390,38 @@ const colorThemes = {
     },
 };
 
+function isThemeUnlocked(themeName) {
+    const themeNames = Object.keys(colorThemes);
+    const themeIndex = themeNames.indexOf(themeName);
+    if (themeIndex < 0) return false;
+    return themeIndex === 0 || xp >= themeIndex * 200 ||
+        userUnlocks.all_designs || userUnlocks.beta_tester;
+}
+
+function updateThemeUnlocks() {
+    document.querySelectorAll(".theme-option").forEach(button => {
+        const themeName = button.dataset.themeChoice;
+        const unlocked = isThemeUnlocked(themeName);
+        const themeIndex = Object.keys(colorThemes).indexOf(themeName);
+        const requiredXP = themeIndex * 200;
+        button.disabled = !unlocked;
+        button.classList.toggle("theme-locked", !unlocked);
+        button.dataset.unlockLabel = unlocked
+            ? "Freigeschaltet"
+            : requiredXP.toLocaleString("de-DE") + " XP";
+        button.setAttribute("aria-label",
+            colorThemes[themeName].name + (unlocked ? " – freigeschaltet" : " – benötigt " + requiredXP + " XP"));
+    });
+}
+
 function setColorTheme(themeName) {
     const theme = colorThemes[themeName];
-    if (!theme) return;
+    if (!theme || !isThemeUnlocked(themeName)) {
+        const status = document.getElementById("themeStatus");
+        if (status) status.textContent = "Dieses Design wird bei " +
+            (Object.keys(colorThemes).indexOf(themeName) * 200).toLocaleString("de-DE") + " XP freigeschaltet.";
+        return;
+    }
 
     Object.entries(theme).forEach(([property, value]) => {
         if (property.startsWith("--")) {
@@ -1444,6 +1474,7 @@ function syncCustomColorInputs() {
 }
 
 function loadColorTheme() {
+    updateThemeUnlocks();
     const savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
 
     if (savedTheme === "custom") {

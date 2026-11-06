@@ -755,8 +755,8 @@ input:disabled {
     background: var(--card);
 }
 .xp-roadmap-item.earned {
-    border-color: #aab99f;
-    background: #edf1e8;
+    border-color: var(--sage-dark);
+    background: color-mix(in srgb, var(--sage-dark) 18%, var(--card));
 }
 .xp-roadmap-item.locked {
     opacity: .72;

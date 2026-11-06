@@ -305,7 +305,7 @@ function showCard() {
 
     if (words.length === 0) {
         spanishWord.textContent = "Keine Vokabeln vorhanden";
-        translation.classList.add("hidden");
+        translation.textContent = "";
         return;
     }
 
@@ -313,13 +313,8 @@ function showCard() {
 
     spanishWord.textContent = words[currentCard].spanish;
     translation.textContent = words[currentCard].german;
-
-    translation.classList.add("hidden");
 }
 
-function revealWord() {
-    document.getElementById("translation").classList.remove("hidden");
-}
 
 function nextCard() {
     if (words.length === 0) return;

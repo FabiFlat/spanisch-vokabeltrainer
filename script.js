@@ -165,6 +165,7 @@ async function loadUserData() {
         correct = Number(data.correct) || 0;
     } else {
         // Beim ersten Anmelden vorhandene lokale Vokabeln übernehmen
+        syncReady = true;
         await saveDataToCloud();
     }
 

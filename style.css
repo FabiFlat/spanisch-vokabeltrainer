@@ -681,3 +681,18 @@ button:disabled,
     outline: 2px solid var(--sage-dark);
     outline-offset: 2px;
 }
+
+
+/* QUIZ-BUTTONS: dunkler Hintergrund mit gut lesbarer Schrift */
+#quiz button,
+#quiz #answers button {
+    background: color-mix(in srgb, var(--sage) 55%, #202020) !important;
+    color: #ffffff !important;
+    border: 1px solid color-mix(in srgb, var(--sage) 35%, #111111) !important;
+}
+
+#quiz button:hover:not(:disabled),
+#quiz #answers button:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--sage) 40%, #101010) !important;
+    color: #ffffff !important;
+}

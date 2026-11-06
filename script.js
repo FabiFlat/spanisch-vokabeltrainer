@@ -1,4 +1,4 @@
-
+undefined
 /* ==========================================
    SUPABASE VERBINDUNG
 ========================================== */
@@ -431,28 +431,10 @@ function addXP(amount) {
 
 function updateSessionControls() {
     const ready = sessionActions >= 5;
-    ["card", "quiz"].forEach(prefix => {
-        const status = document.getElementById(prefix + "SessionStatus");
-        const button = document.getElementById(prefix + "FinishSession");
-        if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
-        if (button) button.disabled = !ready;
-    });
-}
-
-function markCurrentCardLearned() {
-    if (!words.length) return;
-    if (learnedCardsThisSession.has(currentCard)) {
-        const status = document.getElementById("cardSessionStatus");
-        if (status) status.textContent = "Diese Karte wurde in dieser Lerneinheit bereits gewertet.";
-        return;
-    }
-    learnedCardsThisSession.add(currentCard);
-    flashcardsLearned++;
-    sessionActions++;
-    addXP(5);
-    updateSessionControls();
-    const status = document.getElementById("cardSessionStatus");
-    if (status) status.textContent = "Karte gelernt! +5 XP · " + sessionActions + "/5 Lernaktionen";
+    const status = document.getElementById("quizSessionStatus");
+    const button = document.getElementById("quizFinishSession");
+    if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
+    if (button) button.disabled = !ready;
 }
 
 function finishLearningSession() {
@@ -460,12 +442,9 @@ function finishLearningSession() {
     sessionsCompleted++;
     addXP(20);
     sessionActions = 0;
-    learnedCardsThisSession.clear();
     updateSessionControls();
     const status = document.getElementById("quizSessionStatus");
-    const cardStatus = document.getElementById("cardSessionStatus");
     if (status) status.textContent = "Lerneinheit abgeschlossen! +20 XP";
-    if (cardStatus) cardStatus.textContent = "Lerneinheit abgeschlossen! +20 XP";
 }
 
 

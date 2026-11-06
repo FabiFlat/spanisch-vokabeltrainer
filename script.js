@@ -177,6 +177,79 @@ async function signOut() {
    SUPABASE SYNCHRONISIERUNG
 ========================================== */
 
+
+/* FREISCHALTCODES */
+let userUnlocks = { beta_tester: false, all_designs: false };
+
+function renderUnlockStatus() {
+    const target = document.getElementById("unlockBadges");
+    if (!target) return;
+    const badges = [];
+    if (userUnlocks.beta_tester) badges.push("Beta Tester – alles freigeschaltet");
+    else if (userUnlocks.all_designs) badges.push("Alle Farbdesigns freigeschaltet");
+    target.innerHTML = badges.length
+        ? badges.map(label => '<span class="unlock-badge">' + label + '</span>').join("")
+        : '<span class="unlock-muted">Noch keine Codes eingelöst.</span>';
+}
+
+async function loadUserUnlocks() {
+    if (!currentUser || !supabaseClient) {
+        userUnlocks = { beta_tester: false, all_designs: false };
+        renderUnlockStatus();
+        return;
+    }
+    const { data, error } = await supabaseClient
+        .from("user_unlocks")
+        .select("beta_tester, all_designs")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+    if (error) {
+        const status = document.getElementById("unlockStatus");
+        if (status) status.textContent = "Freischaltungen konnten nicht geladen werden. Bitte SQL-Einrichtung abschließen.";
+        return;
+    }
+    userUnlocks = {
+        beta_tester: Boolean(data?.beta_tester),
+        all_designs: Boolean(data?.all_designs)
+    };
+    renderUnlockStatus();
+}
+
+async function redeemUnlockCode() {
+    const input = document.getElementById("unlockCode");
+    const status = document.getElementById("unlockStatus");
+    const code = input?.value.trim();
+
+    if (!currentUser || !supabaseClient) {
+        status.textContent = "Bitte melde dich zuerst an.";
+        return;
+    }
+    if (!code) {
+        status.textContent = "Bitte gib einen Code ein.";
+        return;
+    }
+
+    status.textContent = "Code wird überprüft ...";
+    const { data, error } = await supabaseClient.rpc("redeem_unlock_code", {
+        input_code: code
+    });
+
+    if (error) {
+        console.error("Freischaltcode:", error);
+        status.textContent = "Code konnte nicht geprüft werden. Bitte zuerst die SQL-Einrichtung in Supabase ausführen.";
+        return;
+    }
+    if (!data?.success) {
+        status.textContent = data?.message || "Dieser Code ist ungültig.";
+        return;
+    }
+
+    await loadUserUnlocks();
+    status.textContent = data.message || "Freischaltung erfolgreich!";
+    input.value = "";
+}
+
 async function loadUserData() {
     if (!currentUser || !supabaseClient) return;
 
@@ -193,6 +266,8 @@ async function loadUserData() {
         setAuthStatus("Ladefehler: " + error.message);
         return;
     }
+
+    await loadUserUnlocks();
 
     if (data) {
         words = Array.isArray(data.words)

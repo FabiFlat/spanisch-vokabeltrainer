@@ -1,30 +1,595 @@
 
-/* GEMISCHTER VOKABELTEST */
+// ==========================================
+// SPANISCH VOKABELTRAINER – LOFI DESIGN
+// ==========================================
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+// ==========================================
+// FARBEN
+// ==========================================
+
+:root {
+    --background: #f4f0e7;
+    --surface: #fffdf7;
+    --surface-dark: #ebe6d9;
+
+    --primary: #a4b394;
+    --primary-dark: #718466;
+    --primary-light: #dce4d3;
+
+    --text: #45483f;
+    --text-light: #858477;
+
+    --border: #e5e0d3;
+    --danger: #c47e76;
+
+    --shadow: 0 5px 18px rgba(80, 75, 55, 0.07);
+}
+
+// ==========================================
+// GRUNDEINSTELLUNGEN
+// ==========================================
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+h1, h2, h3 {
+    color: var(--text);
+    font-weight: 800;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 23px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+p {
+    color: var(--text-light);
+}
+
+// ==========================================
+// HAUPTBEREICH
+// ==========================================
+
+.container,
+main {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+header {
+    text-align: center;
+    padding: 30px 15px 20px;
+}
+
+header h1 {
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+header p {
+    margin-top: 0;
+}
+
+// ==========================================
+// NAVIGATION
+// ==========================================
+
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px auto 30px;
+    padding: 0 15px;
+}
+
+nav button {
+    background: var(--surface);
+    color: var(--text-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 11px 19px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+nav button:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+// ==========================================
+// SEITEN
+// ==========================================
+
+.page {
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ==========================================
+// KARTEN UND BEREICHE
+// ==========================================
+
+.card,
+.stat-card,
+.auth-panel,
+.quiz-card,
+section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.card {
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+section {
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+// ==========================================
+// STATISTIKEN
+// ==========================================
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 20px;
+}
+
+.stat-card h2 {
+    font-size: 30px;
+    color: var(--primary-dark);
+    margin: 0;
+}
+
+.stat-card p {
+    margin: 5px 0 0;
+    font-weight: 700;
+}
+
+// ==========================================
+// BUTTONS
+// ==========================================
+
+button {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    background: var(--primary-dark);
+    border: none;
+    border-radius: 13px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background: #62765a;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+button.secondary,
+.secondary {
+    background: var(--surface-dark);
+    color: var(--text);
+}
+
+button.secondary:hover {
+    background: var(--primary-light);
+}
+
+button.danger {
+    background: var(--danger);
+}
+
+// ==========================================
+// EINGABEFELDER
+// ==========================================
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 7px 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #fffefa;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(164, 179, 148, 0.18);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #aaa89d;
+}
+
+// ==========================================
+// KARTEIKARTEN
+// ==========================================
+
+#spanishWord {
+    font-size: 32px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--primary-dark);
+    margin: 25px 0;
+    overflow-wrap: anywhere;
+}
+
+#translation {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    background: var(--primary-light);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    overflow-wrap: anywhere;
+}
+
+// ==========================================
+// VOKABELTEST
+// ==========================================
+
+#quiz {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+#quizWord {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    border-radius: 18px;
+    padding: 28px 18px;
+    margin: 20px 0;
+    overflow-wrap: anywhere;
+}
+
+#answers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#answers button {
+    width: 100%;
+    min-height: 50px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    text-align: center;
+    font-size: 16px;
+}
+
+#answers button:hover:not(:disabled) {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
 
 .quiz-direction {
-    color: #718466;
+    color: var(--primary-dark);
     font-weight: 800;
-    margin-bottom: 8px;
+    text-align: center;
+    margin: 5px 0;
 }
 
 .quiz-type {
-    color: #77766d;
-    margin-bottom: 15px;
+    color: var(--text-light);
+    text-align: center;
+    font-weight: 700;
+    margin: 5px 0 12px;
 }
+
+// ==========================================
+// SCHREIBFRAGEN
+// ==========================================
 
 #writtenAnswer {
     width: 100%;
     box-sizing: border-box;
-    padding: 15px;
-    border: 1px solid #d8d5c8;
-    border-radius: 12px;
-    background: #fffdf7;
-    font-family: inherit;
-    font-size: 17px;
-    margin-bottom: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #fffefa;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: var(--text);
 }
 
 #writtenAnswer:focus {
-    outline: 2px solid #a4b394;
-    border-color: #a4b394;
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(164, 179, 148, 0.18);
+}
+
+#answers button.next-question-button {
+    background: var(--primary-dark);
+    color: white;
+    margin-top: 10px;
+}
+
+// ==========================================
+// QUIZ-ERGEBNIS
+// ==========================================
+
+#quizResult {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 15px 0;
+}
+
+.wrong-answer {
+    background: #f3e6df;
+    border: 1px solid #e8d2c8;
+    border-radius: 17px;
+    padding: 18px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.wrong-label {
+    color: #98756c;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.wrong-word {
+    color: #6d5149;
+    font-size: 25px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+// ==========================================
+// VOKABELLISTE
+// ==========================================
+
+.word-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: #faf8f1;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+}
+
+.word-item span {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.word-item button {
+    background: var(--danger);
+    padding: 8px 13px;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+// ==========================================
+// ANMELDUNG UND SYNCHRONISIERUNG
+// ==========================================
+
+.auth-panel {
+    padding: 22px;
+    margin-bottom: 25px;
+}
+
+.auth-panel h2 {
+    margin-bottom: 10px;
+}
+
+.auth-panel p {
+    font-size: 14px;
+}
+
+.auth-panel.logged-in {
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+}
+
+.auth-panel.logged-in h2 {
+    display: none;
+}
+
+.auth-panel.logged-in p {
+    margin: 5px 0;
+}
+
+.auth-panel.logged-in button {
+    margin-top: 5px;
+}
+
+#signOutButton {
+    margin-top: 10px;
+}
+
+// ==========================================
+// FOTO-SCAN
+// ==========================================
+
+#scanStatus {
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin: 12px 0;
+}
+
+#scanEditor {
+    margin-top: 15px;
+}
+
+#scanText {
+    min-height: 180px;
+    resize: vertical;
+}
+
+// ==========================================
+// FOOTER
+// ==========================================
+
+footer {
+    text-align: center;
+    padding: 25px 15px;
+    color: var(--text-light);
+    font-size: 13px;
+}
+
+// ==========================================
+// RESPONSIVE DESIGN – HANDY UND TABLET
+// ==========================================
+
+@media (max-width: 600px) {
+    .container,
+    main {
+        padding: 15px;
+    }
+
+    header {
+        padding: 22px 12px 12px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    nav {
+        gap: 7px;
+        margin-bottom: 20px;
+    }
+
+    nav button {
+        padding: 9px 12px;
+        font-size: 13px;
+    }
+
+    section,
+    .card {
+        padding: 18px;
+        border-radius: 17px;
+    }
+
+    #quizWord {
+        font-size: 27px;
+        padding: 22px 14px;
+    }
+
+    #spanishWord {
+        font-size: 27px;
+    }
+
+    #translation {
+        font-size: 21px;
+    }
+
+    .word-item {
+        align-items: flex-start;
+    }
+
+    .word-item button {
+        padding: 8px 10px;
+    }
+
+    button {
+        padding: 12px 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .word-item {
+        flex-direction: column;
+    }
+
+    .word-item button {
+        width: 100%;
+    }
 }

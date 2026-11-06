@@ -1018,7 +1018,7 @@ const colorThemes = {
         "--sage-dark": "#a2b9aa", "--brown": "#d5cfc3", "--text": "#eeeae2",
         "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
         "--correct": "#9ab895", name: "Dunkel"
-    }
+    },
     forest: {
         "--background": "#edf1e8", "--card": "#fbfff8", "--sage": "#8fa88b",
         "--sage-dark": "#607c60", "--brown": "#455b48", "--text": "#344338",

@@ -832,6 +832,35 @@ async function scanVocabulary(event) {
    ERKANNTE VOKABELN ÜBERNEHMEN
 ========================================== */
 
+/* ==========================================
+   VOKABELDATEI IMPORTIEREN
+========================================== */
+
+async function importVocabularyFile(file) {
+    if (!file) return;
+
+    const status = document.getElementById("scanStatus");
+    const editor = document.getElementById("scanEditor");
+    const scanText = document.getElementById("scanText");
+
+    const extension = file.name.split(".").pop().toLowerCase();
+    if (!["csv", "txt"].includes(extension)) {
+        status.textContent = "Bitte eine CSV- oder TXT-Datei auswählen.";
+        return;
+    }
+
+    try {
+        const content = await file.text();
+        scanText.value = content;
+        editor.classList.remove("hidden");
+        status.textContent = "Datei geladen. Prüfe die Vokabeln und klicke auf „Vokabeln importieren“.";
+    } catch (error) {
+        console.error(error);
+        status.textContent = "Die Datei konnte nicht gelesen werden.";
+    }
+}
+
+
 function importScannedWords() {
     const text = document.getElementById("scanText").value;
 

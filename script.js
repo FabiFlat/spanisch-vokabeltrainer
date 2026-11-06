@@ -58,6 +58,106 @@ let syncReady = false;
 let quizTimer = null;
 let questionLocked = false;
 let quizAnswerLanguage = "de";
+let quizMode = "normal";
+let quizDifficulty = "medium";
+let quizAskedCount = 0;
+let quizModeCorrect = 0;
+let quizTimeLeft = 60;
+let quizModeInterval = null;
+let wrongVocabulary = [];
+try {
+    wrongVocabulary = JSON.parse(localStorage.getItem("wrongVocabulary")) || [];
+    if (!Array.isArray(wrongVocabulary)) wrongVocabulary = [];
+} catch {
+    wrongVocabulary = [];
+}
+
+function saveWrongVocabulary() {
+    localStorage.setItem("wrongVocabulary", JSON.stringify(wrongVocabulary));
+}
+
+function updateQuizModeStatus() {
+    const status = document.getElementById("quizModeStatus");
+    if (!status) return;
+    if (quizMode === "marathon") {
+        status.textContent = "Vokabel-Marathon: " + quizAskedCount + " / 50 Fragen";
+    } else if (quizMode === "time") {
+        status.textContent = "Zeit-Challenge: " + quizTimeLeft + " Sekunden · " + quizModeCorrect + " richtig";
+    } else if (quizMode === "errors") {
+        status.textContent = "Fehlertraining: " + wrongVocabulary.length + " Vokabeln zum Wiederholen";
+    } else {
+        status.textContent = "Normaler Quizmodus";
+    }
+}
+
+function stopQuizModeTimer() {
+    if (quizModeInterval) {
+        clearInterval(quizModeInterval);
+        quizModeInterval = null;
+    }
+}
+
+function endQuizMode(message) {
+    stopQuizModeTimer();
+    clearTimeout(quizTimer);
+    questionLocked = true;
+    const answers = document.getElementById("answers");
+    const result = document.getElementById("quizResult");
+    const word = document.getElementById("quizWord");
+    const direction = document.getElementById("quizDirection");
+    if (answers) answers.innerHTML = "";
+    if (word) word.textContent = message;
+    if (direction) direction.textContent =
+        quizMode === "marathon"
+            ? "Ergebnis: " + quizModeCorrect + " von " + quizAskedCount + " richtig"
+            : quizMode === "time"
+                ? "Du hast " + quizModeCorrect + " Fragen richtig beantwortet."
+                : "Du hast alle aktuell gespeicherten Fehler wiederholt.";
+    if (result) result.textContent = "Du kannst jederzeit eine neue Runde starten.";
+    updateQuizModeStatus();
+}
+
+function startQuizMode(mode) {
+    stopQuizModeTimer();
+    clearTimeout(quizTimer);
+    quizMode = mode;
+    quizAskedCount = 0;
+    quizModeCorrect = 0;
+    quizTimeLeft = 60;
+    questionLocked = false;
+
+    const selectedDifficulty = document.getElementById("quizDifficulty");
+    quizDifficulty = selectedDifficulty ? selectedDifficulty.value : "medium";
+
+    if (mode === "errors") {
+        wrongVocabulary = wrongVocabulary.filter(item =>
+            words.some(word => word.spanish === item.spanish && word.german === item.german)
+        );
+        saveWrongVocabulary();
+        if (!wrongVocabulary.length) {
+            const word = document.getElementById("quizWord");
+            const direction = document.getElementById("quizDirection");
+            const answers = document.getElementById("answers");
+            const result = document.getElementById("quizResult");
+            if (word) word.textContent = "Keine Fehler zum Wiederholen vorhanden.";
+            if (direction) direction.textContent = "Beantworte zuerst ein paar Quizfragen falsch, damit hier Vokabeln gesammelt werden.";
+            if (answers) answers.innerHTML = "";
+            if (result) result.textContent = "";
+            updateQuizModeStatus();
+            return;
+        }
+    }
+
+    updateQuizModeStatus();
+    if (mode === "time") {
+        quizModeInterval = setInterval(() => {
+            quizTimeLeft--;
+            updateQuizModeStatus();
+            if (quizTimeLeft <= 0) endQuizMode("Zeit abgelaufen!");
+        }, 1000);
+    }
+    nextQuestion();
+}
 
 
 /* ==========================================
@@ -605,14 +705,34 @@ function nextQuestion() {
 
     questionLocked = false;
 
-    if (words.length < 2) {
-        quizWord.textContent = "Du benötigst mindestens zwei Vokabeln.";
+    if (quizMode === "time" && quizTimeLeft <= 0) {
+        endQuizMode("Zeit abgelaufen!");
+        return;
+    }
+    if (quizMode === "marathon" && quizAskedCount >= 50) {
+        endQuizMode("Marathon geschafft!");
+        return;
+    }
+
+    let availableIndexes = words.map((word, index) => index);
+    if (quizMode === "errors") {
+        availableIndexes = availableIndexes.filter(index =>
+            wrongVocabulary.some(item =>
+                item.spanish === words[index].spanish && item.german === words[index].german
+            )
+        );
+        if (!availableIndexes.length) {
+            endQuizMode("Fehlertraining abgeschlossen!");
+            return;
+        }
+    }
+    if (availableIndexes.length === 0) {
+        quizWord.textContent = "Du benötigst mindestens eine Vokabel.";
         direction.textContent = "";
         return;
     }
 
-    currentQuestion = Math.floor(Math.random() * words.length);
-
+    currentQuestion = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
     const word = words[currentQuestion];
 
     /*
@@ -642,7 +762,11 @@ function nextQuestion() {
      * true = Multiple Choice
      * false = Antwort eintippen
      */
-    const multipleChoice = Math.random() < 0.5;
+    const multipleChoice = quizDifficulty === "easy"
+        ? true
+        : quizDifficulty === "hard"
+            ? false
+            : Math.random() < 0.5;
 
     if (multipleChoice) {
         createMultipleChoice(
@@ -823,9 +947,19 @@ function checkQuizAnswer(
     });
 
     sessionActions++;
+    quizAskedCount++;
+    updateQuizModeStatus();
     updateSessionControls();
 
     if (isCorrect) {
+        quizModeCorrect++;
+        if (currentQuestion !== null && words[currentQuestion]) {
+            const answeredWord = words[currentQuestion];
+            wrongVocabulary = wrongVocabulary.filter(item =>
+                !(item.spanish === answeredWord.spanish && item.german === answeredWord.german)
+            );
+            saveWrongVocabulary();
+        }
         result.textContent = "Richtig!";
         addXP(10);
         result.style.color = "#718466";
@@ -837,16 +971,30 @@ function checkQuizAnswer(
 
         quizTimer = setTimeout(() => {
             const quizPage = document.getElementById("quiz");
-
-            if (
-                quizPage &&
-                !quizPage.classList.contains("hidden")
-            ) {
-                nextQuestion();
+            if (quizMode === "marathon" && quizAskedCount >= 50) {
+                endQuizMode("Marathon geschafft!");
+                return;
             }
+            if (quizMode === "errors" && wrongVocabulary.length === 0) {
+                endQuizMode("Fehlertraining abgeschlossen!");
+                return;
+            }
+            if (quizPage && !quizPage.classList.contains("hidden")) nextQuestion();
         }, 700);
 
     } else {
+        if (currentQuestion !== null && words[currentQuestion]) {
+            const answeredWord = words[currentQuestion];
+            if (!wrongVocabulary.some(item =>
+                item.spanish === answeredWord.spanish && item.german === answeredWord.german
+            )) {
+                wrongVocabulary.push({
+                    spanish: answeredWord.spanish,
+                    german: answeredWord.german
+                });
+                saveWrongVocabulary();
+            }
+        }
         result.innerHTML = `
             <div class="wrong-answer" style="background:#26334d !important;background-color:#26334d !important;border:1px solid #465a82 !important;border-radius:16px;padding:20px;margin-top:15px;text-align:center;color:#ffffff !important;">
                 <div class="wrong-label" style="color:#cbd3e5 !important;font-size:15px;font-weight:700;">Richtige Antwort:</div>
@@ -862,6 +1010,17 @@ function checkQuizAnswer(
         nextButton.onclick = nextQuestion;
 
         answers.appendChild(nextButton);
+        if (quizMode === "time") {
+            quizTimer = setTimeout(() => {
+                if (quizTimeLeft > 0) nextQuestion();
+            }, 500);
+        }
+    }
+
+    if (quizMode === "marathon" && quizAskedCount >= 50) {
+        quizTimer = setTimeout(() => endQuizMode("Marathon geschafft!"), 700);
+    } else if (quizMode === "errors" && wrongVocabulary.length === 0) {
+        quizTimer = setTimeout(() => endQuizMode("Fehlertraining abgeschlossen!"), 700);
     }
 }
 

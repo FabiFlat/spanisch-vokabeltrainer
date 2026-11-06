@@ -528,3 +528,36 @@ input:disabled {
 .theme-rose { background: linear-gradient(135deg, #f8eeee 50%, #c99da5 50%); }
 .theme-dark { background: linear-gradient(135deg, #25272b 50%, #687b70 50%); }
 .theme-status { color: var(--muted); margin-top: 14px; }
+
+
+.theme-forest { background: linear-gradient(135deg, #edf1e8 50%, #8fa88b 50%); }
+.theme-peach { background: linear-gradient(135deg, #fbf0e7 50%, #e5ad8c 50%); }
+.theme-matcha { background: linear-gradient(135deg, #f0f2e5 50%, #b4bd83 50%); }
+.theme-midnight { background: linear-gradient(135deg, #202638 50%, #8295bd 50%); }
+
+.custom-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+.custom-color-grid label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--text);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+}
+.custom-color-grid input[type="color"] {
+    width: 48px;
+    height: 36px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    cursor: pointer;
+}

@@ -1,21 +1,227 @@
-hr {
+
+/* =================================
+   ESPAÑOL - LOFI STUDY DESIGN
+================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #f4f0e7;
+    --surface: #fffdf7;
+    --surface-dark: #e9e4d8;
+    --sage: #9aaa87;
+    --sage-dark: #718466;
+    --brown: #756653;
+    --text: #514b40;
+    --muted: #9b9283;
+    --border: #e5dfd2;
+    --danger: #bd786d;
+    --shadow: 0 5px 20px rgba(94, 82, 62, 0.07);
+}
+
+body {
+    margin: 0;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* HEADER */
+
+header {
+    padding: 45px 20px 35px;
+    background: #e9e3d5;
+    border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+    font-family: Georgia, serif;
+    font-size: 42px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    color: var(--sage-dark);
+    margin: 0;
+}
+
+header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* NAVIGATION */
+
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 22px 15px;
+    max-width: 850px;
+    margin: auto;
+}
+
+button {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px 19px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    background: var(--sage);
+    color: white;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.primary {
+    background: var(--sage);
+    color: white;
     border: none;
-    border-top: 1px solid #414765;
+}
+
+.primary:hover {
+    background: var(--sage-dark);
+}
+
+/* MAIN */
+
+main {
+    max-width: 780px;
+    margin: 20px auto;
+    padding: 15px;
+}
+
+.page {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 35px 25px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+    animation: appear 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+h2 {
+    font-family: Georgia, serif;
+    font-weight: normal;
+    font-size: 29px;
+    color: var(--sage-dark);
+    margin-top: 0;
+}
+
+h3 {
+    color: var(--brown);
+}
+
+/* STATS */
+
+.stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
     margin: 30px 0;
 }
 
-.upload-button {
-    display: inline-block;
-    background: #7655dc;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin: 15px 0;
+.stat {
+    background: #f0eee4;
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 17px;
+    min-width: 140px;
 }
 
-.upload-button:hover {
-    background: #8b70ed;
+.stat h3 {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    color: var(--sage-dark);
+    margin: 0;
+}
+
+.stat p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 5px 0 0;
+}
+
+/* FLASHCARDS */
+
+.flashcard {
+    background: #eeebdf;
+    border: 1px solid var(--border);
+    padding: 65px 20px;
+    border-radius: 20px;
+    margin: 25px 0;
+}
+
+.flashcard h3 {
+    font-family: Georgia, serif;
+    font-size: 36px;
+    font-weight: normal;
+    color: var(--sage-dark);
+}
+
+#translation {
+    font-size: 23px;
+    color: var(--brown);
+}
+
+/* QUIZ */
+
+#answers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 25px 0;
+}
+
+#answers button {
+    background: #eeebdf;
+}
+
+#answers button:hover {
+    background: var(--sage);
+    color: white;
+}
+
+/* INPUTS */
+
+input,
+textarea {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #faf8f2;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--sage);
 }
 
 #scanImage {
@@ -23,45 +229,127 @@ hr {
 }
 
 #scanText {
-    width: 100%;
     min-height: 180px;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 10px;
-    border: 1px solid #555;
-    background: #292f4b;
-    color: white;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
     resize: vertical;
 }
 
+.upload-button {
+    display: inline-block;
+    background: #e7ebdf;
+    color: var(--sage-dark);
+    padding: 15px 22px;
+    border: 1px dashed var(--sage);
+    border-radius: 13px;
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+.upload-button:hover {
+    background: #dce5d4;
+}
+
 #scanStatus {
-    color: #c4b5fd;
+    color: var(--sage-dark);
+    font-size: 14px;
     margin: 15px;
 }
 
-#scanEditor {
-    margin-top: 25px;
-}
-
-#scanEditor button {
-    width: 100%;
-}
+/* WORD LIST */
 
 .word-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 10px;
+    background: #f4f1e9;
+    padding: 14px 17px;
+    margin: 10px 0;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    text-align: left;
 }
 
 .word-item button {
-    background: #a43f52;
+    background: #f0dfd9;
+    color: var(--danger);
+    border: none;
+    padding: 8px 12px;
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+/* DIVIDERS */
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 30px 0;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 25px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ANIMATION */
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 34px;
+    }
+
+    nav {
+        gap: 7px;
+        padding: 15px 8px;
+    }
+
+    nav button {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    main {
+        padding: 8px;
+    }
+
+    .page {
+        padding: 25px 15px;
+        border-radius: 17px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat {
+        min-width: 115px;
+        padding: 15px;
+    }
+
+    #answers {
+        grid-template-columns: 1fr;
+    }
+
+    .flashcard {
+        padding: 45px 15px;
+    }
 }

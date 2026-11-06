@@ -369,12 +369,39 @@ input:disabled {
     border-radius: 13px;
 }
 
+.word-item-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.word-item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
 .word-item button {
     width: auto;
     margin: 0;
     padding: 8px 13px;
     background: #f3e5e0;
     color: var(--wrong);
+}
+
+.word-item button.edit-word-button {
+    background: #e9e5da;
+    color: var(--brown);
+}
+
+.word-edit-fields {
+    flex: 1;
+    min-width: 0;
+}
+
+.word-edit-fields input {
+    margin: 5px 0;
 }
 
 /* OCR SCANNER */

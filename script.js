@@ -1,7 +1,21 @@
 
+// ==========================================
+// SUPABASE VERBINDUNG
+// ==========================================
 
-// VOKABELN LADEN
-let words = JSON.parse(localStorage.getItem("words")) || [
+const SUPABASE_URL = "https://exuxzafvelelozppryir.supabase.co";
+const SUPABASE_KEY = "sb_publishable_2_X-qjrz4Ky8ZMF6isIdbw_Y98ljw1f";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+// ==========================================
+// VOKABELN UND STATISTIKEN
+// ==========================================
+
+const defaultWords = [
     { spanish: "Hola", german: "Hallo" },
     { spanish: "Gracias", german: "Danke" },
     { spanish: "Adiós", german: "Tschüss" },
@@ -12,33 +26,204 @@ let words = JSON.parse(localStorage.getItem("words")) || [
     { spanish: "Amigo", german: "Freund" }
 ];
 
+function loadLocalWords() {
+    try {
+        const saved = JSON.parse(localStorage.getItem("words"));
+        return Array.isArray(saved) ? saved : [...defaultWords];
+    } catch {
+        return [...defaultWords];
+    }
+}
+
+let words = loadLocalWords();
 let currentCard = 0;
 let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
+let currentUser = null;
+let syncReady = false;
 
+// ==========================================
+// STATUS UND ANMELDUNG
+// ==========================================
 
-// DATEN SPEICHERN
-function saveData() {
-    localStorage.setItem("words", JSON.stringify(words));
-    localStorage.setItem("correct", correct);
+function setAuthStatus(message) {
+    const element = document.getElementById("authStatus");
+    if (element) element.textContent = message;
 }
 
+function updateAuthPanel() {
+    const loggedIn = Boolean(currentUser);
 
+    document.getElementById("signOutButton").classList.toggle("hidden", !loggedIn);
+
+    document.getElementById("authEmail").disabled = loggedIn;
+    document.getElementById("authPassword").disabled = loggedIn;
+
+    setAuthStatus(
+        loggedIn
+            ? "Angemeldet: " + currentUser.email + " – Synchronisierung aktiv."
+            : "Du bist nicht angemeldet."
+    );
+}
+
+async function signUp() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    if (!email || !password) {
+        setAuthStatus("Bitte E-Mail und Passwort eingeben.");
+        return;
+    }
+
+    if (password.length < 8) {
+        setAuthStatus("Das Passwort muss mindestens 8 Zeichen haben.");
+        return;
+    }
+
+    setAuthStatus("Konto wird erstellt ...");
+
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password
+    });
+
+    if (error) {
+        setAuthStatus("Fehler: " + error.message);
+        return;
+    }
+
+    if (data.session) {
+        currentUser = data.user;
+        await loadUserData();
+    } else {
+        setAuthStatus("Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an.");
+    }
+}
+
+async function signIn() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    if (!email || !password) {
+        setAuthStatus("Bitte E-Mail und Passwort eingeben.");
+        return;
+    }
+
+    setAuthStatus("Anmeldung läuft ...");
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) {
+        setAuthStatus("Anmeldung fehlgeschlagen: " + error.message);
+        return;
+    }
+
+    currentUser = data.user;
+    await loadUserData();
+}
+
+async function signOut() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        setAuthStatus("Abmelden fehlgeschlagen: " + error.message);
+        return;
+    }
+
+    currentUser = null;
+    syncReady = false;
+    updateAuthPanel();
+    setAuthStatus("Du wurdest abgemeldet.");
+}
+
+// ==========================================
+// DATEN MIT SUPABASE SYNCHRONISIEREN
+// ==========================================
+
+async function loadUserData() {
+    if (!currentUser) return;
+
+    syncReady = false;
+    setAuthStatus("Deine Vokabeln werden geladen ...");
+
+    const { data, error } = await supabaseClient
+        .from("vocab_data")
+        .select("words, correct")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+    if (error) {
+        setAuthStatus("Ladefehler: " + error.message);
+        return;
+    }
+
+    if (data) {
+        words = Array.isArray(data.words) ? data.words : [...defaultWords];
+        correct = Number(data.correct) || 0;
+    } else {
+        // Beim ersten Anmelden vorhandene lokale Vokabeln übernehmen
+        await saveDataToCloud();
+    }
+
+    localStorage.setItem("words", JSON.stringify(words));
+    localStorage.setItem("correct", String(correct));
+
+    syncReady = true;
+    updateStats();
+    showCard();
+    showWordList();
+    updateAuthPanel();
+}
+
+async function saveDataToCloud() {
+    if (!currentUser || !syncReady) return;
+
+    const { error } = await supabaseClient
+        .from("vocab_data")
+        .upsert({
+            user_id: currentUser.id,
+            words: words,
+            correct: correct,
+            updated_at: new Date().toISOString()
+        }, {
+            onConflict: "user_id"
+        });
+
+    if (error) {
+        setAuthStatus("Synchronisierungsfehler: " + error.message);
+    } else {
+        setAuthStatus("Angemeldet: " + currentUser.email + " – synchronisiert.");
+    }
+}
+
+function saveData() {
+    localStorage.setItem("words", JSON.stringify(words));
+    localStorage.setItem("correct", String(correct));
+    saveDataToCloud();
+}
+
+// ==========================================
 // STATISTIKEN
+// ==========================================
+
 function updateStats() {
     document.getElementById("wordCount").textContent = words.length;
     document.getElementById("correctCount").textContent = correct;
 }
 
-
+// ==========================================
 // SEITEN WECHSELN
+// ==========================================
+
 function showPage(page) {
     document.querySelectorAll(".page").forEach(section => {
         section.classList.add("hidden");
     });
 
     const selectedPage = document.getElementById(page);
-
     if (!selectedPage) return;
 
     selectedPage.classList.remove("hidden");
@@ -50,25 +235,21 @@ function showPage(page) {
     updateStats();
 }
 
-
+// ==========================================
 // KARTEIKARTEN
+// ==========================================
+
 function showCard() {
     if (words.length === 0) {
-        document.getElementById("spanishWord").textContent =
-            "Keine Vokabeln vorhanden";
-
+        document.getElementById("spanishWord").textContent = "Keine Vokabeln vorhanden";
         document.getElementById("translation").classList.add("hidden");
         return;
     }
 
     currentCard = currentCard % words.length;
 
-    document.getElementById("spanishWord").textContent =
-        words[currentCard].spanish;
-
-    document.getElementById("translation").textContent =
-        words[currentCard].german;
-
+    document.getElementById("spanishWord").textContent = words[currentCard].spanish;
+    document.getElementById("translation").textContent = words[currentCard].german;
     document.getElementById("translation").classList.add("hidden");
 }
 
@@ -83,8 +264,10 @@ function nextCard() {
     showCard();
 }
 
+// ==========================================
+// VOKABELTEST – 0,7 SEKUNDEN
+// ==========================================
 
-// VOKABELTEST
 function nextQuestion() {
     const answers = document.getElementById("answers");
     const result = document.getElementById("quizResult");
@@ -99,7 +282,6 @@ function nextQuestion() {
     }
 
     currentQuestion = Math.floor(Math.random() * words.length);
-
     const correctAnswer = words[currentQuestion].german;
 
     quizWord.textContent = words[currentQuestion].spanish;
@@ -108,10 +290,7 @@ function nextQuestion() {
 
     while (options.length < Math.min(4, words.length)) {
         const random = words[Math.floor(Math.random() * words.length)].german;
-
-        if (!options.includes(random)) {
-            options.push(random);
-        }
+        if (!options.includes(random)) options.push(random);
     }
 
     options.sort(() => Math.random() - 0.5);
@@ -135,7 +314,6 @@ function nextQuestion() {
                 saveData();
                 updateStats();
 
-                // AUTOMATISCH WEITER NACH 0,7 SEKUNDEN
                 setTimeout(() => {
                     if (!document.getElementById("quiz").classList.contains("hidden")) {
                         nextQuestion();
@@ -143,7 +321,6 @@ function nextQuestion() {
                 }, 700);
 
             } else {
-                // RICHTIGE ANTWORT GROSS ANZEIGEN
                 result.innerHTML = `
                     <div class="wrong-answer">
                         <div class="wrong-label">Richtige Antwort:</div>
@@ -151,13 +328,10 @@ function nextQuestion() {
                     </div>
                 `;
 
-                // BUTTON NUR BEI FALSCHER ANTWORT
                 const nextButton = document.createElement("button");
-                nextButton.id = "nextQuestionButton";
                 nextButton.textContent = "Nächste Frage";
                 nextButton.className = "next-question-button";
                 nextButton.onclick = nextQuestion;
-
                 answers.appendChild(nextButton);
             }
         };
@@ -166,8 +340,6 @@ function nextQuestion() {
     });
 }
 
-
-// HTML-SONDERZEICHEN SICHER DARSTELLEN
 function escapeHTML(text) {
     return String(text).replace(/[&<>"']/g, character => ({
         "&": "&amp;",
@@ -178,8 +350,10 @@ function escapeHTML(text) {
     })[character]);
 }
 
-
+// ==========================================
 // VOKABEL HINZUFÜGEN
+// ==========================================
+
 function addWord() {
     const spanishInput = document.getElementById("newSpanish");
     const germanInput = document.getElementById("newGerman");
@@ -193,7 +367,6 @@ function addWord() {
     }
 
     words.push({ spanish, german });
-
     saveData();
 
     spanishInput.value = "";
@@ -203,11 +376,12 @@ function addWord() {
     updateStats();
 }
 
-
+// ==========================================
 // VOKABELLISTE
+// ==========================================
+
 function showWordList() {
     const list = document.getElementById("wordList");
-
     list.innerHTML = "";
 
     if (words.length === 0) {
@@ -238,11 +412,12 @@ function showWordList() {
     });
 }
 
+// ==========================================
+// FOTO-SCAN
+// ==========================================
 
-// FOTO-SCAN MIT TESSERACT.JS
 async function scanVocabulary(event) {
     const file = event.target.files[0];
-
     if (!file) return;
 
     const status = document.getElementById("scanStatus");
@@ -250,11 +425,9 @@ async function scanVocabulary(event) {
     const scanText = document.getElementById("scanText");
 
     editor.classList.add("hidden");
-    status.textContent = "Bild wird vorbereitet ...";
 
     if (!window.Tesseract) {
-        status.textContent =
-            "Texterkennung konnte nicht geladen werden. Bitte Internetverbindung prüfen.";
+        status.textContent = "Texterkennung konnte nicht geladen werden. Internetverbindung prüfen.";
         event.target.value = "";
         return;
     }
@@ -262,38 +435,31 @@ async function scanVocabulary(event) {
     try {
         status.textContent = "Vokabelliste wird eingescannt. Bitte warten ...";
 
-        const result = await Tesseract.recognize(
-            file,
-            "spa+deu",
-            {
-                logger: message => {
-                    if (message.status === "recognizing text") {
-                        status.textContent =
-                            "Texterkennung: " +
-                            Math.round(message.progress * 100) + "%";
-                    }
+        const result = await Tesseract.recognize(file, "spa+deu", {
+            logger: message => {
+                if (message.status === "recognizing text") {
+                    status.textContent = "Texterkennung: " +
+                        Math.round(message.progress * 100) + "%";
                 }
             }
-        );
+        });
 
         scanText.value = result.data.text;
         editor.classList.remove("hidden");
-
-        status.textContent =
-            "Scan abgeschlossen! Bitte überprüfe die erkannten Wörter.";
+        status.textContent = "Scan abgeschlossen! Bitte überprüfe die Wörter.";
 
     } catch (error) {
         console.error(error);
-
-        status.textContent =
-            "Scan fehlgeschlagen. Bitte versuche ein anderes Foto.";
+        status.textContent = "Scan fehlgeschlagen. Bitte versuche ein anderes Foto.";
     }
 
     event.target.value = "";
 }
 
-
+// ==========================================
 // ERKANNTE VOKABELN ÜBERNEHMEN
+// ==========================================
+
 function importScannedWords() {
     const text = document.getElementById("scanText").value;
 
@@ -302,16 +468,13 @@ function importScannedWords() {
         return;
     }
 
-    const lines = text.split(/\r?\n/);
     let imported = 0;
 
-    lines.forEach(line => {
+    text.split(/\r?\n/).forEach(line => {
         line = line.trim();
-
         if (!line) return;
 
         const parts = line.split(/\s*(?:=|\||;|\t)\s*/);
-
         if (parts.length < 2) return;
 
         const spanish = parts[0].trim();
@@ -342,9 +505,40 @@ function importScannedWords() {
     alert(imported + " Vokabeln erfolgreich importiert!");
 }
 
+// ==========================================
+// WEBSITE STARTEN UND ANMELDESTATUS PRÜFEN
+// ==========================================
 
-// WEBSITE INITIALISIEREN
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     updateStats();
     showWordList();
+
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+        setAuthStatus("Anmeldestatus konnte nicht geladen werden.");
+        return;
+    }
+
+    currentUser = data.session?.user || null;
+
+    if (currentUser) {
+        await loadUserData();
+    } else {
+        updateAuthPanel();
+    }
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        const user = session?.user || null;
+
+        if (user?.id !== currentUser?.id) {
+            currentUser = user;
+            if (currentUser) {
+                loadUserData();
+            } else {
+                syncReady = false;
+                updateAuthPanel();
+            }
+        }
+    });
 });

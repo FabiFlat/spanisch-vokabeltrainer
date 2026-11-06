@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -124,9 +124,9 @@
 
             <h3>Neue Vokabel hinzufügen</h3>
 
-            <input type="text" id="newSpanish" placeholder="Spanisches Wort">
+            <input type="text" id="newSpanish" placeholder="Spanisches Wort" lang="es" spellcheck="true" autocorrect="on">
 
-            <input type="text" id="newGerman" placeholder="Deutsche Übersetzung">
+            <input type="text" id="newGerman" placeholder="Deutsche Übersetzung" lang="de" spellcheck="true" autocorrect="on">
 
             <button onclick="addWord()">Vokabel hinzufügen</button>
 
@@ -162,6 +162,8 @@
 
                 <textarea
                     id="scanText"
+                    lang="es"
+                    spellcheck="true"
                     rows="10"
                     placeholder="Erkannte Vokabeln erscheinen hier..."
                 ></textarea>
@@ -176,7 +178,7 @@
 
 </main>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 
 </body>
 </html>

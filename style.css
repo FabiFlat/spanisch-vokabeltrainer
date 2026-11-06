@@ -1,0 +1,67 @@
+hr {
+    border: none;
+    border-top: 1px solid #414765;
+    margin: 30px 0;
+}
+
+.upload-button {
+    display: inline-block;
+    background: #7655dc;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+.upload-button:hover {
+    background: #8b70ed;
+}
+
+#scanImage {
+    display: none;
+}
+
+#scanText {
+    width: 100%;
+    min-height: 180px;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #292f4b;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    resize: vertical;
+}
+
+#scanStatus {
+    color: #c4b5fd;
+    margin: 15px;
+}
+
+#scanEditor {
+    margin-top: 25px;
+}
+
+#scanEditor button {
+    width: 100%;
+}
+
+.word-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.word-item button {
+    background: #a43f52;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -572,3 +572,21 @@ input:disabled {
     background: var(--card);
     cursor: pointer;
 }
+
+/* QUIZ-EINGABEFELD – DUNKELER HINTERGRUND, WEISSE SCHRIFT */
+#writtenAnswer {
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border: 1px solid #465a82 !important;
+}
+
+#writtenAnswer::placeholder {
+    color: #cbd3e5 !important;
+    opacity: 1;
+}
+
+#writtenAnswer:focus {
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border-color: #8295bd !important;
+}

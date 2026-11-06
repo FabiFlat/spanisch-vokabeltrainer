@@ -643,17 +643,17 @@ input:disabled {
 
 
 /* ANZEIGE DER RICHTIGEN ANTWORT NACH EINER FALSCHEN QUIZ-ANTWORT */
-#answers .wrong-answer {
+#quizResult .wrong-answer {
     background: #26334d !important;
     background-color: #26334d !important;
     border: 1px solid #465a82 !important;
     color: #ffffff !important;
 }
 
-#answers .wrong-answer .wrong-label {
+#quizResult .wrong-answer .wrong-label {
     color: #cbd3e5 !important;
 }
 
-#answers .wrong-answer .wrong-word {
+#quizResult .wrong-answer .wrong-word {
     color: #ffffff !important;
 }

@@ -1024,6 +1024,30 @@ const colorThemes = {
         "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
         "--correct": "#9ab895", name: "Dunkel"
     }
+    forest: {
+        "--background": "#edf1e8", "--card": "#fbfff8", "--sage": "#8fa88b",
+        "--sage-dark": "#607c60", "--brown": "#455b48", "--text": "#344338",
+        "--muted": "#829184", "--border": "#dce5d8", "--wrong": "#c77d70",
+        "--correct": "#668d6c", name: "Wald"
+    },
+    peach: {
+        "--background": "#fbf0e7", "--card": "#fffaf5", "--sage": "#e5ad8c",
+        "--sage-dark": "#bd8061", "--brown": "#805d4b", "--text": "#57463d",
+        "--muted": "#a58d80", "--border": "#efdfd2", "--wrong": "#c87975",
+        "--correct": "#829879", name: "Pfirsich"
+    },
+    matcha: {
+        "--background": "#f0f2e5", "--card": "#fcfdf5", "--sage": "#b4bd83",
+        "--sage-dark": "#87945b", "--brown": "#626b43", "--text": "#414833",
+        "--muted": "#92977b", "--border": "#e1e5cf", "--wrong": "#c77d70",
+        "--correct": "#829879", name: "Matcha"
+    },
+    midnight: {
+        "--background": "#202638", "--card": "#2c354a", "--sage": "#8295bd",
+        "--sage-dark": "#a5b5d7", "--brown": "#d8def0", "--text": "#edf0fa",
+        "--muted": "#a3acc2", "--border": "#424d65", "--wrong": "#d58b82",
+        "--correct": "#91b89a", name: "Mitternacht"
+    },
 };
 
 function setColorTheme(themeName) {
@@ -1044,11 +1068,65 @@ function setColorTheme(themeName) {
 
     const status = document.getElementById("themeStatus");
     if (status) status.textContent = "Aktuelles Design: " + theme.name;
+    syncCustomColorInputs();
+}
+
+function updateCustomColor(input) {
+    const property = input.dataset.cssVar;
+    if (!property) return;
+
+    document.documentElement.style.setProperty(property, input.value);
+
+    const custom = {};
+    document.querySelectorAll("[data-css-var]").forEach(colorInput => {
+        custom[colorInput.dataset.cssVar] = colorInput.value;
+    });
+
+    localStorage.setItem("vocabCustomColors", JSON.stringify(custom));
+    localStorage.setItem("vocabColorTheme", "custom");
+
+    document.querySelectorAll(".theme-option").forEach(button => button.classList.remove("active"));
+    const status = document.getElementById("themeStatus");
+    if (status) status.textContent = "Aktuelles Design: Eigene Farben";
+}
+
+function resetCustomColors() {
+    localStorage.removeItem("vocabCustomColors");
+    localStorage.setItem("vocabColorTheme", "sage");
+    setColorTheme("sage");
+    syncCustomColorInputs();
+}
+
+function syncCustomColorInputs() {
+    document.querySelectorAll("[data-css-var]").forEach(input => {
+        const value = getComputedStyle(document.documentElement).getPropertyValue(input.dataset.cssVar).trim();
+        if (/^#[0-9a-f]{6}$/i.test(value)) input.value = value;
+    });
 }
 
 function loadColorTheme() {
     const savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
+
+    if (savedTheme === "custom") {
+        try {
+            const custom = JSON.parse(localStorage.getItem("vocabCustomColors") || "{}");
+            Object.entries(custom).forEach(([property, value]) => {
+                if (/^--[a-z-]+$/.test(property) && /^#[0-9a-f]{6}$/i.test(value)) {
+                    document.documentElement.style.setProperty(property, value);
+                }
+            });
+            document.querySelectorAll(".theme-option").forEach(button => button.classList.remove("active"));
+            const status = document.getElementById("themeStatus");
+            if (status) status.textContent = "Aktuelles Design: Eigene Farben";
+            syncCustomColorInputs();
+            return;
+        } catch (error) {
+            console.error("Eigene Farben konnten nicht geladen werden:", error);
+        }
+    }
+
     setColorTheme(colorThemes[savedTheme] ? savedTheme : "sage");
+    syncCustomColorInputs();
 }
 
 

@@ -13,6 +13,7 @@
     --border: #e6e1d6;
     --wrong: #c77d70;
     --correct: #829879;
+    --button-text: #30352d;
 }
 
 * {
@@ -66,7 +67,7 @@ nav button {
 
 nav button:hover {
     background: var(--sage);
-    color: white;
+    color: var(--button-text);
 }
 
 /* HAUPTBEREICH */
@@ -270,7 +271,7 @@ button {
     border: none;
     border-radius: 14px;
     background: var(--sage);
-    color: white;
+    color: var(--button-text);
     font-family: inherit;
     font-size: 16px;
     font-weight: 700;

@@ -1052,6 +1052,62 @@ const colorThemes = {
         "--correct": "#91b89a",
         "--button-text": "#ffffff", "--button-bg": "#26334d", "--button-hover": "#1b263d", name: "Mitternacht"
     },
+    midnightPurple: {
+        "--background": "#211d35", "--card": "#302a49", "--sage": "#8f80b8",
+        "--sage-dark": "#b2a5d2", "--brown": "#e2dcf0", "--text": "#f1edf8",
+        "--muted": "#b1a9c2", "--border": "#514967", "--wrong": "#d58b91",
+        "--correct": "#91b89a", "--button-text": "#ffffff",
+        "--button-bg": "#393052", "--button-hover": "#29223e", name: "Midnight Purple"
+    },
+    arcticBlue: {
+        "--background": "#172b3a", "--card": "#223b4d", "--sage": "#789eb5",
+        "--sage-dark": "#a5c4d5", "--brown": "#dceaf0", "--text": "#edf5f8",
+        "--muted": "#a9c0cc", "--border": "#3b596b", "--wrong": "#d58b82",
+        "--correct": "#8fb8a8", "--button-text": "#ffffff",
+        "--button-bg": "#29485b", "--button-hover": "#1d3646", name: "Arctic Blue"
+    },
+    emerald: {
+        "--background": "#19372f", "--card": "#25483d", "--sage": "#78a58b",
+        "--sage-dark": "#a2c6ad", "--brown": "#dcebe1", "--text": "#eff7f0",
+        "--muted": "#aec4b4", "--border": "#416454", "--wrong": "#d58b82",
+        "--correct": "#a6c99d", "--button-text": "#ffffff",
+        "--button-bg": "#315b4b", "--button-hover": "#234638", name: "Emerald"
+    },
+    oceanNight: {
+        "--background": "#142c3b", "--card": "#1d3d4c", "--sage": "#438a91",
+        "--sage-dark": "#79b6b7", "--brown": "#d2e8e7", "--text": "#edf7f6",
+        "--muted": "#a5c4c5", "--border": "#365968", "--wrong": "#d58b82",
+        "--correct": "#8fb8a8", "--button-text": "#ffffff",
+        "--button-bg": "#1f5060", "--button-hover": "#173d4a", name: "Ocean Night"
+    },
+    cyberBlue: {
+        "--background": "#151d36", "--card": "#202d4d", "--sage": "#526fb5",
+        "--sage-dark": "#8299d2", "--brown": "#dce4ff", "--text": "#f0f3ff",
+        "--muted": "#aab7dc", "--border": "#3b4b70", "--wrong": "#d58b91",
+        "--correct": "#91b89a", "--button-text": "#ffffff",
+        "--button-bg": "#293c69", "--button-hover": "#1d2d52", name: "Cyber Blue"
+    },
+    sakura: {
+        "--background": "#f4e5e9", "--card": "#fff8fa", "--sage": "#c995a7",
+        "--sage-dark": "#a66f83", "--brown": "#713f50", "--text": "#513943",
+        "--muted": "#987b86", "--border": "#e7cbd4", "--wrong": "#bd716f",
+        "--correct": "#829879", "--button-text": "#ffffff",
+        "--button-bg": "#855a6b", "--button-hover": "#684352", name: "Sakura"
+    },
+    sunset: {
+        "--background": "#f5e2cf", "--card": "#fff9f2", "--sage": "#d99872",
+        "--sage-dark": "#b86f51", "--brown": "#80513f", "--text": "#633d32",
+        "--muted": "#a68170", "--border": "#ead0bd", "--wrong": "#bd716f",
+        "--correct": "#829879", "--button-text": "#ffffff",
+        "--button-bg": "#a45f49", "--button-hover": "#824936", name: "Sunset"
+    },
+    vanilla: {
+        "--background": "#f7f0e2", "--card": "#fffdf7", "--sage": "#c9b99f",
+        "--sage-dark": "#a18d72", "--brown": "#6b5b49", "--text": "#554b40",
+        "--muted": "#978a78", "--border": "#e8dece", "--wrong": "#c77d70",
+        "--correct": "#829879", "--button-text": "#ffffff",
+        "--button-bg": "#8a7965", "--button-hover": "#6f604f", name: "Vanilla"
+    },
 };
 
 function setColorTheme(themeName) {

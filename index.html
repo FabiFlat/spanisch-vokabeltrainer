@@ -117,6 +117,23 @@
 
         <h2>Vokabel-Quiz</h2>
 
+        <div class="quiz-mode-panel">
+            <h3>Lernmodus auswählen</h3>
+            <div class="quiz-mode-buttons">
+                <button type="button" onclick="startQuizMode('normal')">Normales Quiz</button>
+                <button type="button" onclick="startQuizMode('marathon')">Vokabel-Marathon · 50 Fragen</button>
+                <button type="button" onclick="startQuizMode('time')">Zeit-Challenge · 60 Sekunden</button>
+                <button type="button" onclick="startQuizMode('errors')">Fehlertraining</button>
+            </div>
+            <label class="quiz-difficulty-label" for="quizDifficulty">Schwierigkeit</label>
+            <select id="quizDifficulty" onchange="quizDifficulty = this.value">
+                <option value="easy">Einfach – Multiple Choice</option>
+                <option value="medium" selected>Mittel – Gemischt</option>
+                <option value="hard">Schwer – Antworten eintippen</option>
+            </select>
+            <p id="quizModeStatus" class="quiz-mode-status">Normaler Quizmodus</p>
+        </div>
+
         <div class="quiz-box">
 
             <p id="quizDirection">Übersetze die Vokabel</p>

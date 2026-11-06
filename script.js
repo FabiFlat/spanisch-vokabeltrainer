@@ -62,6 +62,7 @@ let quizMode = "normal";
 let quizDifficulty = "medium";
 let quizAskedCount = 0;
 let quizModeCorrect = 0;
+let quizModeRewarded = false;
 let quizTimeLeft = 60;
 let quizModeInterval = null;
 let wrongVocabulary = [];
@@ -98,6 +99,12 @@ function stopQuizModeTimer() {
 }
 
 function endQuizMode(message) {
+    if (quizMode === "marathon" && !quizModeRewarded) {
+        addXP(quizModeCorrect);
+        quizModeRewarded = true;
+        sessionActions = 0;
+        updateSessionControls();
+    }
     stopQuizModeTimer();
     clearTimeout(quizTimer);
     questionLocked = true;
@@ -123,6 +130,7 @@ function startQuizMode(mode) {
     quizMode = mode;
     quizAskedCount = 0;
     quizModeCorrect = 0;
+    quizModeRewarded = false;
     quizTimeLeft = 60;
     questionLocked = false;
 
@@ -536,11 +544,11 @@ function updateSessionControls() {
     const status = document.getElementById("quizSessionStatus");
     const button = document.getElementById("quizFinishSession");
     if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
-    if (button) button.disabled = !ready;
+    if (button) button.disabled = !ready || quizMode === "marathon";
 }
 
 function finishLearningSession() {
-    if (sessionActions < 5) return;
+    if (sessionActions < 5 || quizMode === "marathon") return;
     sessionsCompleted++;
     addXP(20);
     sessionActions = 0;
@@ -961,7 +969,7 @@ function checkQuizAnswer(
             saveWrongVocabulary();
         }
         result.textContent = "Richtig!";
-        addXP(10);
+        if (quizMode !== "marathon") addXP(10);
         result.style.color = "#718466";
 
         correct++;

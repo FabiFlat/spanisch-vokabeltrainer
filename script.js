@@ -543,12 +543,24 @@ function updateSessionControls() {
     const ready = sessionActions >= 5;
     const status = document.getElementById("quizSessionStatus");
     const button = document.getElementById("quizFinishSession");
-    if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
-    if (button) button.disabled = !ready || quizMode === "marathon" || quizMode === "errors";
+    if (status) {
+        status.textContent = quizMode === "time"
+            ? "Zeit-Challenge: +5 XP pro richtige Vokabel · keine zusätzliche Lerneinheit"
+            : "Lernaktionen: " + sessionActions + "/5";
+    }
+    if (button) {
+        button.disabled = !ready ||
+            quizMode === "marathon" ||
+            quizMode === "errors" ||
+            quizMode === "time";
+    }
 }
 
 function finishLearningSession() {
-    if (sessionActions < 5 || quizMode === "marathon" || quizMode === "errors") return;
+    if (sessionActions < 5 ||
+        quizMode === "marathon" ||
+        quizMode === "errors" ||
+        quizMode === "time") return;
     sessionsCompleted++;
     addXP(20);
     sessionActions = 0;

@@ -6,10 +6,10 @@
 const SUPABASE_URL = "https://exuxzafvelelozppryir.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2_X-qjrz4Ky8ZMF6isIdbw_Y98ljw1f";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+/* Supabase darf die lokalen Lernfunktionen nicht blockieren. */
+const supabaseClient = window.supabase?.createClient
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+    : null;
 
 
 /* ==========================================
@@ -81,6 +81,11 @@ function updateAuthPanel() {
 }
 
 async function signUp() {
+    if (!supabaseClient) {
+        setAuthStatus("Supabase konnte nicht geladen werden. Bitte Seite neu laden.");
+        return;
+    }
+
     const email = document.getElementById("authEmail").value.trim();
     const password = document.getElementById("authPassword").value;
 
@@ -117,6 +122,11 @@ async function signUp() {
 }
 
 async function signIn() {
+    if (!supabaseClient) {
+        setAuthStatus("Supabase konnte nicht geladen werden. Bitte Seite neu laden.");
+        return;
+    }
+
     const email = document.getElementById("authEmail").value.trim();
     const password = document.getElementById("authPassword").value;
 
@@ -142,6 +152,11 @@ async function signIn() {
 }
 
 async function signOut() {
+    if (!supabaseClient) {
+        setAuthStatus("Supabase ist nicht verfügbar.");
+        return;
+    }
+
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
@@ -162,7 +177,7 @@ async function signOut() {
 ========================================== */
 
 async function loadUserData() {
-    if (!currentUser) return;
+    if (!currentUser || !supabaseClient) return;
 
     syncReady = false;
     setAuthStatus("Deine Vokabeln werden geladen ...");
@@ -206,7 +221,7 @@ async function loadUserData() {
 }
 
 async function saveDataToCloud() {
-    if (!currentUser || !syncReady) return;
+    if (!currentUser || !syncReady || !supabaseClient) return;
 
     const { error } = await supabaseClient
         .from("vocab_data")
@@ -786,41 +801,43 @@ function importScannedWords() {
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
-
     updateStats();
     showWordList();
+    showCard();
 
-    const { data, error } =
-        await supabaseClient.auth.getSession();
-
-    if (error) {
-        setAuthStatus(
-            "Anmeldestatus konnte nicht geladen werden."
-        );
+    if (!supabaseClient) {
+        updateAuthPanel();
+        setAuthStatus("Cloud-Anmeldung nicht verfügbar. Lokales Lernen funktioniert weiterhin.");
         return;
     }
 
-    currentUser = data.session?.user || null;
+    try {
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error) throw error;
 
-    if (currentUser) {
-        await loadUserData();
-    } else {
-        updateAuthPanel();
-    }
+        currentUser = data.session?.user || null;
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-        const user = session?.user || null;
-
-        if (user?.id !== currentUser?.id) {
-            currentUser = user;
-
-            if (currentUser) {
-                setTimeout(() => loadUserData(), 0);
-            } else {
-                syncReady = false;
-                updateAuthPanel();
-            }
+        if (currentUser) {
+            await loadUserData();
+        } else {
+            updateAuthPanel();
         }
-    });
 
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            const user = session?.user || null;
+            if (user?.id !== currentUser?.id) {
+                currentUser = user;
+                if (currentUser) {
+                    setTimeout(() => loadUserData(), 0);
+                } else {
+                    syncReady = false;
+                    updateAuthPanel();
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Supabase-Initialisierung:", error);
+        updateAuthPanel();
+        setAuthStatus("Cloud-Verbindung fehlgeschlagen: " + error.message + ". Lokales Lernen funktioniert weiterhin.");
+    }
 });

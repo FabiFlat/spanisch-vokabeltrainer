@@ -1583,6 +1583,45 @@ function updateThemeUnlocks() {
     });
 }
 
+function saveSelectedTheme(themeName) {
+    let saved = false;
+    try {
+        localStorage.setItem("vocabColorTheme", themeName);
+        localStorage.setItem("vocabThemeLastSaved", String(Date.now()));
+        saved = localStorage.getItem("vocabColorTheme") === themeName;
+    } catch (error) {
+        console.error("LocalStorage konnte das Design nicht speichern:", error);
+    }
+    try {
+        document.cookie = "vocabColorTheme=" + encodeURIComponent(themeName) +
+            "; max-age=31536000; path=/; SameSite=Lax";
+        saved = saved || document.cookie.split("; ").some(part =>
+            part === "vocabColorTheme=" + encodeURIComponent(themeName)
+        );
+    } catch (error) {
+        console.error("Cookie konnte das Design nicht speichern:", error);
+    }
+    return saved;
+}
+
+function readSavedTheme() {
+    try {
+        const stored = localStorage.getItem("vocabColorTheme");
+        if (stored) return stored;
+    } catch (error) {
+        console.error("LocalStorage konnte das Design nicht lesen:", error);
+    }
+    try {
+        const cookie = document.cookie.split("; ").find(part =>
+            part.startsWith("vocabColorTheme=")
+        );
+        if (cookie) return decodeURIComponent(cookie.substring("vocabColorTheme=".length));
+    } catch (error) {
+        console.error("Cookie konnte das Design nicht lesen:", error);
+    }
+    return "sage";
+}
+
 function setColorTheme(themeName) {
     const theme = colorThemes[themeName];
     if (!theme || !isThemeUnlocked(themeName)) {
@@ -1598,20 +1637,16 @@ function setColorTheme(themeName) {
         }
     });
 
-    // Gewähltes Design dauerhaft im Browser speichern.
-    try {
-        localStorage.setItem("vocabColorTheme", themeName);
-        localStorage.setItem("vocabThemeLastSaved", String(Date.now()));
-    } catch (error) {
-        console.error("Das Design konnte nicht im Browserspeicher gespeichert werden:", error);
-    }
+    // Design in LocalStorage und zusätzlich als Cookie speichern.
+    const themeSaved = saveSelectedTheme(themeName);
 
     document.querySelectorAll(".theme-option").forEach(button => {
         button.classList.toggle("active", button.dataset.themeChoice === themeName);
     });
 
     const status = document.getElementById("themeStatus");
-    if (status) status.textContent = "Aktuelles Design: " + theme.name;
+    if (status) status.textContent = "Aktuelles Design: " + theme.name +
+        (themeSaved ? " · gespeichert" : " · Speichern im Browser nicht möglich");
     syncCustomColorInputs();
 }
 
@@ -1626,8 +1661,12 @@ function updateCustomColor(input) {
         custom[colorInput.dataset.cssVar] = colorInput.value;
     });
 
-    localStorage.setItem("vocabCustomColors", JSON.stringify(custom));
-    localStorage.setItem("vocabColorTheme", "custom");
+    try {
+        localStorage.setItem("vocabCustomColors", JSON.stringify(custom));
+    } catch (error) {
+        console.error("Eigene Farben konnten nicht gespeichert werden:", error);
+    }
+    saveSelectedTheme("custom");
 
     document.querySelectorAll(".theme-option").forEach(button => button.classList.remove("active"));
     const status = document.getElementById("themeStatus");
@@ -1635,8 +1674,12 @@ function updateCustomColor(input) {
 }
 
 function resetCustomColors() {
-    localStorage.removeItem("vocabCustomColors");
-    localStorage.setItem("vocabColorTheme", "sage");
+    try {
+        localStorage.removeItem("vocabCustomColors");
+    } catch (error) {
+        console.error("Eigene Farben konnten nicht zurückgesetzt werden:", error);
+    }
+    saveSelectedTheme("sage");
     setColorTheme("sage");
     syncCustomColorInputs();
 }
@@ -1650,12 +1693,7 @@ function syncCustomColorInputs() {
 
 function loadColorTheme() {
     updateThemeUnlocks();
-    let savedTheme = "sage";
-    try {
-        savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
-    } catch (error) {
-        console.error("Das gespeicherte Design konnte nicht gelesen werden:", error);
-    }
+    const savedTheme = readSavedTheme();
 
     if (savedTheme === "custom") {
         try {
@@ -1688,7 +1726,7 @@ function loadColorTheme() {
         button.classList.toggle("active", button.dataset.themeChoice === themeToApply);
     });
     const status = document.getElementById("themeStatus");
-    if (status) status.textContent = "Aktuelles Design: " + theme.name;
+    if (status) status.textContent = "Aktuelles Design: " + theme.name + " · gespeichert";
     syncCustomColorInputs();
 }
 

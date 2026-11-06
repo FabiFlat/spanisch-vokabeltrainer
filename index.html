@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=33">
+    <link rel="stylesheet" href="style.css?v=34">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -50,6 +50,7 @@
         <button onclick="showPage('cards')">Lernkarten</button>
         <button onclick="showPage('quiz')">Quiz</button>
         <button onclick="showPage('manage')">Vokabeln</button>
+        <button onclick="showPage('profile')">Profil</button>
         <button onclick="showPage('scan')">Scanner</button>
         <button onclick="showPage('settings')">Einstellungen</button>
     </nav>
@@ -232,6 +233,35 @@
     </section>
 
     
+
+    <!-- PROFIL -->
+    <section id="profile" class="page hidden">
+        <h2>Mein Profil</h2>
+
+        <div class="card profile-card">
+            <h3>Profil bearbeiten</h3>
+            <label for="profileDisplayName">Anzeigename</label>
+            <input type="text" id="profileDisplayName" maxlength="24" placeholder="Dein Anzeigename" autocomplete="nickname">
+            <label for="profileTitleSelect">Aktiver Titel</label>
+            <select id="profileTitleSelect" onchange="selectProfileTitle(this.value)"></select>
+            <button type="button" onclick="saveProfileSettings()">Profil speichern</button>
+            <p id="profileStatus" class="theme-status" aria-live="polite">Deine Profileinstellungen werden gespeichert.</p>
+            <p id="profileActiveTitle" class="profile-active-title"></p>
+        </div>
+
+        <div class="card">
+            <h3>Deine Titel &amp; Freischaltungen</h3>
+            <p>Hier siehst du alle Titel, die du durch XP oder einen Freischaltcode erhalten hast. Wähle oben deinen aktiven Titel aus.</p>
+            <div id="profileTitles" class="profile-unlock-list"></div>
+        </div>
+
+        <div class="card">
+            <h3>Deine Designs</h3>
+            <p>Freigeschaltete Designs kannst du direkt hier auswählen. Weitere Designs werden mit XP oder einem Freischaltcode verfügbar.</p>
+            <div id="profileThemes" class="profile-theme-list"></div>
+        </div>
+    </section>
+
     <!-- DESIGN-EINSTELLUNGEN -->
     <section id="settings" class="page hidden">
         <h2>Einstellungen &amp; Design</h2>
@@ -328,7 +358,7 @@
 
 </main>
 
-<script src="script.js?v=33"></script>
+<script src="script.js?v=34"></script>
 
 </body>
 </html>

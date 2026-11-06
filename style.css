@@ -487,3 +487,44 @@ input:disabled {
     background: #edf0e8;
     border-color: var(--sage-dark);
 }
+
+
+/* ==========================================
+   DESIGN-AUSWAHL
+========================================== */
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    justify-content: flex-start;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    width: 100%;
+}
+.theme-option.active {
+    border: 2px solid var(--sage-dark);
+    box-shadow: 0 0 0 2px var(--sage);
+}
+.theme-swatch {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    flex: 0 0 25px;
+    border: 1px solid rgba(0,0,0,.12);
+}
+.theme-sage { background: linear-gradient(135deg, #f4f1e9 50%, #9eaa91 50%); }
+.theme-lavender { background: linear-gradient(135deg, #f2eff8 50%, #a99bc8 50%); }
+.theme-ocean { background: linear-gradient(135deg, #edf4f5 50%, #82aeb5 50%); }
+.theme-rose { background: linear-gradient(135deg, #f8eeee 50%, #c99da5 50%); }
+.theme-dark { background: linear-gradient(135deg, #25272b 50%, #687b70 50%); }
+.theme-status { color: var(--muted); margin-top: 14px; }

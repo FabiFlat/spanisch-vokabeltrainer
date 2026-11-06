@@ -643,7 +643,6 @@ function addWord() {
 
 function showWordList() {
     const list = document.getElementById("wordList");
-
     list.innerHTML = "";
 
     if (words.length === 0) {
@@ -651,34 +650,126 @@ function showWordList() {
         return;
     }
 
-    words.forEach((word, index) => {
+    // Anzeige alphabetisch nach dem spanischen Begriff sortieren.
+    // Die ursprünglichen Array-Indizes bleiben erhalten, damit Bearbeiten/Löschen stimmt.
+    const sortedWords = words
+        .map((word, index) => ({ word, index }))
+        .sort((a, b) => a.word.spanish.localeCompare(
+            b.word.spanish,
+            "es",
+            { sensitivity: "base" }
+        ));
+
+    sortedWords.forEach(({ word, index }) => {
         const item = document.createElement("div");
         item.className = "word-item";
 
         const text = document.createElement("span");
+        text.className = "word-item-text";
+        text.textContent = word.spanish + " – " + word.german;
 
-        text.textContent =
-            word.spanish + " – " + word.german;
+        const actions = document.createElement("div");
+        actions.className = "word-item-actions";
+
+        const edit = document.createElement("button");
+        edit.type = "button";
+        edit.className = "edit-word-button";
+        edit.textContent = "Bearbeiten";
+        edit.onclick = () => editWord(index);
 
         const remove = document.createElement("button");
-
+        remove.type = "button";
         remove.textContent = "Löschen";
-
         remove.onclick = () => {
             words.splice(index, 1);
-
             saveData();
             showWordList();
             updateStats();
-
             currentCard = 0;
+            showCard();
         };
 
+        actions.appendChild(edit);
+        actions.appendChild(remove);
         item.appendChild(text);
-        item.appendChild(remove);
-
+        item.appendChild(actions);
         list.appendChild(item);
     });
+}
+
+function editWord(index) {
+    const word = words[index];
+    if (!word) return;
+
+    const list = document.getElementById("wordList");
+    const item = [...list.querySelectorAll(".word-item")].find(row =>
+        row.querySelector(".edit-word-button")?.onclick
+    );
+
+    // Die Bearbeitungsansicht wird in der sortierten Liste anhand des Wortinhalts gefunden.
+    const rows = [...list.querySelectorAll(".word-item")];
+    const targetRow = rows.find(row =>
+        row.querySelector(".word-item-text")?.textContent ===
+        word.spanish + " – " + word.german
+    );
+
+    if (!targetRow) return;
+
+    targetRow.innerHTML = "";
+
+    const fields = document.createElement("div");
+    fields.className = "word-edit-fields";
+
+    const spanishInput = document.createElement("input");
+    spanishInput.type = "text";
+    spanishInput.value = word.spanish;
+    spanishInput.placeholder = "Spanisches Wort";
+    spanishInput.lang = "es";
+    spanishInput.spellcheck = true;
+
+    const germanInput = document.createElement("input");
+    germanInput.type = "text";
+    germanInput.value = word.german;
+    germanInput.placeholder = "Deutsche Übersetzung";
+    germanInput.lang = "de";
+    germanInput.spellcheck = true;
+
+    fields.appendChild(spanishInput);
+    fields.appendChild(germanInput);
+
+    const actions = document.createElement("div");
+    actions.className = "word-item-actions";
+
+    const save = document.createElement("button");
+    save.type = "button";
+    save.textContent = "Speichern";
+    save.onclick = () => {
+        const spanish = spanishInput.value.trim();
+        const german = germanInput.value.trim();
+
+        if (!spanish || !german) {
+            alert("Bitte beide Felder ausfüllen.");
+            return;
+        }
+
+        words[index] = { spanish, german };
+        saveData();
+        showWordList();
+        showCard();
+    };
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "edit-word-button";
+    cancel.textContent = "Abbrechen";
+    cancel.onclick = showWordList;
+
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+
+    targetRow.appendChild(fields);
+    targetRow.appendChild(actions);
+    spanishInput.focus();
 }
 
 

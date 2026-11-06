@@ -590,3 +590,13 @@ input:disabled {
     color: #ffffff !important;
     border-color: #8295bd !important;
 }
+
+/* ZUSAETZLICHE FARBSKALEN */
+.theme-midnight-purple { background: linear-gradient(135deg, #211d35 50%, #8f80b8 50%); }
+.theme-arctic-blue { background: linear-gradient(135deg, #172b3a 50%, #789eb5 50%); }
+.theme-emerald { background: linear-gradient(135deg, #19372f 50%, #78a58b 50%); }
+.theme-ocean-night { background: linear-gradient(135deg, #142c3b 50%, #438a91 50%); }
+.theme-cyber-blue { background: linear-gradient(135deg, #151d36 50%, #526fb5 50%); }
+.theme-sakura { background: linear-gradient(135deg, #f4e5e9 50%, #c995a7 50%); }
+.theme-sunset { background: linear-gradient(135deg, #f5e2cf 50%, #d99872 50%); }
+.theme-vanilla { background: linear-gradient(135deg, #f7f0e2 50%, #c9b99f 50%); }

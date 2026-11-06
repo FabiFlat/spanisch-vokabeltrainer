@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=27">
+    <link rel="stylesheet" href="style.css?v=28">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -64,7 +64,12 @@
             <div class="xp-summary"><strong id="xpTotal">0 XP</strong><span id="xpLevel">Anfänger</span></div>
             <div class="xp-progress-track"><div id="xpProgressBar" class="xp-progress-bar"></div></div>
             <p id="xpProgressText" class="xp-progress-text">Noch 100 XP bis zum nächsten Level</p>
-            <div id="xpBadges" class="xp-badges"></div>
+            <div class="xp-roadmap-heading">
+                <h4>Alle Level &amp; Belohnungen</h4>
+                <span id="xpOverallProgressText">0 von 1.000 XP</span>
+            </div>
+            <div class="xp-overall-track"><div id="xpOverallProgressBar" class="xp-overall-bar"></div></div>
+            <div id="xpBadges" class="xp-roadmap"></div>
         </div>
 
         <div class="stats">
@@ -309,7 +314,7 @@
 
 </main>
 
-<script src="script.js?v=24"></script>
+<script src="script.js?v=25"></script>
 
 </body>
 </html>

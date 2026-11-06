@@ -1,12 +1,15 @@
-index.html
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Español – Vokabeltrainer</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header>
@@ -15,16 +18,18 @@ index.html
 </header>
 
 <nav>
-    <button onclick="showPage('home')">Start</button>
-    <button onclick="showPage('cards')">Karteikarten</button>
-    <button onclick="showPage('quiz')">Vokabeltest</button>
-    <button onclick="showPage('manage')">Vokabeln</button>
+    <button type="button" onclick="showPage('home')">Start</button>
+    <button type="button" onclick="showPage('cards')">Karteikarten</button>
+    <button type="button" onclick="showPage('quiz')">Vokabeltest</button>
+    <button type="button" onclick="showPage('manage')">Vokabeln</button>
 </nav>
 
 <main>
 
+    <!-- STARTSEITE -->
     <section id="home" class="page">
         <h2>¡Hola!</h2>
+
         <p>Willkommen bei deinem Spanisch-Vokabeltrainer.</p>
 
         <div class="stats">
@@ -32,18 +37,22 @@ index.html
                 <h3 id="wordCount">0</h3>
                 <p>Vokabeln</p>
             </div>
+
             <div class="stat">
                 <h3 id="correctCount">0</h3>
                 <p>Richtige Antworten</p>
             </div>
         </div>
 
-        <button class="primary" onclick="showPage('cards')">
+        <button type="button" class="primary" onclick="showPage('cards')">
             Jetzt lernen
         </button>
     </section>
 
+
+    <!-- KARTEIKARTEN -->
     <section id="cards" class="page hidden">
+
         <h2>Karteikarten</h2>
 
         <div class="flashcard">
@@ -51,27 +60,53 @@ index.html
             <p id="translation" class="hidden">Hallo</p>
         </div>
 
-        <button onclick="revealWord()">Übersetzung anzeigen</button>
-        <button onclick="nextCard()">Nächste Vokabel</button>
+        <button type="button" onclick="revealWord()">
+            Übersetzung anzeigen
+        </button>
+
+        <button type="button" onclick="nextCard()">
+            Nächste Vokabel
+        </button>
+
     </section>
 
+
+    <!-- VOKABELTEST -->
     <section id="quiz" class="page hidden">
+
         <h2>Vokabeltest</h2>
+
         <h3 id="quizWord">Hola</h3>
+
         <div id="answers"></div>
+
         <p id="quizResult"></p>
-        <button onclick="nextQuestion()">Nächste Frage</button>
+
+        <!-- Der Button wird bei falschen Antworten automatisch erstellt -->
+
     </section>
 
+
+    <!-- VOKABELN VERWALTEN -->
     <section id="manage" class="page hidden">
+
         <h2>Vokabeln verwalten</h2>
 
         <h3>Manuell hinzufügen</h3>
 
-        <input id="newSpanish" placeholder="Spanisches Wort">
-        <input id="newGerman" placeholder="Deutsche Übersetzung">
+        <input
+            type="text"
+            id="newSpanish"
+            placeholder="Spanisches Wort"
+        >
 
-        <button class="primary" onclick="addWord()">
+        <input
+            type="text"
+            id="newGerman"
+            placeholder="Deutsche Übersetzung"
+        >
+
+        <button type="button" class="primary" onclick="addWord()">
             Vokabel hinzufügen
         </button>
 
@@ -99,6 +134,7 @@ index.html
         <p id="scanStatus"></p>
 
         <div id="scanEditor" class="hidden">
+
             <h3>Erkannter Text</h3>
 
             <p>
@@ -113,15 +149,18 @@ index.html
                 placeholder="la casa = das Haus&#10;el perro = der Hund&#10;comer = essen"
             ></textarea>
 
-            <button class="primary" onclick="importScannedWords()">
+            <button type="button" class="primary" onclick="importScannedWords()">
                 Erkannte Vokabeln übernehmen
             </button>
+
         </div>
 
         <hr>
 
         <h3>Deine Vokabelliste</h3>
+
         <div id="wordList"></div>
+
     </section>
 
 </main>
@@ -130,8 +169,11 @@ index.html
     <p>Mein Spanisch-Lernbereich</p>
 </footer>
 
-<!-- Texterkennung -->
+
+<!-- TEXTERKENNUNG -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<!-- HAUPT-JAVASCRIPT -->
 <script src="script.js"></script>
 
 </body>

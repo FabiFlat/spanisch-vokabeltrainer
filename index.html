@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -51,6 +51,7 @@
         <button onclick="showPage('quiz')">Quiz</button>
         <button onclick="showPage('manage')">Vokabeln</button>
         <button onclick="showPage('scan')">Scanner</button>
+        <button onclick="showPage('settings')">Design</button>
     </nav>
 
     <!-- STARTSEITE -->
@@ -195,9 +196,37 @@
 
     </section>
 
+    
+    <!-- DESIGN-EINSTELLUNGEN -->
+    <section id="settings" class="page hidden">
+        <h2>Website-Design</h2>
+        <div class="card">
+            <h3>Farbschema auswählen</h3>
+            <p>Wähle eine Farbgestaltung für deinen Vokabeltrainer. Deine Auswahl wird auf diesem Gerät gespeichert.</p>
+            <div class="theme-options">
+                <button type="button" class="theme-option" data-theme-choice="sage" onclick="setColorTheme('sage')">
+                    <span class="theme-swatch theme-sage"></span> LoFi Sage
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="lavender" onclick="setColorTheme('lavender')">
+                    <span class="theme-swatch theme-lavender"></span> Lavendel
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="ocean" onclick="setColorTheme('ocean')">
+                    <span class="theme-swatch theme-ocean"></span> Ozean
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="rose" onclick="setColorTheme('rose')">
+                    <span class="theme-swatch theme-rose"></span> Rosé
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="dark" onclick="setColorTheme('dark')">
+                    <span class="theme-swatch theme-dark"></span> Dunkel
+                </button>
+            </div>
+            <p id="themeStatus" class="theme-status">Aktuelles Design: LoFi Sage</p>
+        </div>
+    </section>
+
 </main>
 
-<script src="script.js?v=10"></script>
+<script src="script.js?v=11"></script>
 
 </body>
 </html>

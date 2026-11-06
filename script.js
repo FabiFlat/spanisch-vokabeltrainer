@@ -1,7 +1,7 @@
 
-// ==========================================
-// SUPABASE VERBINDUNG
-// ==========================================
+/* ==========================================
+   SUPABASE VERBINDUNG
+========================================== */
 
 const SUPABASE_URL = "https://exuxzafvelelozppryir.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2_X-qjrz4Ky8ZMF6isIdbw_Y98ljw1f";
@@ -11,9 +11,10 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_KEY
 );
 
-// ==========================================
-// VOKABELN UND STATISTIKEN
-// ==========================================
+
+/* ==========================================
+   VOKABELN UND STATISTIKEN
+========================================== */
 
 const defaultWords = [
     { spanish: "Hola", german: "Hallo" },
@@ -29,7 +30,12 @@ const defaultWords = [
 function loadLocalWords() {
     try {
         const saved = JSON.parse(localStorage.getItem("words"));
-        return Array.isArray(saved) ? saved : [...defaultWords];
+
+        if (Array.isArray(saved)) {
+            return saved;
+        }
+
+        return [...defaultWords];
     } catch {
         return [...defaultWords];
     }
@@ -39,36 +45,33 @@ let words = loadLocalWords();
 let currentCard = 0;
 let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
+
 let currentUser = null;
 let syncReady = false;
+let quizTimer = null;
+let questionLocked = false;
 
-// ==========================================
-// STATUS UND ANMELDUNG
-// ==========================================
+
+/* ==========================================
+   ANMELDUNG UND STATUS
+========================================== */
 
 function setAuthStatus(message) {
     const element = document.getElementById("authStatus");
-    if (element) element.textContent = message;
+
+    if (element) {
+        element.textContent = message;
+    }
 }
 
 function updateAuthPanel() {
     const loggedIn = Boolean(currentUser);
 
-    const controls = document.getElementById("authControls");
-    const panel = document.getElementById("account");
+    const authControls = document.getElementById("authControls");
     const signOutButton = document.getElementById("signOutButton");
 
-    if (controls) {
-        controls.style.display = loggedIn ? "none" : "block";
-    }
-
-    if (signOutButton) {
-        signOutButton.style.display = loggedIn ? "inline-block" : "none";
-    }
-
-    if (panel) {
-        panel.classList.toggle("logged-in", loggedIn);
-    }
+    authControls.classList.toggle("hidden", loggedIn);
+    signOutButton.classList.toggle("hidden", !loggedIn);
 
     setAuthStatus(
         loggedIn
@@ -148,13 +151,15 @@ async function signOut() {
 
     currentUser = null;
     syncReady = false;
+
     updateAuthPanel();
     setAuthStatus("Du wurdest abgemeldet.");
 }
 
-// ==========================================
-// DATEN MIT SUPABASE SYNCHRONISIEREN
-// ==========================================
+
+/* ==========================================
+   SUPABASE SYNCHRONISIERUNG
+========================================== */
 
 async function loadUserData() {
     if (!currentUser) return;
@@ -174,18 +179,25 @@ async function loadUserData() {
     }
 
     if (data) {
-        words = Array.isArray(data.words) ? data.words : [...defaultWords];
+        words = Array.isArray(data.words)
+            ? data.words
+            : [...defaultWords];
+
         correct = Number(data.correct) || 0;
+
+        syncReady = true;
+
     } else {
-        // Beim ersten Anmelden lokale Vokabeln übernehmen
+        /*
+         * Beim ersten Login werden die lokalen
+         * Vokabeln in die Cloud übernommen.
+         */
         syncReady = true;
         await saveDataToCloud();
     }
 
     localStorage.setItem("words", JSON.stringify(words));
     localStorage.setItem("correct", String(correct));
-
-    syncReady = true;
 
     updateStats();
     showCard();
@@ -219,60 +231,74 @@ async function saveDataToCloud() {
 function saveData() {
     localStorage.setItem("words", JSON.stringify(words));
     localStorage.setItem("correct", String(correct));
+
     saveDataToCloud();
 }
 
-// ==========================================
-// STATISTIKEN
-// ==========================================
+
+/* ==========================================
+   STATISTIKEN
+========================================== */
 
 function updateStats() {
     document.getElementById("wordCount").textContent = words.length;
     document.getElementById("correctCount").textContent = correct;
 }
 
-// ==========================================
-// SEITEN WECHSELN
-// ==========================================
+
+/* ==========================================
+   SEITEN WECHSELN
+========================================== */
 
 function showPage(page) {
     document.querySelectorAll(".page").forEach(section => {
+        section.classList.remove("active");
         section.classList.add("hidden");
     });
 
     const selectedPage = document.getElementById(page);
+
     if (!selectedPage) return;
 
     selectedPage.classList.remove("hidden");
+    selectedPage.classList.add("active");
 
-    if (page === "cards") showCard();
-    if (page === "quiz") nextQuestion();
-    if (page === "manage") showWordList();
+    if (page === "cards") {
+        showCard();
+    }
+
+    if (page === "quiz") {
+        nextQuestion();
+    }
+
+    if (page === "manage") {
+        showWordList();
+    }
 
     updateStats();
 }
 
-// ==========================================
-// KARTEIKARTEN
-// ==========================================
+
+/* ==========================================
+   LERNKARTEN
+========================================== */
 
 function showCard() {
+    const spanishWord = document.getElementById("spanishWord");
+    const translation = document.getElementById("translation");
+
     if (words.length === 0) {
-        document.getElementById("spanishWord").textContent =
-            "Keine Vokabeln vorhanden";
-        document.getElementById("translation").classList.add("hidden");
+        spanishWord.textContent = "Keine Vokabeln vorhanden";
+        translation.classList.add("hidden");
         return;
     }
 
     currentCard = currentCard % words.length;
 
-    document.getElementById("spanishWord").textContent =
-        words[currentCard].spanish;
+    spanishWord.textContent = words[currentCard].spanish;
+    translation.textContent = words[currentCard].german;
 
-    document.getElementById("translation").textContent =
-        words[currentCard].german;
-
-    document.getElementById("translation").classList.add("hidden");
+    translation.classList.add("hidden");
 }
 
 function revealWord() {
@@ -283,60 +309,65 @@ function nextCard() {
     if (words.length === 0) return;
 
     currentCard = (currentCard + 1) % words.length;
+
     showCard();
 }
 
-// ==========================================
-// GEMISCHTER VOKABELTEST
-// AUSWAHL + EINGABE + BEIDE RICHTUNGEN
-// ==========================================
+
+/* ==========================================
+   QUIZ – GEMISCHTE FRAGERICHTUNGEN
+========================================== */
 
 function nextQuestion() {
+    clearTimeout(quizTimer);
+
     const answers = document.getElementById("answers");
     const result = document.getElementById("quizResult");
     const quizWord = document.getElementById("quizWord");
+    const direction = document.getElementById("quizDirection");
 
     answers.innerHTML = "";
     result.innerHTML = "";
 
+    questionLocked = false;
+
     if (words.length < 2) {
         quizWord.textContent = "Du benötigst mindestens zwei Vokabeln.";
+        direction.textContent = "";
         return;
     }
 
-    // Zufällige Vokabel
     currentQuestion = Math.floor(Math.random() * words.length);
 
     const word = words[currentQuestion];
 
-    // Zufällige Übersetzungsrichtung
+    /*
+     * Zufällige Fragerichtung:
+     * true = Spanisch nach Deutsch
+     * false = Deutsch nach Spanisch
+     */
     const spanishToGerman = Math.random() < 0.5;
 
-    const question = spanishToGerman ? word.spanish : word.german;
-    const correctAnswer = spanishToGerman ? word.german : word.spanish;
+    const question = spanishToGerman
+        ? word.spanish
+        : word.german;
 
-    // Zufälliger Fragetyp
-    const multipleChoice = Math.random() < 0.5;
+    const correctAnswer = spanishToGerman
+        ? word.german
+        : word.spanish;
 
     quizWord.textContent = question;
 
-    // Übersetzungsrichtung anzeigen
-    const direction = document.createElement("p");
-    direction.className = "quiz-direction";
     direction.textContent = spanishToGerman
-        ? "Spanisch → Deutsch"
-        : "Deutsch → Spanisch";
+        ? "Übersetze ins Deutsche"
+        : "Übersetze ins Spanische";
 
-    answers.appendChild(direction);
-
-    // Fragetyp anzeigen
-    const typeLabel = document.createElement("p");
-    typeLabel.className = "quiz-type";
-    typeLabel.textContent = multipleChoice
-        ? "Wähle die richtige Antwort:"
-        : "Schreibe die Übersetzung selbst:";
-
-    answers.appendChild(typeLabel);
+    /*
+     * Zufälliger Fragetyp:
+     * true = Multiple Choice
+     * false = Antwort eintippen
+     */
+    const multipleChoice = Math.random() < 0.5;
 
     if (multipleChoice) {
         createMultipleChoice(
@@ -346,13 +377,18 @@ function nextQuestion() {
             result
         );
     } else {
-        createWrittenAnswer(correctAnswer, answers, result);
+        createWrittenAnswer(
+            correctAnswer,
+            answers,
+            result
+        );
     }
 }
 
-// ==========================================
-// AUSWAHLFRAGEN
-// ==========================================
+
+/* ==========================================
+   MULTIPLE CHOICE
+========================================== */
 
 function createMultipleChoice(
     correctAnswer,
@@ -360,30 +396,41 @@ function createMultipleChoice(
     answers,
     result
 ) {
+    const property = spanishToGerman ? "german" : "spanish";
+
     let options = [correctAnswer];
 
-    const possibleAnswers = [...new Set(
-        words.map(word =>
-            spanishToGerman ? word.german : word.spanish
+    const possibleAnswers = [
+        ...new Set(
+            words
+                .map(word => word[property])
+                .filter(answer => answer !== correctAnswer)
         )
-    )].filter(answer => answer !== correctAnswer);
+    ];
 
     possibleAnswers.sort(() => Math.random() - 0.5);
 
-    options.push(...possibleAnswers.slice(0, 3));
+    options.push(
+        ...possibleAnswers.slice(0, 3)
+    );
+
+    /*
+     * Falls es nicht genug unterschiedliche Antworten
+     * für Multiple Choice gibt, wird eine Eingabe gefragt.
+     */
+    if (options.length < 2) {
+        createWrittenAnswer(correctAnswer, answers, result);
+        return;
+    }
+
     options.sort(() => Math.random() - 0.5);
 
     options.forEach(option => {
         const button = document.createElement("button");
+
         button.textContent = option;
 
         button.onclick = () => {
-            if (button.disabled) return;
-
-            answers.querySelectorAll("button").forEach(b => {
-                b.disabled = true;
-            });
-
             checkQuizAnswer(
                 option,
                 correctAnswer,
@@ -396,66 +443,68 @@ function createMultipleChoice(
     });
 }
 
-// ==========================================
-// SCHREIBFRAGEN
-// ==========================================
 
-function createWrittenAnswer(correctAnswer, answers, result) {
+/* ==========================================
+   EINGABEFRAGE
+========================================== */
+
+function createWrittenAnswer(
+    correctAnswer,
+    answers,
+    result
+) {
+    const area = document.createElement("div");
+    area.className = "written-answer-area";
+
     const input = document.createElement("input");
-
     input.type = "text";
     input.id = "writtenAnswer";
-    input.placeholder = "Übersetzung eingeben ...";
+    input.placeholder = "Deine Übersetzung ...";
     input.autocomplete = "off";
 
-    answers.appendChild(input);
+    const button = document.createElement("button");
+    button.textContent = "Antwort überprüfen";
 
-    const checkButton = document.createElement("button");
-    checkButton.textContent = "Antwort überprüfen";
-
-    checkButton.onclick = () => {
-        if (checkButton.disabled) return;
-
-        const userAnswer = input.value.trim();
-
-        if (!userAnswer) {
-            result.textContent = "Bitte gib eine Antwort ein.";
-            return;
-        }
-
-        input.disabled = true;
-        checkButton.disabled = true;
-
+    button.onclick = () => {
         checkQuizAnswer(
-            userAnswer,
+            input.value,
             correctAnswer,
             result,
             answers
         );
     };
 
-    answers.appendChild(checkButton);
-
     input.addEventListener("keydown", event => {
         if (event.key === "Enter") {
-            checkButton.click();
+            checkQuizAnswer(
+                input.value,
+                correctAnswer,
+                result,
+                answers
+            );
         }
     });
+
+    area.appendChild(input);
+    area.appendChild(button);
+
+    answers.appendChild(area);
 
     input.focus();
 }
 
-// ==========================================
-// ANTWORTEN VERGLEICHEN
-// ==========================================
+
+/* ==========================================
+   ANTWORTEN ÜBERPRÜFEN
+========================================== */
 
 function normalizeAnswer(answer) {
     return String(answer)
         .trim()
-        .toLocaleLowerCase("de-DE")
+        .toLocaleLowerCase("de")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[¿¡.,!?]/g, "")
+        .replace(/[¿?¡!.,;:]/g, "")
         .replace(/\s+/g, " ");
 }
 
@@ -465,22 +514,41 @@ function checkQuizAnswer(
     result,
     answers
 ) {
+    if (questionLocked) return;
+
+    if (!String(userAnswer).trim()) {
+        result.textContent = "Bitte gib eine Antwort ein.";
+        result.style.color = "#c77d70";
+        return;
+    }
+
+    questionLocked = true;
+
     const isCorrect =
-        normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer);
+        normalizeAnswer(userAnswer) ===
+        normalizeAnswer(correctAnswer);
+
+    const controls = answers.querySelectorAll("button, input");
+
+    controls.forEach(control => {
+        control.disabled = true;
+    });
 
     if (isCorrect) {
         result.textContent = "Richtig!";
         result.style.color = "#718466";
 
         correct++;
+
         saveData();
         updateStats();
 
-        // Nach 0,7 Sekunden nächste Frage
-        setTimeout(() => {
+        quizTimer = setTimeout(() => {
+            const quizPage = document.getElementById("quiz");
+
             if (
-                !document.getElementById("quiz")
-                    .classList.contains("hidden")
+                quizPage &&
+                !quizPage.classList.contains("hidden")
             ) {
                 nextQuestion();
             }
@@ -490,24 +558,25 @@ function checkQuizAnswer(
         result.innerHTML = `
             <div class="wrong-answer">
                 <div class="wrong-label">Richtige Antwort:</div>
-                <div class="wrong-word">
-                    ${escapeHTML(correctAnswer)}
-                </div>
+                <div class="wrong-word">${escapeHTML(correctAnswer)}</div>
             </div>
         `;
 
         const nextButton = document.createElement("button");
+
         nextButton.textContent = "Nächste Frage";
         nextButton.className = "next-question-button";
+
         nextButton.onclick = nextQuestion;
 
         answers.appendChild(nextButton);
     }
 }
 
-// ==========================================
-// HTML SICHER ANZEIGEN
-// ==========================================
+
+/* ==========================================
+   HTML SICHER AUSGEBEN
+========================================== */
 
 function escapeHTML(text) {
     return String(text).replace(/[&<>"']/g, character => ({
@@ -519,9 +588,10 @@ function escapeHTML(text) {
     })[character]);
 }
 
-// ==========================================
-// VOKABEL HINZUFÜGEN
-// ==========================================
+
+/* ==========================================
+   VOKABEL HINZUFÜGEN
+========================================== */
 
 function addWord() {
     const spanishInput = document.getElementById("newSpanish");
@@ -535,7 +605,11 @@ function addWord() {
         return;
     }
 
-    words.push({ spanish, german });
+    words.push({
+        spanish: spanish,
+        german: german
+    });
+
     saveData();
 
     spanishInput.value = "";
@@ -545,12 +619,14 @@ function addWord() {
     updateStats();
 }
 
-// ==========================================
-// VOKABELLISTE
-// ==========================================
+
+/* ==========================================
+   VOKABELLISTE
+========================================== */
 
 function showWordList() {
     const list = document.getElementById("wordList");
+
     list.innerHTML = "";
 
     if (words.length === 0) {
@@ -563,30 +639,39 @@ function showWordList() {
         item.className = "word-item";
 
         const text = document.createElement("span");
-        text.textContent = word.spanish + " – " + word.german;
+
+        text.textContent =
+            word.spanish + " – " + word.german;
 
         const remove = document.createElement("button");
+
         remove.textContent = "Löschen";
 
         remove.onclick = () => {
             words.splice(index, 1);
+
             saveData();
             showWordList();
             updateStats();
+
+            currentCard = 0;
         };
 
         item.appendChild(text);
         item.appendChild(remove);
+
         list.appendChild(item);
     });
 }
 
-// ==========================================
-// FOTO-SCAN
-// ==========================================
+
+/* ==========================================
+   FOTO-SCAN
+========================================== */
 
 async function scanVocabulary(event) {
     const file = event.target.files[0];
+
     if (!file) return;
 
     const status = document.getElementById("scanStatus");
@@ -598,6 +683,7 @@ async function scanVocabulary(event) {
     if (!window.Tesseract) {
         status.textContent =
             "Texterkennung konnte nicht geladen werden. Internetverbindung prüfen.";
+
         event.target.value = "";
         return;
     }
@@ -606,22 +692,31 @@ async function scanVocabulary(event) {
         status.textContent =
             "Vokabelliste wird eingescannt. Bitte warten ...";
 
-        const result = await Tesseract.recognize(file, "spa+deu", {
-            logger: message => {
-                if (message.status === "recognizing text") {
-                    status.textContent = "Texterkennung: " +
-                        Math.round(message.progress * 100) + "%";
+        const result = await Tesseract.recognize(
+            file,
+            "spa+deu",
+            {
+                logger: message => {
+                    if (message.status === "recognizing text") {
+                        status.textContent =
+                            "Texterkennung: " +
+                            Math.round(message.progress * 100) +
+                            "%";
+                    }
                 }
             }
-        });
+        );
 
         scanText.value = result.data.text;
+
         editor.classList.remove("hidden");
+
         status.textContent =
             "Scan abgeschlossen! Bitte überprüfe die Wörter.";
 
     } catch (error) {
         console.error(error);
+
         status.textContent =
             "Scan fehlgeschlagen. Bitte versuche ein anderes Foto.";
     }
@@ -629,9 +724,10 @@ async function scanVocabulary(event) {
     event.target.value = "";
 }
 
-// ==========================================
-// ERKANNTE VOKABELN ÜBERNEHMEN
-// ==========================================
+
+/* ==========================================
+   ERKANNTE VOKABELN ÜBERNEHMEN
+========================================== */
 
 function importScannedWords() {
     const text = document.getElementById("scanText").value;
@@ -645,9 +741,11 @@ function importScannedWords() {
 
     text.split(/\r?\n/).forEach(line => {
         line = line.trim();
+
         if (!line) return;
 
         const parts = line.split(/\s*(?:=|\||;|\t)\s*/);
+
         if (parts.length < 2) return;
 
         const spanish = parts[0].trim();
@@ -660,7 +758,11 @@ function importScannedWords() {
         );
 
         if (!exists) {
-            words.push({ spanish, german });
+            words.push({
+                spanish: spanish,
+                german: german
+            });
+
             imported++;
         }
     });
@@ -678,18 +780,23 @@ function importScannedWords() {
     alert(imported + " Vokabeln erfolgreich importiert!");
 }
 
-// ==========================================
-// WEBSITE STARTEN UND ANMELDESTATUS PRÜFEN
-// ==========================================
+
+/* ==========================================
+   WEBSITE STARTEN
+========================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
+
     updateStats();
     showWordList();
 
-    const { data, error } = await supabaseClient.auth.getSession();
+    const { data, error } =
+        await supabaseClient.auth.getSession();
 
     if (error) {
-        setAuthStatus("Anmeldestatus konnte nicht geladen werden.");
+        setAuthStatus(
+            "Anmeldestatus konnte nicht geladen werden."
+        );
         return;
     }
 
@@ -708,11 +815,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             currentUser = user;
 
             if (currentUser) {
-                loadUserData();
+                setTimeout(() => loadUserData(), 0);
             } else {
                 syncReady = false;
                 updateAuthPanel();
             }
         }
     });
+
 });

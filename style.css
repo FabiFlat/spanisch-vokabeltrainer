@@ -693,3 +693,17 @@ input:disabled {
     color: #cbd3e5 !important;
     opacity: 1;
 }
+
+
+/* XP-ANZEIGE UND LEVEL */
+.xp-card { margin-bottom: 20px; }
+.xp-summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 12px 0; }
+.xp-summary strong { font-size: 25px; color: var(--brown); }
+.xp-summary span { padding: 6px 12px; border-radius: 999px; background: #26334d; color: #fff; font-weight: 800; }
+.xp-progress-track { height: 13px; overflow: hidden; border-radius: 999px; background: var(--border); }
+.xp-progress-bar { width: 0; height: 100%; border-radius: inherit; background: var(--sage-dark); transition: width .25s ease; }
+.xp-progress-text, .xp-session-status { color: var(--muted); font-size: 14px; margin: 9px 0; }
+.xp-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.xp-badge { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 12px; }
+.xp-badge.earned { background: #e9efe5; border-color: #cbd8c4; color: #526449; font-weight: 800; }
+.xp-finish-button:disabled { opacity: .45; cursor: not-allowed; }

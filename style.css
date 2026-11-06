@@ -13,7 +13,9 @@
     --border: #e6e1d6;
     --wrong: #c77d70;
     --correct: #829879;
-    --button-text: #30352d;
+    --button-bg: #26334d;
+    --button-hover: #1b263d;
+    --button-text: #ffffff;
 }
 
 * {
@@ -59,15 +61,6 @@ nav {
 nav button {
     width: auto;
     padding: 10px 20px;
-    background: transparent;
-    color: var(--brown);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-}
-
-nav button:hover {
-    background: var(--sage);
-    color: var(--button-text);
 }
 
 /* HAUPTBEREICH */
@@ -87,7 +80,6 @@ main {
     display: block;
 }
 
-/* hidden hat Vorrang vor page.active */
 .hidden {
     display: none !important;
 }
@@ -97,6 +89,7 @@ main {
         opacity: 0;
         transform: translateY(5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -198,19 +191,11 @@ h3 {
 
 #answers button {
     min-height: 65px;
-    background: #f3f0e8;
-    color: var(--text);
-    border: 1px solid var(--border);
     font-size: 17px;
 }
 
-#answers button:hover {
-    background: #e7ebdf;
-    border-color: var(--sage);
-}
-
 #answers button:disabled {
-    opacity: 0.7;
+    opacity: 1;
     cursor: default;
     transform: none;
 }
@@ -263,24 +248,27 @@ h3 {
     font-weight: 700;
 }
 
-/* BUTTONS */
+/* BUTTONS – EINHEITLICH DUNKEL */
 button {
     width: 100%;
     padding: 14px 20px;
     margin-top: 10px;
-    border: none;
+    border: none !important;
     border-radius: 14px;
-    background: var(--sage);
-    color: var(--button-text);
+    background: #26334d !important;
+    background-color: #26334d !important;
+    color: #ffffff !important;
     font-family: inherit;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover {
-    background: var(--sage-dark);
+    background: #1b263d !important;
+    background-color: #1b263d !important;
+    color: #ffffff !important;
     transform: translateY(-1px);
 }
 
@@ -288,13 +276,15 @@ button:active {
     transform: scale(0.98);
 }
 
-button.secondary {
-    background: #e9e5da;
-    color: var(--brown);
+button:disabled {
+    opacity: 0.85;
+    cursor: default;
+    transform: none;
 }
 
-button.secondary:hover {
-    background: var(--border);
+button.secondary {
+    background: #26334d !important;
+    color: #ffffff !important;
 }
 
 .next-question-button {
@@ -387,13 +377,6 @@ input:disabled {
     width: auto;
     margin: 0;
     padding: 8px 13px;
-    background: #f3e5e0;
-    color: var(--wrong);
-}
-
-.word-item button.edit-word-button {
-    background: #e9e5da;
-    color: var(--brown);
 }
 
 .word-edit-fields {
@@ -465,7 +448,6 @@ input:disabled {
     }
 }
 
-
 /* VOKABELDATEI-IMPORT */
 .vocab-drop-zone {
     margin: 16px 0;
@@ -489,32 +471,28 @@ input:disabled {
     border-color: var(--sage-dark);
 }
 
-
-/* ==========================================
-   DESIGN-AUSWAHL
-========================================== */
+/* DESIGN-AUSWAHL */
 .theme-options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
     gap: 10px;
     margin-top: 16px;
 }
+
 .theme-option {
     display: flex;
     align-items: center;
     gap: 9px;
     justify-content: flex-start;
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 14px;
     padding: 12px;
     width: 100%;
 }
+
 .theme-option.active {
-    border: 2px solid var(--sage-dark);
-    box-shadow: 0 0 0 2px var(--sage);
+    outline: 2px solid var(--sage-dark);
+    outline-offset: 2px;
 }
+
 .theme-swatch {
     display: inline-block;
     width: 25px;
@@ -523,25 +501,56 @@ input:disabled {
     flex: 0 0 25px;
     border: 1px solid rgba(0,0,0,.12);
 }
-.theme-sage { background: linear-gradient(135deg, #f4f1e9 50%, #9eaa91 50%); }
-.theme-lavender { background: linear-gradient(135deg, #f2eff8 50%, #a99bc8 50%); }
-.theme-ocean { background: linear-gradient(135deg, #edf4f5 50%, #82aeb5 50%); }
-.theme-rose { background: linear-gradient(135deg, #f8eeee 50%, #c99da5 50%); }
-.theme-dark { background: linear-gradient(135deg, #25272b 50%, #687b70 50%); }
-.theme-status { color: var(--muted); margin-top: 14px; }
 
+.theme-sage {
+    background: linear-gradient(135deg, #f4f1e9 50%, #9eaa91 50%);
+}
 
-.theme-forest { background: linear-gradient(135deg, #edf1e8 50%, #8fa88b 50%); }
-.theme-peach { background: linear-gradient(135deg, #fbf0e7 50%, #e5ad8c 50%); }
-.theme-matcha { background: linear-gradient(135deg, #f0f2e5 50%, #b4bd83 50%); }
-.theme-midnight { background: linear-gradient(135deg, #202638 50%, #8295bd 50%); }
+.theme-lavender {
+    background: linear-gradient(135deg, #f2eff8 50%, #a99bc8 50%);
+}
 
+.theme-ocean {
+    background: linear-gradient(135deg, #edf4f5 50%, #82aeb5 50%);
+}
+
+.theme-rose {
+    background: linear-gradient(135deg, #f8eeee 50%, #c99da5 50%);
+}
+
+.theme-dark {
+    background: linear-gradient(135deg, #25272b 50%, #687b70 50%);
+}
+
+.theme-forest {
+    background: linear-gradient(135deg, #edf1e8 50%, #8fa88b 50%);
+}
+
+.theme-peach {
+    background: linear-gradient(135deg, #fbf0e7 50%, #e5ad8c 50%);
+}
+
+.theme-matcha {
+    background: linear-gradient(135deg, #f0f2e5 50%, #b4bd83 50%);
+}
+
+.theme-midnight {
+    background: linear-gradient(135deg, #202638 50%, #8295bd 50%);
+}
+
+.theme-status {
+    color: var(--muted);
+    margin-top: 14px;
+}
+
+/* EIGENE FARBEN */
 .custom-color-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 12px;
     margin: 18px 0;
 }
+
 .custom-color-grid label {
     display: flex;
     align-items: center;
@@ -553,6 +562,7 @@ input:disabled {
     border-radius: 12px;
     background: var(--card);
 }
+
 .custom-color-grid input[type="color"] {
     width: 48px;
     height: 36px;
@@ -561,166 +571,4 @@ input:disabled {
     border-radius: 8px;
     background: var(--card);
     cursor: pointer;
-}
-
-
-/* KONTRAST-FIX: ALLE BUTTONS IN JEDEM FARBTHEMA */
-button {
-    color: var(--button-text, var(--text)) !important;
-}
-
-button:hover,
-nav button:hover {
-    color: var(--button-text, var(--text)) !important;
-    filter: brightness(0.94);
-}
-
-/* Sekundäre Buttons */
-button.secondary,
-button.secondary:hover {
-    background: color-mix(in srgb, var(--sage) 24%, var(--card)) !important;
-    color: var(--text) !important;
-    border: 1px solid var(--border);
-}
-
-/* Quiz-Antwortmöglichkeiten */
-#answers button {
-    background: color-mix(in srgb, var(--sage) 20%, var(--card)) !important;
-    color: var(--text) !important;
-    border: 1px solid var(--border);
-}
-#answers button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--sage) 38%, var(--card)) !important;
-    color: var(--text) !important;
-}
-#answers button:disabled {
-    color: var(--text) !important;
-    opacity: 1;
-}
-
-/* Löschen und Bearbeiten */
-.word-item button,
-.word-item button.edit-word-button {
-    background: color-mix(in srgb, var(--wrong) 20%, var(--card)) !important;
-    color: var(--text) !important;
-    border: 1px solid color-mix(in srgb, var(--wrong) 45%, var(--border));
-}
-.word-item button.edit-word-button {
-    background: color-mix(in srgb, var(--sage) 24%, var(--card)) !important;
-    border-color: var(--border);
-}
-.word-item button:hover,
-.word-item button.edit-word-button:hover {
-    filter: brightness(0.94);
-}
-
-/* Farbauswahl-Buttons */
-.theme-option,
-.theme-option:hover {
-    background: var(--card) !important;
-    color: var(--text) !important;
-    border: 1px solid var(--border);
-}
-.theme-option.active {
-    border: 2px solid var(--sage-dark);
-}
-
-/* Navigationsbuttons bleiben auch beim Darüberfahren lesbar */
-nav button {
-    color: var(--brown);
-}
-nav button:hover {
-    background: color-mix(in srgb, var(--sage) 35%, var(--card)) !important;
-    color: var(--text) !important;
-}
-
-
-/* EINHEITLICHES BUTTON-DESIGN – alle Buttons wie „Quiz starten“ */
-button,
-button.secondary,
-nav button,
-#answers button,
-.word-item button,
-.word-item button.edit-word-button,
-.theme-option {
-    background: var(--button-bg, var(--sage)) !important;
-    color: var(--button-text, var(--text)) !important;
-    border: none !important;
-    border-radius: 14px !important;
-    font-family: inherit !important;
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    box-shadow: none;
-}
-
-button:hover,
-button.secondary:hover,
-nav button:hover,
-#answers button:hover:not(:disabled),
-.word-item button:hover,
-.word-item button.edit-word-button:hover,
-.theme-option:hover {
-    background: var(--button-hover, var(--sage-dark)) !important;
-    color: var(--button-text, var(--text)) !important;
-    filter: none !important;
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled,
-#answers button:disabled {
-    opacity: 0.72;
-    cursor: default;
-    transform: none;
-}
-
-.theme-option.active {
-    outline: 2px solid var(--sage-dark);
-    outline-offset: 2px;
-}
-
-
-/* QUIZ-BUTTONS: dunkler Hintergrund mit gut lesbarer Schrift */
-#quiz button,
-#quiz #answers button {
-    background: color-mix(in srgb, var(--sage) 55%, #202020) !important;
-    color: #ffffff !important;
-    border: 1px solid color-mix(in srgb, var(--sage) 35%, #111111) !important;
-}
-
-#quiz button:hover:not(:disabled),
-#quiz #answers button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--sage) 40%, #101010) !important;
-    color: #ffffff !important;
-}
-
-
-/* QUIZ: Buttons deutlich dunkler darstellen */
-#quiz button {
-    background: color-mix(in srgb, var(--sage) 25%, #171717) !important;
-    color: #ffffff !important;
-    border: 1px solid color-mix(in srgb, var(--sage) 30%, #080808) !important;
-}
-#quiz button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--sage) 35%, #080808) !important;
-    color: #ffffff !important;
-}
-
-
-/* FESTE QUIZ-FARBE: unabhängig vom ausgewählten Farbschema */
-#quiz button,
-#quiz button:visited {
-    background: #26334d !important;
-    background-color: #26334d !important;
-    color: #ffffff !important;
-    border-color: #1b263d !important;
-    opacity: 1 !important;
-}
-#quiz button:hover:not(:disabled) {
-    background: #1b263d !important;
-    background-color: #1b263d !important;
-    color: #ffffff !important;
 }

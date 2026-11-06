@@ -358,10 +358,10 @@ function updateStats() {
 /* XP, LEVEL UND LERNEINHEITEN */
 const xpLevels = [
     { name: "Anfänger", min: 0, badge: "Erster Schritt" },
-    { name: "Wortsammler", min: 100, badge: "Wortsammler" },
-    { name: "Sprachentdecker", min: 250, badge: "Sprachentdecker" },
-    { name: "Sprachprofi", min: 500, badge: "Sprachprofi" },
-    { name: "Spanisch-Meister", min: 1000, badge: "Spanisch-Meister" }
+    { name: "Wortsammler", min: 500, badge: "Wortsammler" },
+    { name: "Sprachentdecker", min: 1500, badge: "Sprachentdecker" },
+    { name: "Sprachprofi", min: 2500, badge: "Sprachprofi" },
+    { name: "Spanisch-Meister", min: 3500, badge: "Spanisch-Meister" }
 ];
 
 function getXPLevel() {
@@ -389,11 +389,12 @@ function updateXPDisplay() {
     document.getElementById("xpProgressText").textContent = next
         ? (next.min - xp) + " XP bis Level " + next.name
         : "Höchstes Level erreicht";
-    const overallProgress = Math.max(0, Math.min(100, (xp / 1000) * 100));
+    const maxXP = xpLevels[xpLevels.length - 1].min;
+    const overallProgress = Math.max(0, Math.min(100, (xp / maxXP) * 100));
     const overallBar = document.getElementById("xpOverallProgressBar");
     const overallText = document.getElementById("xpOverallProgressText");
     if (overallBar) overallBar.style.width = overallProgress + "%";
-    if (overallText) overallText.textContent = Math.min(xp, 1000).toLocaleString("de-DE") + " von 1.000 XP";
+    if (overallText) overallText.textContent = Math.min(xp, maxXP).toLocaleString("de-DE") + " von " + maxXP.toLocaleString("de-DE") + " XP";
 
     const badges = document.getElementById("xpBadges");
     badges.innerHTML = xpLevels.map((item, index) => {

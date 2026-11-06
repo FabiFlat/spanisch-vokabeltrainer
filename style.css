@@ -600,3 +600,19 @@ input:disabled {
 .theme-sakura { background: linear-gradient(135deg, #f4e5e9 50%, #c995a7 50%); }
 .theme-sunset { background: linear-gradient(135deg, #f5e2cf 50%, #d99872 50%); }
 .theme-vanilla { background: linear-gradient(135deg, #f7f0e2 50%, #c9b99f 50%); }
+
+
+/* BUTTON NACH FALSCHER QUIZ-ANTWORT */
+#answers .next-question-button {
+    background: #26334d !important;
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border: 1px solid #465a82 !important;
+}
+
+#answers .next-question-button:hover,
+#answers .next-question-button:focus {
+    background: #1b263d !important;
+    background-color: #1b263d !important;
+    color: #ffffff !important;
+}

@@ -806,3 +806,24 @@ input:disabled {
     .xp-roadmap-status { display: none; }
     .xp-roadmap-heading { align-items: flex-start; flex-direction: column; }
 }
+
+
+/* XP-Freischaltung der Designs */
+.theme-option.theme-locked {
+    opacity: 0.58;
+    filter: grayscale(0.55);
+    cursor: not-allowed;
+    position: relative;
+}
+.theme-option.theme-locked::after {
+    content: "🔒 " attr(data-unlock-label);
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+.theme-option:disabled {
+    pointer-events: none;
+}

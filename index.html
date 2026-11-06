@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -143,13 +143,32 @@
 
         <div class="card">
 
-            <p>Lade ein Foto deiner Vokabelliste hoch.</p>
+            <p>Lade ein Foto deiner Vokabelliste hoch oder importiere eine Vokabeldatei.</p>
 
             <input
                 type="file"
                 id="scanImage"
                 accept="image/*"
                 onchange="scanVocabulary(event)"
+            >
+
+            <div
+                id="vocabDropZone"
+                class="vocab-drop-zone"
+                onclick="document.getElementById('vocabFile').click()"
+                ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                ondragleave="this.classList.remove('drag-over')"
+                ondrop="event.preventDefault(); this.classList.remove('drag-over'); importVocabularyFile(event.dataTransfer.files[0])"
+            >
+                <strong>Vokabeldatei hier hineinziehen</strong>
+                <p>oder klicken, um eine CSV- oder TXT-Datei auszuwählen</p>
+            </div>
+            <input
+                type="file"
+                id="vocabFile"
+                accept=".csv,.txt,text/csv,text/plain"
+                hidden
+                onchange="importVocabularyFile(this.files[0]); this.value=''"
             >
 
             <p id="scanStatus"></p>
@@ -178,7 +197,7 @@
 
 </main>
 
-<script src="script.js?v=8"></script>
+<script src="script.js?v=9"></script>
 
 </body>
 </html>

@@ -389,13 +389,30 @@ function updateXPDisplay() {
     document.getElementById("xpProgressText").textContent = next
         ? (next.min - xp) + " XP bis Level " + next.name
         : "Höchstes Level erreicht";
+    const overallProgress = Math.max(0, Math.min(100, (xp / 1000) * 100));
+    const overallBar = document.getElementById("xpOverallProgressBar");
+    const overallText = document.getElementById("xpOverallProgressText");
+    if (overallBar) overallBar.style.width = overallProgress + "%";
+    if (overallText) overallText.textContent = Math.min(xp, 1000).toLocaleString("de-DE") + " von 1.000 XP";
+
     const badges = document.getElementById("xpBadges");
-    const earned = xpLevels.filter(item => xp >= item.min);
-    const visible = userUnlocks.beta_tester ? xpLevels : earned;
-    badges.innerHTML = visible.map(item =>
-        '<span class="xp-badge' + (xp >= item.min || userUnlocks.beta_tester ? ' earned' : '') + '">' +
-        escapeHTML(item.badge) + '</span>'
-    ).join("");
+    badges.innerHTML = xpLevels.map((item, index) => {
+        const unlocked = xp >= item.min || userUnlocks.beta_tester;
+        const nextLevel = xpLevels[index + 1];
+        const requirement = item.min === 0
+            ? "Startbelohnung"
+            : item.min.toLocaleString("de-DE") + " XP";
+        const detail = unlocked
+            ? (item.min === 0 ? "Bereits freigeschaltet" : "Freigeschaltet")
+            : (item.min - xp).toLocaleString("de-DE") + " XP fehlen noch";
+        return '<div class="xp-roadmap-item' + (unlocked ? ' earned' : ' locked') + '">' +
+            '<div class="xp-roadmap-icon">' + (unlocked ? '★' : '🔒') + '</div>' +
+            '<div class="xp-roadmap-info"><strong>' + escapeHTML(item.name) + '</strong>' +
+            '<span>' + escapeHTML(item.badge) + ' · ' + requirement + '</span>' +
+            '<small>' + detail + '</small></div>' +
+            '<div class="xp-roadmap-status">' + (unlocked ? 'Erreicht' : 'Offen') + '</div>' +
+            '</div>';
+    }).join("");
     updateSessionControls();
 }
 

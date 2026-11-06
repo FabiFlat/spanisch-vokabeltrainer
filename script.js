@@ -988,11 +988,76 @@ function importScannedWords() {
 }
 
 
+
+/* ==========================================
+   FARBSCHEMA / DESIGN
+========================================== */
+
+const colorThemes = {
+    sage: {
+        "--background": "#f4f1e9", "--card": "#fffdf7", "--sage": "#9eaa91",
+        "--sage-dark": "#78866c", "--brown": "#625b4e", "--text": "#45443d",
+        "--muted": "#999487", "--border": "#e6e1d6", "--wrong": "#c77d70",
+        "--correct": "#829879", name: "LoFi Sage"
+    },
+    lavender: {
+        "--background": "#f2eff8", "--card": "#fffaff", "--sage": "#b7a9d2",
+        "--sage-dark": "#8877ad", "--brown": "#625875", "--text": "#484253",
+        "--muted": "#958ca4", "--border": "#e4ddec", "--wrong": "#c77d8e",
+        "--correct": "#829b91", name: "Lavendel"
+    },
+    ocean: {
+        "--background": "#edf4f5", "--card": "#fbffff", "--sage": "#91b8bf",
+        "--sage-dark": "#608f98", "--brown": "#49666d", "--text": "#354b50",
+        "--muted": "#81969a", "--border": "#d8e6e8", "--wrong": "#c77d70",
+        "--correct": "#719b91", name: "Ozean"
+    },
+    rose: {
+        "--background": "#f8eeee", "--card": "#fffafa", "--sage": "#d6adb4",
+        "--sage-dark": "#ad7f89", "--brown": "#765860", "--text": "#514247",
+        "--muted": "#a18e93", "--border": "#eadcdf", "--wrong": "#bd716f",
+        "--correct": "#829879", name: "Rosé"
+    },
+    dark: {
+        "--background": "#25272b", "--card": "#32363b", "--sage": "#82988b",
+        "--sage-dark": "#a2b9aa", "--brown": "#d5cfc3", "--text": "#eeeae2",
+        "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
+        "--correct": "#9ab895", name: "Dunkel"
+    }
+};
+
+function setColorTheme(themeName) {
+    const theme = colorThemes[themeName];
+    if (!theme) return;
+
+    Object.entries(theme).forEach(([property, value]) => {
+        if (property.startsWith("--")) {
+            document.documentElement.style.setProperty(property, value);
+        }
+    });
+
+    localStorage.setItem("vocabColorTheme", themeName);
+
+    document.querySelectorAll(".theme-option").forEach(button => {
+        button.classList.toggle("active", button.dataset.themeChoice === themeName);
+    });
+
+    const status = document.getElementById("themeStatus");
+    if (status) status.textContent = "Aktuelles Design: " + theme.name;
+}
+
+function loadColorTheme() {
+    const savedTheme = localStorage.getItem("vocabColorTheme") || "sage";
+    setColorTheme(colorThemes[savedTheme] ? savedTheme : "sage");
+}
+
+
 /* ==========================================
    WEBSITE STARTEN
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
+    loadColorTheme();
     updateStats();
     showWordList();
     showCard();

@@ -521,7 +521,15 @@ function updateXPDisplay() {
             '<small>' + detail + '</small></div>' +
             '<div class="xp-roadmap-status">' + (unlocked ? 'Erreicht' : 'Offen') + '</div>' +
             '</div>';
-    }).join("");
+    }).join("") + (userUnlocks.beta_tester
+        ? '<div class="xp-roadmap-item earned beta-title-reward">' +
+            '<div class="xp-roadmap-icon">★</div>' +
+            '<div class="xp-roadmap-info"><strong>Exklusiver Titel: Beta-Tester</strong>' +
+            '<span>Nur mit dem Beta-Tester-Code erhältlich</span>' +
+            '<small>Durch den Beta-Tester-Code freigeschaltet</small></div>' +
+            '<div class="xp-roadmap-status">Erreicht</div>' +
+          '</div>'
+        : "");
     updateSessionControls();
     updateThemeUnlocks();
 }

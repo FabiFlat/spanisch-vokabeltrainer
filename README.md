@@ -1,2 +1,2 @@
-# spanisch-vokabeltrainer 2
-spanisch vokabel trainer 2
+# spanisch-vokabeltrainer
+spanisch vokabel trainer

@@ -296,6 +296,77 @@ function showPage(page) {
 
 
 /* ==========================================
+   SPRACHAUSGABE UND AUSSPRACHE-TRAINING
+========================================== */
+
+function speakText(text, language = "es-ES") {
+    if (!("speechSynthesis" in window)) {
+        alert("Die Vorlesefunktion wird von diesem Browser leider nicht unterstützt.");
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(String(text || ""));
+    utterance.lang = language;
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+}
+
+function speakQuizWord() {
+    const word = document.getElementById("quizWord")?.textContent || "";
+    const language = quizAnswerLanguage === "de" ? "es-ES" : "de-DE";
+    speakText(word, language);
+}
+
+function startPronunciationCheck(input, status, checkButton) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        status.textContent = "Dein Browser unterstützt keine Spracherkennung. Verwende Chrome oder Edge.";
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = quizAnswerLanguage === "es" ? "es-ES" : "de-DE";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    status.textContent = "Ich höre zu …";
+    const micButton = status.previousElementSibling;
+    if (micButton) micButton.disabled = true;
+
+    recognition.onresult = event => {
+        const transcript = event.results[0][0].transcript.trim();
+        input.value = transcript;
+        status.textContent = "Erkannt: „" + transcript + "“ – klicke auf „Antwort überprüfen“. Die Erkennung ist eine Orientierung und keine genaue Bewertung deines Akzents.";
+        checkButton.disabled = false;
+    };
+
+    recognition.onerror = event => {
+        const messages = {
+            "not-allowed": "Mikrofonzugriff wurde nicht erlaubt. Prüfe die Browser-Berechtigungen.",
+            "no-speech": "Es wurde nichts erkannt. Versuche es bitte erneut.",
+            "audio-capture": "Kein Mikrofon gefunden.",
+            "network": "Die Spracherkennung benötigt eine Netzwerkverbindung."
+        };
+        status.textContent = messages[event.error] || "Spracherkennung fehlgeschlagen: " + event.error;
+    };
+
+    recognition.onend = () => {
+        if (micButton) micButton.disabled = false;
+    };
+
+    try {
+        recognition.start();
+    } catch (error) {
+        status.textContent = "Die Spracherkennung konnte nicht gestartet werden. Bitte versuche es erneut.";
+        if (micButton) micButton.disabled = false;
+    }
+}
+
+
+/* ==========================================
    LERNKARTEN
 ========================================== */
 
@@ -313,6 +384,10 @@ function showCard() {
 
     spanishWord.textContent = words[currentCard].spanish;
     translation.textContent = words[currentCard].german;
+    const spanishSpeakButton = document.getElementById("speakSpanishCard");
+    const germanSpeakButton = document.getElementById("speakGermanCard");
+    if (spanishSpeakButton) spanishSpeakButton.onclick = () => speakText(words[currentCard].spanish, "es-ES");
+    if (germanSpeakButton) germanSpeakButton.onclick = () => speakText(words[currentCard].german, "de-DE");
 }
 
 
@@ -477,8 +552,19 @@ function createWrittenAnswer(
     input.spellcheck = true;
     input.setAttribute("autocorrect", "on");
 
+    const micButton = document.createElement("button");
+    micButton.type = "button";
+    micButton.className = "speech-button";
+    micButton.textContent = "🎙️ Antwort einsprechen";
+
+    const speechStatus = document.createElement("p");
+    speechStatus.className = "speech-status";
+    speechStatus.setAttribute("aria-live", "polite");
+
     const button = document.createElement("button");
     button.textContent = "Antwort überprüfen";
+
+    micButton.onclick = () => startPronunciationCheck(input, speechStatus, button);
 
     button.onclick = () => {
         checkQuizAnswer(
@@ -501,6 +587,8 @@ function createWrittenAnswer(
     });
 
     area.appendChild(input);
+    area.appendChild(micButton);
+    area.appendChild(speechStatus);
     area.appendChild(button);
 
     answers.appendChild(area);

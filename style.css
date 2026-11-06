@@ -1,10 +1,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
-/* GRUNDEINSTELLUNGEN */
+/* FARBEN */
 :root {
     --background: #f4f1e9;
-    --card: #fffdf7;
+    --surface: #fffdf7;
     --sage: #9eaa91;
     --sage-dark: #78866c;
     --brown: #625b4e;
@@ -12,9 +12,9 @@
     --muted: #999487;
     --border: #e6e1d6;
     --wrong: #c77d70;
-    --correct: #829879;
 }
 
+/* GRUNDEINSTELLUNGEN */
 * {
     box-sizing: border-box;
 }
@@ -28,7 +28,7 @@ body {
     font-size: 16px;
 }
 
-/* ÜBERSCHRIFT */
+/* HEADER */
 header {
     text-align: center;
     padding: 35px 15px 20px;
@@ -37,7 +37,7 @@ header {
 header h1 {
     margin: 0;
     color: var(--brown);
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 800;
 }
 
@@ -52,16 +52,18 @@ nav {
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    padding: 10px 15px 25px;
+    padding: 15px;
+    margin-bottom: 25px;
 }
 
 nav button {
     width: auto;
+    margin: 0;
     padding: 10px 20px;
     background: transparent;
     color: var(--brown);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 25px;
 }
 
 nav button:hover {
@@ -72,18 +74,23 @@ nav button:hover {
 /* HAUPTBEREICH */
 main {
     width: 100%;
-    max-width: 650px;
+    max-width: 680px;
     margin: 0 auto;
     padding: 0 18px 50px;
 }
 
+/* SEITEN */
 .page {
-    display: none;
+    display: block;
     animation: fadeIn 0.3s ease;
 }
 
-.page.active {
-    display: block;
+.page.hidden {
+    display: none !important;
+}
+
+.hidden {
+    display: none !important;
 }
 
 @keyframes fadeIn {
@@ -91,6 +98,7 @@ main {
         opacity: 0;
         transform: translateY(5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -102,24 +110,47 @@ h2 {
     color: var(--brown);
     text-align: center;
     font-size: 25px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 h3 {
     color: var(--brown);
+    margin-top: 0;
 }
 
-/* KARTEN UND BOXEN */
+/* BOXEN */
 .card,
 .flashcard,
 .quiz-box,
 .auth-panel {
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 22px;
-    padding: 28px;
+    padding: 27px;
     margin-bottom: 20px;
     box-shadow: 0 5px 18px rgba(80, 70, 50, 0.04);
+}
+
+/* ANMELDUNG */
+.auth-panel {
+    max-width: 500px;
+    margin: 0 auto 35px;
+}
+
+.auth-panel h2 {
+    margin-top: 0;
+}
+
+.auth-panel p {
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+}
+
+#authStatus {
+    margin-top: 16px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
 }
 
 /* STARTSEITE */
@@ -133,22 +164,22 @@ h3 {
 .stat {
     flex: 1;
     min-width: 130px;
-    padding: 22px;
+    padding: 23px;
     text-align: center;
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
 }
 
 .stat strong {
     display: block;
-    font-size: 30px;
+    font-size: 32px;
     color: var(--sage-dark);
 }
 
-/* VOKABELKARTEN */
+/* KARTEIKARTEN */
 .flashcard {
-    min-height: 230px;
+    min-height: 240px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -157,7 +188,7 @@ h3 {
 }
 
 #spanishWord {
-    font-size: 34px;
+    font-size: 35px;
     font-weight: 800;
     color: var(--brown);
     overflow-wrap: anywhere;
@@ -165,17 +196,21 @@ h3 {
 
 #translation {
     margin-top: 18px;
-    font-size: 24px;
+    font-size: 26px;
+    font-weight: 700;
     color: var(--sage-dark);
 }
 
 /* QUIZ */
-#quizWord {
+.quiz-box {
     text-align: center;
-    font-size: 30px;
+}
+
+#quizWord {
+    font-size: 32px;
     font-weight: 800;
     color: var(--brown);
-    margin: 25px 0;
+    margin: 20px 0 25px;
 }
 
 #answers {
@@ -192,9 +227,14 @@ h3 {
     font-size: 17px;
 }
 
-#answers button:hover {
+#answers button:hover:not(:disabled) {
     background: #e7ebdf;
     border-color: var(--sage);
+}
+
+#answers button:disabled {
+    opacity: 0.65;
+    cursor: default;
 }
 
 #quizResult {
@@ -204,7 +244,7 @@ h3 {
 
 /* FALSCHE ANTWORT */
 .wrong-answer {
-    padding: 20px;
+    padding: 22px;
     margin-top: 15px;
     background: #f8e9e5;
     border: 1px solid #ebd2cb;
@@ -214,7 +254,7 @@ h3 {
 
 .wrong-label {
     color: var(--wrong);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -222,17 +262,8 @@ h3 {
     display: block;
     margin-top: 8px;
     color: var(--brown);
-    font-size: 26px;
+    font-size: 29px;
     font-weight: 800;
-}
-
-/* RICHTIGE ANTWORT */
-.correct-answer {
-    padding: 18px;
-    background: #e9efe5;
-    border-radius: 16px;
-    color: var(--sage-dark);
-    font-weight: 700;
 }
 
 /* BUTTONS */
@@ -300,30 +331,14 @@ textarea::placeholder {
     color: #aaa597;
 }
 
-/* ANMELDEBEREICH */
-.auth-panel {
-    margin-bottom: 25px;
-}
-
-.auth-panel h2 {
-    margin-top: 0;
-}
-
-.auth-panel p {
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.5;
-}
-
-#authStatus {
-    margin-top: 15px;
-    font-size: 14px;
-    overflow-wrap: anywhere;
+input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* VOKABELLISTE */
 #wordList {
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .word-item {
@@ -333,20 +348,29 @@ textarea::placeholder {
     gap: 12px;
     padding: 13px 15px;
     margin-bottom: 9px;
-    background: var(--card);
+    background: #faf8f1;
     border: 1px solid var(--border);
     border-radius: 13px;
 }
 
+.word-item span {
+    overflow-wrap: anywhere;
+}
+
 .word-item button {
     width: auto;
+    flex-shrink: 0;
     margin: 0;
     padding: 8px 13px;
     background: #f3e5e0;
     color: var(--wrong);
 }
 
-/* OCR SCANNER */
+.word-item button:hover {
+    background: #ebd2cb;
+}
+
+/* FOTO-SCANNER */
 #scanStatus {
     text-align: center;
     color: var(--muted);
@@ -357,19 +381,14 @@ textarea::placeholder {
     margin-top: 15px;
 }
 
-/* HILFSKLASSE */
-.hidden {
-    display: none !important;
-}
-
-/* HANDY-DESIGN */
+/* HANDY */
 @media (max-width: 500px) {
     header {
         padding-top: 25px;
     }
 
     header h1 {
-        font-size: 27px;
+        font-size: 29px;
     }
 
     main {
@@ -394,15 +413,20 @@ textarea::placeholder {
     }
 
     #quizWord {
-        font-size: 26px;
+        font-size: 27px;
     }
 
     nav {
-        gap: 6px;
+        gap: 7px;
     }
 
     nav button {
         padding: 9px 13px;
         font-size: 14px;
     }
+
+    .word-item {
+        align-items: flex-start;
+    }
 }
+

@@ -970,6 +970,7 @@ function checkQuizAnswer(
         }
         result.textContent = "Richtig!";
         if (quizMode === "errors") addXP(1);
+        else if (quizMode === "time") addXP(5);
         else if (quizMode !== "marathon") addXP(10);
         result.style.color = "#718466";
 

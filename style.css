@@ -616,3 +616,27 @@ input:disabled {
     background-color: #1b263d !important;
     color: #ffffff !important;
 }
+
+
+/* SPRACHFUNKTIONEN */
+.speech-button {
+    background: #26334d !important;
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border: 1px solid #465a82 !important;
+}
+
+.speech-button:hover,
+.speech-button:focus {
+    background: #1b263d !important;
+    background-color: #1b263d !important;
+    color: #ffffff !important;
+}
+
+.speech-status {
+    min-height: 1.4em;
+    margin: 8px 0;
+    color: var(--muted);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}

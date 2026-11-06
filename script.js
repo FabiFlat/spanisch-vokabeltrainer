@@ -656,9 +656,9 @@ function checkQuizAnswer(
 
     } else {
         result.innerHTML = `
-            <div class="wrong-answer">
-                <div class="wrong-label">Richtige Antwort:</div>
-                <div class="wrong-word">${escapeHTML(correctAnswer)}</div>
+            <div class="wrong-answer" style="background:#26334d !important;background-color:#26334d !important;border:1px solid #465a82 !important;border-radius:16px;padding:20px;margin-top:15px;text-align:center;color:#ffffff !important;">
+                <div class="wrong-label" style="color:#cbd3e5 !important;font-size:15px;font-weight:700;">Richtige Antwort:</div>
+                <div class="wrong-word" style="display:block;margin-top:8px;color:#ffffff !important;font-size:26px;font-weight:800;">${escapeHTML(correctAnswer)}</div>
             </div>
         `;
 

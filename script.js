@@ -544,11 +544,11 @@ function updateSessionControls() {
     const status = document.getElementById("quizSessionStatus");
     const button = document.getElementById("quizFinishSession");
     if (status) status.textContent = "Lernaktionen: " + sessionActions + "/5";
-    if (button) button.disabled = !ready || quizMode === "marathon";
+    if (button) button.disabled = !ready || quizMode === "marathon" || quizMode === "errors";
 }
 
 function finishLearningSession() {
-    if (sessionActions < 5 || quizMode === "marathon") return;
+    if (sessionActions < 5 || quizMode === "marathon" || quizMode === "errors") return;
     sessionsCompleted++;
     addXP(20);
     sessionActions = 0;
@@ -969,7 +969,8 @@ function checkQuizAnswer(
             saveWrongVocabulary();
         }
         result.textContent = "Richtig!";
-        if (quizMode !== "marathon") addXP(10);
+        if (quizMode === "errors") addXP(1);
+        else if (quizMode !== "marathon") addXP(10);
         result.style.color = "#718466";
 
         correct++;

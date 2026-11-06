@@ -1675,7 +1675,20 @@ function loadColorTheme() {
         }
     }
 
-    setColorTheme(colorThemes[savedTheme] ? savedTheme : "sage");
+    // Beim Laden darf ein gespeichertes Design nicht wegen noch
+    // nicht geladener Cloud-XP auf LoFi zurückgesetzt werden.
+    const themeToApply = colorThemes[savedTheme] ? savedTheme : "sage";
+    const theme = colorThemes[themeToApply];
+    Object.entries(theme).forEach(([property, value]) => {
+        if (property.startsWith("--")) {
+            document.documentElement.style.setProperty(property, value);
+        }
+    });
+    document.querySelectorAll(".theme-option").forEach(button => {
+        button.classList.toggle("active", button.dataset.themeChoice === themeToApply);
+    });
+    const status = document.getElementById("themeStatus");
+    if (status) status.textContent = "Aktuelles Design: " + theme.name;
     syncCustomColorInputs();
 }
 

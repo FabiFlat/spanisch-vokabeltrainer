@@ -1,35 +1,20 @@
 
-// ==========================================
-// SPANISCH VOKABELTRAINER – LOFI DESIGN
-// ==========================================
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
-// ==========================================
-// FARBEN
-// ==========================================
-
+/* GRUNDDESIGN */
 :root {
     --background: #f4f0e7;
     --surface: #fffdf7;
-    --surface-dark: #ebe6d9;
-
-    --primary: #a4b394;
-    --primary-dark: #718466;
-    --primary-light: #dce4d3;
-
-    --text: #45483f;
-    --text-light: #858477;
-
-    --border: #e5e0d3;
-    --danger: #c47e76;
-
-    --shadow: 0 5px 18px rgba(80, 75, 55, 0.07);
+    --surface-dark: #eae5d9;
+    --primary: #82947b;
+    --primary-dark: #687d61;
+    --text: #46483f;
+    --text-light: #858579;
+    --border: #e5e0d5;
+    --danger: #c97970;
+    --success: #789879;
+    --shadow: 0 8px 25px rgba(80, 75, 60, 0.07);
 }
-
-// ==========================================
-// GRUNDEINSTELLUNGEN
-// ==========================================
 
 * {
     box-sizing: border-box;
@@ -37,104 +22,136 @@
 
 body {
     margin: 0;
-    padding: 0;
+    min-height: 100vh;
     background: var(--background);
     color: var(--text);
     font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
+    padding: 25px 16px 50px;
 }
 
-h1, h2, h3 {
-    color: var(--text);
-    font-weight: 800;
-    margin-top: 0;
-}
-
-h1 {
-    font-size: 30px;
-}
-
-h2 {
-    font-size: 23px;
-}
-
-h3 {
-    font-size: 18px;
-}
-
-p {
-    color: var(--text-light);
-}
-
-// ==========================================
-// HAUPTBEREICH
-// ==========================================
-
-.container,
+/* ALLGEMEINER BEREICH */
+header,
 main {
     width: 100%;
-    max-width: 900px;
+    max-width: 850px;
     margin: 0 auto;
-    padding: 25px;
 }
 
 header {
     text-align: center;
-    padding: 30px 15px 20px;
+    margin-bottom: 28px;
 }
 
 header h1 {
-    margin-bottom: 5px;
-    letter-spacing: -0.5px;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 10px 0 5px;
+    color: #596b54;
 }
 
 header p {
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* ANMELDUNG */
+.auth-panel,
+#account {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+}
+
+.auth-panel h2,
+#account h2 {
     margin-top: 0;
 }
 
-// ==========================================
-// NAVIGATION
-// ==========================================
+input {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fffefa;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+    margin: 6px 0;
+}
 
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(130, 148, 123, 0.13);
+}
+
+#authStatus,
+#scanStatus {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* NAVIGATION */
 nav {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px auto 30px;
-    padding: 0 15px;
+    justify-content: center;
+    gap: 9px;
+    margin: 22px 0;
 }
 
 nav button {
-    background: var(--surface);
-    color: var(--text-light);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 11px 19px;
+    background: #e8e4d9;
+    color: #62675b;
+    box-shadow: none;
+}
+
+nav button:hover,
+nav button.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* BUTTONS */
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 19px;
+    background: var(--primary);
+    color: white;
     font-family: inherit;
-    font-weight: 700;
+    font-size: 0.96rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: background 0.2s, transform 0.2s;
 }
 
-nav button:hover {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    transform: translateY(-2px);
+button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
-// ==========================================
-// SEITEN
-// ==========================================
+button:active {
+    transform: scale(0.98);
+}
 
+#signOutButton {
+    background: #e8e4d9;
+    color: var(--text);
+}
+
+/* SEITEN */
 .page {
-    width: 100%;
+    display: none;
     animation: fadeIn 0.3s ease;
 }
 
-.hidden {
-    display: none !important;
+.page.active {
+    display: block;
 }
 
 @keyframes fadeIn {
@@ -148,448 +165,188 @@ nav button:hover {
     }
 }
 
-// ==========================================
-// KARTEN UND BEREICHE
-// ==========================================
-
+/* KARTEN UND BEREICHE */
 .card,
 .stat-card,
-.auth-panel,
 .quiz-card,
-section {
+.auth-panel,
+#account {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
     box-shadow: var(--shadow);
 }
 
-.card {
-    padding: 25px;
-    margin-bottom: 20px;
+.card,
+.quiz-card {
+    padding: 28px;
+    margin: 15px 0;
+    text-align: center;
 }
 
-section {
-    padding: 25px;
-    margin-bottom: 20px;
+.card h2,
+.quiz-card h2 {
+    color: var(--primary-dark);
 }
 
-// ==========================================
-// STATISTIKEN
-// ==========================================
-
+/* STARTSEITE / STATISTIK */
 .stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    margin-bottom: 25px;
+    margin: 20px 0;
 }
 
 .stat-card {
+    padding: 22px;
     text-align: center;
-    padding: 20px;
 }
 
 .stat-card h2 {
-    font-size: 30px;
-    color: var(--primary-dark);
     margin: 0;
+    font-size: 2rem;
+    color: var(--primary-dark);
 }
 
 .stat-card p {
     margin: 5px 0 0;
-    font-weight: 700;
+    color: var(--text-light);
 }
 
-// ==========================================
-// BUTTONS
-// ==========================================
-
-button {
-    font-family: 'Nunito', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-    color: white;
-    background: var(--primary-dark);
-    border: none;
-    border-radius: 13px;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-button:hover {
-    background: #62765a;
-    transform: translateY(-2px);
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-}
-
-button.secondary,
-.secondary {
-    background: var(--surface-dark);
-    color: var(--text);
-}
-
-button.secondary:hover {
-    background: var(--primary-light);
-}
-
-button.danger {
-    background: var(--danger);
-}
-
-// ==========================================
-// EINGABEFELDER
-// ==========================================
-
-input,
-textarea,
-select {
-    width: 100%;
-    padding: 14px 16px;
-    margin: 7px 0 14px;
-    border: 1px solid var(--border);
-    border-radius: 13px;
-    background: #fffefa;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    outline: none;
-    transition: border 0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(164, 179, 148, 0.18);
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: #aaa89d;
-}
-
-// ==========================================
-// KARTEIKARTEN
-// ==========================================
-
+/* VOKABELKARTEN */
 #spanishWord {
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 800;
-    text-align: center;
     color: var(--primary-dark);
     margin: 25px 0;
-    overflow-wrap: anywhere;
 }
 
 #translation {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--text);
-    background: var(--primary-light);
-    border-radius: 15px;
-    padding: 20px;
-    margin: 15px 0;
-    overflow-wrap: anywhere;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 20px 0;
 }
 
-// ==========================================
-// VOKABELTEST
-// ==========================================
-
-#quiz {
-    max-width: 650px;
-    margin: 0 auto;
-}
-
+/* QUIZ */
 #quizWord {
-    text-align: center;
-    font-size: 32px;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--primary-dark);
-    background: var(--primary-light);
-    border-radius: 18px;
-    padding: 28px 18px;
-    margin: 20px 0;
-    overflow-wrap: anywhere;
+    margin: 25px 0;
 }
 
 #answers {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
+    margin: 20px 0;
 }
 
 #answers button {
-    width: 100%;
-    min-height: 50px;
-    background: var(--surface);
+    min-height: 55px;
+    background: #eeece3;
     color: var(--text);
     border: 1px solid var(--border);
-    text-align: center;
-    font-size: 16px;
 }
 
-#answers button:hover:not(:disabled) {
-    background: var(--primary-light);
-    border-color: var(--primary);
-    color: var(--primary-dark);
+#answers button:hover {
+    background: #dce4d6;
 }
-
-.quiz-direction {
-    color: var(--primary-dark);
-    font-weight: 800;
-    text-align: center;
-    margin: 5px 0;
-}
-
-.quiz-type {
-    color: var(--text-light);
-    text-align: center;
-    font-weight: 700;
-    margin: 5px 0 12px;
-}
-
-// ==========================================
-// SCHREIBFRAGEN
-// ==========================================
-
-#writtenAnswer {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: 13px;
-    background: #fffefa;
-    font-family: 'Nunito', sans-serif;
-    font-size: 18px;
-    margin-bottom: 5px;
-    color: var(--text);
-}
-
-#writtenAnswer:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(164, 179, 148, 0.18);
-}
-
-#answers button.next-question-button {
-    background: var(--primary-dark);
-    color: white;
-    margin-top: 10px;
-}
-
-// ==========================================
-// QUIZ-ERGEBNIS
-// ==========================================
 
 #quizResult {
-    text-align: center;
-    font-size: 18px;
+    font-size: 1.1rem;
     font-weight: 800;
-    margin: 15px 0;
+    margin: 18px 0;
 }
 
-.wrong-answer {
-    background: #f3e6df;
-    border: 1px solid #e8d2c8;
-    border-radius: 17px;
-    padding: 18px;
-    margin: 15px 0;
-    text-align: center;
+/* VOKABELVERWALTUNG */
+#wordList {
+    margin-top: 20px;
 }
 
-.wrong-label {
-    color: #98756c;
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 5px;
-}
-
-.wrong-word {
-    color: #6d5149;
-    font-size: 25px;
-    font-weight: 800;
-    overflow-wrap: anywhere;
-}
-
-// ==========================================
-// VOKABELLISTE
-// ==========================================
-
-.word-item {
+#wordList > div {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    background: #faf8f1;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 13px;
-    padding: 12px 15px;
-    margin-bottom: 10px;
+    padding: 13px 16px;
+    margin: 9px 0;
 }
 
-.word-item span {
-    font-weight: 700;
-    overflow-wrap: anywhere;
+#wordList button {
+    background: #f0dfda;
+    color: #a65e55;
+    padding: 8px 12px;
 }
 
-.word-item button {
-    background: var(--danger);
-    padding: 8px 13px;
-    font-size: 13px;
-    flex-shrink: 0;
-}
-
-// ==========================================
-// ANMELDUNG UND SYNCHRONISIERUNG
-// ==========================================
-
-.auth-panel {
-    padding: 22px;
-    margin-bottom: 25px;
-}
-
-.auth-panel h2 {
-    margin-bottom: 10px;
-}
-
-.auth-panel p {
-    font-size: 14px;
-}
-
-.auth-panel.logged-in {
-    padding: 12px 20px;
-    margin-bottom: 20px;
-    border-radius: 15px;
-}
-
-.auth-panel.logged-in h2 {
-    display: none;
-}
-
-.auth-panel.logged-in p {
-    margin: 5px 0;
-}
-
-.auth-panel.logged-in button {
-    margin-top: 5px;
-}
-
-#signOutButton {
-    margin-top: 10px;
-}
-
-// ==========================================
-// FOTO-SCAN
-// ==========================================
-
-#scanStatus {
-    color: var(--primary-dark);
-    font-weight: 700;
-    margin: 12px 0;
-}
-
-#scanEditor {
-    margin-top: 15px;
-}
-
+/* SCANNER */
+#scanEditor,
 #scanText {
-    min-height: 180px;
-    resize: vertical;
+    width: 100%;
+    min-height: 150px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fffefa;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    margin: 10px 0;
 }
 
-// ==========================================
-// FOOTER
-// ==========================================
-
-footer {
-    text-align: center;
-    padding: 25px 15px;
-    color: var(--text-light);
-    font-size: 13px;
+/* ALLGEMEINE ABSTÄNDE */
+h2 {
+    font-weight: 800;
 }
 
-// ==========================================
-// RESPONSIVE DESIGN – HANDY UND TABLET
-// ==========================================
+p {
+    line-height: 1.6;
+}
 
+section {
+    margin-bottom: 20px;
+}
+
+/* HANDY */
 @media (max-width: 600px) {
-    .container,
-    main {
-        padding: 15px;
-    }
-
-    header {
-        padding: 22px 12px 12px;
+    body {
+        padding: 15px 12px 35px;
     }
 
     header h1 {
-        font-size: 25px;
+        font-size: 1.8rem;
     }
 
     nav {
         gap: 7px;
-        margin-bottom: 20px;
     }
 
     nav button {
-        padding: 9px 12px;
-        font-size: 13px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
     }
 
-    section,
-    .card {
-        padding: 18px;
-        border-radius: 17px;
-    }
-
-    #quizWord {
-        font-size: 27px;
-        padding: 22px 14px;
-    }
-
-    #spanishWord {
-        font-size: 27px;
-    }
-
-    #translation {
-        font-size: 21px;
-    }
-
-    .word-item {
-        align-items: flex-start;
-    }
-
-    .word-item button {
-        padding: 8px 10px;
-    }
-
-    button {
-        padding: 12px 15px;
-    }
-}
-
-@media (max-width: 380px) {
     .stats {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 16px 10px;
+    }
+
+    .card,
+    .quiz-card {
+        padding: 20px 15px;
+    }
+
+    #answers {
         grid-template-columns: 1fr;
     }
 
-    .word-item {
-        flex-direction: column;
-    }
-
-    .word-item button {
-        width: 100%;
+    #wordList > div {
+        align-items: flex-start;
     }
 }

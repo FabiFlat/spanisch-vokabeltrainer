@@ -1050,7 +1050,7 @@ const colorThemes = {
         "--sage-dark": "#a5b5d7", "--brown": "#d8def0", "--text": "#edf0fa",
         "--muted": "#a3acc2", "--border": "#424d65", "--wrong": "#d58b82",
         "--correct": "#91b89a",
-        "--button-text": "#f4f6ff", "--button-bg": "#465a82", "--button-hover": "#354667", name: "Mitternacht"
+        "--button-text": "#ffffff", "--button-bg": "#26334d", "--button-hover": "#1b263d", name: "Mitternacht"
     },
 };
 

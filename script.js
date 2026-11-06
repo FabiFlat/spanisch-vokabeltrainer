@@ -772,7 +772,7 @@ function nextQuestion() {
      */
     const multipleChoice = quizDifficulty === "easy"
         ? true
-        : quizDifficulty === "hard"
+        : quizDifficulty === "medium"
             ? false
             : Math.random() < 0.5;
 

@@ -54,10 +54,13 @@ function setAuthStatus(message) {
 function updateAuthPanel() {
     const loggedIn = Boolean(currentUser);
 
-    document.getElementById("signOutButton").classList.toggle("hidden", !loggedIn);
+    const controls = document.getElementById("authControls");
+    const panel = document.getElementById("account");
+    const signOutButton = document.getElementById("signOutButton");
 
-    document.getElementById("authEmail").disabled = loggedIn;
-    document.getElementById("authPassword").disabled = loggedIn;
+    controls.classList.toggle("hidden", loggedIn);
+    signOutButton.classList.toggle("hidden", !loggedIn);
+    panel.classList.toggle("logged-in", loggedIn);
 
     setAuthStatus(
         loggedIn
@@ -164,7 +167,7 @@ async function loadUserData() {
         words = Array.isArray(data.words) ? data.words : [...defaultWords];
         correct = Number(data.correct) || 0;
     } else {
-        // Beim ersten Anmelden vorhandene lokale Vokabeln übernehmen
+        // Beim ersten Anmelden lokale Vokabeln übernehmen
         syncReady = true;
         await saveDataToCloud();
     }
@@ -507,7 +510,7 @@ function importScannedWords() {
 }
 
 // ==========================================
-// WEBSITE STARTEN UND ANMELDESTATUS PRÜFEN
+// WEBSITE STARTEN
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -534,6 +537,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (user?.id !== currentUser?.id) {
             currentUser = user;
+
             if (currentUser) {
                 loadUserData();
             } else {

@@ -520,11 +520,8 @@ function createWrittenAnswer(
 
 function normalizeAnswer(answer) {
     return String(answer)
+        .normalize("NFC")
         .trim()
-        .toLocaleLowerCase("de")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[¿?¡!.,;:]/g, "")
         .replace(/\s+/g, " ");
 }
 

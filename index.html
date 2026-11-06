@@ -7,7 +7,6 @@
     <title>Español – Vokabeltrainer</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>
@@ -24,40 +23,26 @@
 
 <main>
 
-    <!-- ANMELDUNG UND SYNCHRONISIERUNG -->
     <section class="auth-panel" id="account">
         <h2>Synchronisierung</h2>
-        <p>Melde dich an, um deine Vokabeln auf allen Geräten zu synchronisieren.</p>
 
-        <input
-            type="email"
-            id="authEmail"
-            placeholder="E-Mail-Adresse"
-            autocomplete="email"
-        >
+        <div id="authControls">
+            <p>Melde dich an, um deine Vokabeln auf allen Geräten zu synchronisieren.</p>
 
-        <input
-            type="password"
-            id="authPassword"
-            placeholder="Passwort"
-            autocomplete="current-password"
-        >
+            <input type="email" id="authEmail" placeholder="E-Mail-Adresse">
+            <input type="password" id="authPassword" placeholder="Passwort">
 
-        <button onclick="signUp()">Konto erstellen</button>
-        <button class="secondary" onclick="signIn()">Anmelden</button>
-
-        <button
-            id="signOutButton"
-            class="secondary hidden"
-            onclick="signOut()"
-        >
-            Abmelden
-        </button>
+            <button onclick="signUp()">Konto erstellen</button>
+            <button class="secondary" onclick="signIn()">Anmelden</button>
+        </div>
 
         <p id="authStatus">Du bist nicht angemeldet.</p>
+
+        <button id="signOutButton" class="secondary hidden" onclick="signOut()">
+            Abmelden
+        </button>
     </section>
 
-    <!-- STARTSEITE -->
     <section class="page" id="home">
         <h2>Mein Spanisch-Lernbereich</h2>
 
@@ -74,7 +59,6 @@
         </div>
     </section>
 
-    <!-- KARTEIKARTEN -->
     <section class="page hidden" id="cards">
         <h2>Karteikarten</h2>
 
@@ -87,7 +71,6 @@
         <button class="secondary" onclick="nextCard()">Nächste Vokabel</button>
     </section>
 
-    <!-- VOKABELTEST -->
     <section class="page hidden" id="quiz">
         <h2>Vokabeltest</h2>
 
@@ -98,48 +81,28 @@
         </div>
     </section>
 
-    <!-- VOKABELN VERWALTEN -->
     <section class="page hidden" id="manage">
         <h2>Vokabeln verwalten</h2>
 
         <div class="card">
             <h3>Neue Vokabel hinzufügen</h3>
 
-            <input
-                type="text"
-                id="newSpanish"
-                placeholder="Spanisches Wort"
-            >
-
-            <input
-                type="text"
-                id="newGerman"
-                placeholder="Deutsche Übersetzung"
-            >
+            <input type="text" id="newSpanish" placeholder="Spanisches Wort">
+            <input type="text" id="newGerman" placeholder="Deutsche Übersetzung">
 
             <button onclick="addWord()">Vokabel hinzufügen</button>
         </div>
 
         <div class="card">
             <h3>Vokabeln per Foto erkennen</h3>
-
             <p>Wähle ein Foto deiner Vokabelliste aus.</p>
 
-            <input
-                type="file"
-                id="scanImage"
-                accept="image/*"
-                onchange="scanVocabulary(event)"
-            >
+            <input type="file" id="scanImage" accept="image/*" onchange="scanVocabulary(event)">
 
             <p id="scanStatus"></p>
 
             <div id="scanEditor" class="hidden">
-                <textarea
-                    id="scanText"
-                    rows="8"
-                    placeholder="Erkannte Vokabeln"
-                ></textarea>
+                <textarea id="scanText" rows="8" placeholder="Erkannte Vokabeln"></textarea>
 
                 <button onclick="importScannedWords()">
                     Erkannte Vokabeln übernehmen
@@ -155,11 +118,8 @@
 
 </main>
 
-<!-- BIBLIOTHEKEN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-<!-- DEIN JAVASCRIPT -->
 <script src="script.js"></script>
 
 </body>

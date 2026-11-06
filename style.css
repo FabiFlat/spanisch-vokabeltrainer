@@ -562,3 +562,74 @@ input:disabled {
     background: var(--card);
     cursor: pointer;
 }
+
+
+/* KONTRAST-FIX: ALLE BUTTONS IN JEDEM FARBTHEMA */
+button {
+    color: var(--button-text, var(--text)) !important;
+}
+
+button:hover,
+nav button:hover {
+    color: var(--button-text, var(--text)) !important;
+    filter: brightness(0.94);
+}
+
+/* Sekundäre Buttons */
+button.secondary,
+button.secondary:hover {
+    background: color-mix(in srgb, var(--sage) 24%, var(--card)) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border);
+}
+
+/* Quiz-Antwortmöglichkeiten */
+#answers button {
+    background: color-mix(in srgb, var(--sage) 20%, var(--card)) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border);
+}
+#answers button:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--sage) 38%, var(--card)) !important;
+    color: var(--text) !important;
+}
+#answers button:disabled {
+    color: var(--text) !important;
+    opacity: 1;
+}
+
+/* Löschen und Bearbeiten */
+.word-item button,
+.word-item button.edit-word-button {
+    background: color-mix(in srgb, var(--wrong) 20%, var(--card)) !important;
+    color: var(--text) !important;
+    border: 1px solid color-mix(in srgb, var(--wrong) 45%, var(--border));
+}
+.word-item button.edit-word-button {
+    background: color-mix(in srgb, var(--sage) 24%, var(--card)) !important;
+    border-color: var(--border);
+}
+.word-item button:hover,
+.word-item button.edit-word-button:hover {
+    filter: brightness(0.94);
+}
+
+/* Farbauswahl-Buttons */
+.theme-option,
+.theme-option:hover {
+    background: var(--card) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border);
+}
+.theme-option.active {
+    border: 2px solid var(--sage-dark);
+}
+
+/* Navigationsbuttons bleiben auch beim Darüberfahren lesbar */
+nav button {
+    color: var(--brown);
+}
+nav button:hover {
+    background: color-mix(in srgb, var(--sage) 35%, var(--card)) !important;
+    color: var(--text) !important;
+}

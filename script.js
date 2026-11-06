@@ -663,6 +663,7 @@ function showWordList() {
     sortedWords.forEach(({ word, index }) => {
         const item = document.createElement("div");
         item.className = "word-item";
+        item.dataset.index = String(index);
 
         const text = document.createElement("span");
         text.className = "word-item-text";
@@ -702,15 +703,9 @@ function editWord(index) {
     if (!word) return;
 
     const list = document.getElementById("wordList");
-    const item = [...list.querySelectorAll(".word-item")].find(row =>
-        row.querySelector(".edit-word-button")?.onclick
-    );
-
-    // Die Bearbeitungsansicht wird in der sortierten Liste anhand des Wortinhalts gefunden.
-    const rows = [...list.querySelectorAll(".word-item")];
-    const targetRow = rows.find(row =>
-        row.querySelector(".word-item-text")?.textContent ===
-        word.spanish + " – " + word.german
+    // Über den gespeicherten Originalindex wird auch bei doppelten Wörtern die richtige Zeile bearbeitet.
+    const targetRow = [...list.querySelectorAll(".word-item")].find(row =>
+        row.dataset.index === String(index)
     );
 
     if (!targetRow) return;

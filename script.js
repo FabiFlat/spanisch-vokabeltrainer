@@ -135,7 +135,7 @@ function nextQuestion() {
                 saveData();
                 updateStats();
 
-                // AUTOMATISCH WEITER BEI RICHTIGER ANTWORT
+                // AUTOMATISCH WEITER NACH 0,7 SEKUNDEN
                 setTimeout(() => {
                     if (!document.getElementById("quiz").classList.contains("hidden")) {
                         nextQuestion();

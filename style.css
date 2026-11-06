@@ -696,3 +696,15 @@ button:disabled,
     background: color-mix(in srgb, var(--sage) 40%, #101010) !important;
     color: #ffffff !important;
 }
+
+
+/* QUIZ: Buttons deutlich dunkler darstellen */
+#quiz button {
+    background: color-mix(in srgb, var(--sage) 25%, #171717) !important;
+    color: #ffffff !important;
+    border: 1px solid color-mix(in srgb, var(--sage) 30%, #080808) !important;
+}
+#quiz button:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--sage) 35%, #080808) !important;
+    color: #ffffff !important;
+}

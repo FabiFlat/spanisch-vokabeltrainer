@@ -219,14 +219,47 @@
                 <button type="button" class="theme-option" data-theme-choice="dark" onclick="setColorTheme('dark')">
                     <span class="theme-swatch theme-dark"></span> Dunkel
                 </button>
+                <button type="button" class="theme-option" data-theme-choice="forest" onclick="setColorTheme('forest')">
+                    <span class="theme-swatch theme-forest"></span> Wald
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="peach" onclick="setColorTheme('peach')">
+                    <span class="theme-swatch theme-peach"></span> Pfirsich
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="matcha" onclick="setColorTheme('matcha')">
+                    <span class="theme-swatch theme-matcha"></span> Matcha
+                </button>
+                <button type="button" class="theme-option" data-theme-choice="midnight" onclick="setColorTheme('midnight')">
+                    <span class="theme-swatch theme-midnight"></span> Mitternacht
+                </button>
             </div>
             <p id="themeStatus" class="theme-status">Aktuelles Design: LoFi Sage</p>
+        </div>
+
+        <div class="card">
+            <h3>Eigene Farben erstellen</h3>
+            <p>Wähle jede Farbe selbst aus. Die Änderungen werden sofort übernommen und automatisch gespeichert.</p>
+            <div class="custom-color-grid">
+                <label>Hintergrund <input type="color" data-css-var="--background" value="#f4f1e9" oninput="updateCustomColor(this)"></label>
+                <label>Karten <input type="color" data-css-var="--card" value="#fffdf7" oninput="updateCustomColor(this)"></label>
+                <label>Hauptfarbe <input type="color" data-css-var="--sage" value="#9eaa91" oninput="updateCustomColor(this)"></label>
+                <label>Dunklere Hauptfarbe <input type="color" data-css-var="--sage-dark" value="#78866c" oninput="updateCustomColor(this)"></label>
+                <label>Überschriften <input type="color" data-css-var="--brown" value="#625b4e" oninput="updateCustomColor(this)"></label>
+                <label>Text <input type="color" data-css-var="--text" value="#45443d" oninput="updateCustomColor(this)"></label>
+                <label>Nebentext <input type="color" data-css-var="--muted" value="#999487" oninput="updateCustomColor(this)"></label>
+                <label>Rahmen <input type="color" data-css-var="--border" value="#e6e1d6" oninput="updateCustomColor(this)"></label>
+                <label>Falsche Antwort <input type="color" data-css-var="--wrong" value="#c77d70" oninput="updateCustomColor(this)"></label>
+                <label>Richtige Antwort <input type="color" data-css-var="--correct" value="#829879" oninput="updateCustomColor(this)"></label>
+            </div>
+            <button type="button" class="secondary" onclick="resetCustomColors()">Eigene Farben zurücksetzen</button>
+            <p class="theme-status">Tipp: Klicke auf ein Farbfeld, um den Farbton zu ändern.</p>
+        </div>
+    </section>
         </div>
     </section>
 
 </main>
 
-<script src="script.js?v=11"></script>
+<script src="script.js?v=12"></script>
 
 </body>
 </html>

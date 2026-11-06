@@ -1022,7 +1022,7 @@ const colorThemes = {
         "--sage-dark": "#a2b9aa", "--brown": "#d5cfc3", "--text": "#eeeae2",
         "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
         "--correct": "#9ab895",
-        "--button-text": "#f5f5f2", name: "Dunkel"
+        "--button-text": "#f5f5f2", "--button-bg": "#536d60", "--button-hover": "#40564b", name: "Dunkel"
     },
     forest: {
         "--background": "#edf1e8", "--card": "#fbfff8", "--sage": "#8fa88b",
@@ -1050,7 +1050,7 @@ const colorThemes = {
         "--sage-dark": "#a5b5d7", "--brown": "#d8def0", "--text": "#edf0fa",
         "--muted": "#a3acc2", "--border": "#424d65", "--wrong": "#d58b82",
         "--correct": "#91b89a",
-        "--button-text": "#f4f6ff", name: "Mitternacht"
+        "--button-text": "#f4f6ff", "--button-bg": "#465a82", "--button-hover": "#354667", name: "Mitternacht"
     },
 };
 

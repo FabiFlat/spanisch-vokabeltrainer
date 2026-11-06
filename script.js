@@ -993,55 +993,64 @@ const colorThemes = {
         "--background": "#f4f1e9", "--card": "#fffdf7", "--sage": "#9eaa91",
         "--sage-dark": "#78866c", "--brown": "#625b4e", "--text": "#45443d",
         "--muted": "#999487", "--border": "#e6e1d6", "--wrong": "#c77d70",
-        "--correct": "#829879", name: "LoFi Sage"
+        "--correct": "#829879",
+        "--button-text": "#30352d", name: "LoFi Sage"
     },
     lavender: {
         "--background": "#f2eff8", "--card": "#fffaff", "--sage": "#b7a9d2",
         "--sage-dark": "#8877ad", "--brown": "#625875", "--text": "#484253",
         "--muted": "#958ca4", "--border": "#e4ddec", "--wrong": "#c77d8e",
-        "--correct": "#829b91", name: "Lavendel"
+        "--correct": "#829b91",
+        "--button-text": "#332d40", name: "Lavendel"
     },
     ocean: {
         "--background": "#edf4f5", "--card": "#fbffff", "--sage": "#91b8bf",
         "--sage-dark": "#608f98", "--brown": "#49666d", "--text": "#354b50",
         "--muted": "#81969a", "--border": "#d8e6e8", "--wrong": "#c77d70",
-        "--correct": "#719b91", name: "Ozean"
+        "--correct": "#719b91",
+        "--button-text": "#263b40", name: "Ozean"
     },
     rose: {
         "--background": "#f8eeee", "--card": "#fffafa", "--sage": "#d6adb4",
         "--sage-dark": "#ad7f89", "--brown": "#765860", "--text": "#514247",
         "--muted": "#a18e93", "--border": "#eadcdf", "--wrong": "#bd716f",
-        "--correct": "#829879", name: "Rosé"
+        "--correct": "#829879",
+        "--button-text": "#49363b", name: "Rosé"
     },
     dark: {
         "--background": "#25272b", "--card": "#32363b", "--sage": "#82988b",
         "--sage-dark": "#a2b9aa", "--brown": "#d5cfc3", "--text": "#eeeae2",
         "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
-        "--correct": "#9ab895", name: "Dunkel"
+        "--correct": "#9ab895",
+        "--button-text": "#202522", name: "Dunkel"
     },
     forest: {
         "--background": "#edf1e8", "--card": "#fbfff8", "--sage": "#8fa88b",
         "--sage-dark": "#607c60", "--brown": "#455b48", "--text": "#344338",
         "--muted": "#829184", "--border": "#dce5d8", "--wrong": "#c77d70",
-        "--correct": "#668d6c", name: "Wald"
+        "--correct": "#668d6c",
+        "--button-text": "#26372a", name: "Wald"
     },
     peach: {
         "--background": "#fbf0e7", "--card": "#fffaf5", "--sage": "#e5ad8c",
         "--sage-dark": "#bd8061", "--brown": "#805d4b", "--text": "#57463d",
         "--muted": "#a58d80", "--border": "#efdfd2", "--wrong": "#c87975",
-        "--correct": "#829879", name: "Pfirsich"
+        "--correct": "#829879",
+        "--button-text": "#493326", name: "Pfirsich"
     },
     matcha: {
         "--background": "#f0f2e5", "--card": "#fcfdf5", "--sage": "#b4bd83",
         "--sage-dark": "#87945b", "--brown": "#626b43", "--text": "#414833",
         "--muted": "#92977b", "--border": "#e1e5cf", "--wrong": "#c77d70",
-        "--correct": "#829879", name: "Matcha"
+        "--correct": "#829879",
+        "--button-text": "#343b24", name: "Matcha"
     },
     midnight: {
         "--background": "#202638", "--card": "#2c354a", "--sage": "#8295bd",
         "--sage-dark": "#a5b5d7", "--brown": "#d8def0", "--text": "#edf0fa",
         "--muted": "#a3acc2", "--border": "#424d65", "--wrong": "#d58b82",
-        "--correct": "#91b89a", name: "Mitternacht"
+        "--correct": "#91b89a",
+        "--button-text": "#202638", name: "Mitternacht"
     },
 };
 

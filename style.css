@@ -633,3 +633,51 @@ nav button:hover {
     background: color-mix(in srgb, var(--sage) 35%, var(--card)) !important;
     color: var(--text) !important;
 }
+
+
+/* EINHEITLICHES BUTTON-DESIGN – alle Buttons wie „Quiz starten“ */
+button,
+button.secondary,
+nav button,
+#answers button,
+.word-item button,
+.word-item button.edit-word-button,
+.theme-option {
+    background: var(--sage) !important;
+    color: var(--button-text, var(--text)) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    font-family: inherit !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    box-shadow: none;
+}
+
+button:hover,
+button.secondary:hover,
+nav button:hover,
+#answers button:hover:not(:disabled),
+.word-item button:hover,
+.word-item button.edit-word-button:hover,
+.theme-option:hover {
+    background: var(--sage-dark) !important;
+    color: var(--button-text, var(--text)) !important;
+    filter: none !important;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled,
+#answers button:disabled {
+    opacity: 0.72;
+    cursor: default;
+    transform: none;
+}
+
+.theme-option.active {
+    outline: 2px solid var(--sage-dark);
+    outline-offset: 2px;
+}

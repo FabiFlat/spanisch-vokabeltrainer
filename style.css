@@ -705,7 +705,12 @@ input:disabled {
 .xp-progress-text, .xp-session-status { color: var(--muted); font-size: 14px; margin: 9px 0; }
 .xp-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
 .xp-badge { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 12px; }
-.xp-badge.earned { background: #e9efe5; border-color: #cbd8c4; color: #526449; font-weight: 800; }
+.xp-badge.earned {
+    background: var(--sage-dark);
+    border-color: var(--sage-dark);
+    color: #ffffff;
+    font-weight: 800;
+}
 .xp-finish-button:disabled { opacity: .45; cursor: not-allowed; }
 
 
@@ -756,7 +761,8 @@ input:disabled {
 }
 .xp-roadmap-item.earned {
     border-color: var(--sage-dark);
-    background: color-mix(in srgb, var(--sage-dark) 18%, var(--card));
+    background: var(--sage);
+    background: color-mix(in srgb, var(--sage-dark) 42%, var(--card));
 }
 .xp-roadmap-item.locked {
     opacity: .72;

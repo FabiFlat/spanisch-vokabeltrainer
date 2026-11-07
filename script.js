@@ -817,6 +817,7 @@ async function resetLearningProgress() {
         if (profileError) console.warn("Profil-Titel konnte nicht aktualisiert werden:", profileError);
 
         renderUnlockStatus();
+        setColorTheme("sage");
         updateStats();
         updateXPDisplay();
         renderProfilePage();

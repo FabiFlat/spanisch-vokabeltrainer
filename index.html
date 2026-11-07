@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=37">
+    <link rel="stylesheet" href="style.css?v=38">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -252,6 +252,13 @@
             <p>Freigeschaltete Designs kannst du direkt hier auswählen. Weitere Designs werden mit XP oder einem Freischaltcode verfügbar.</p>
             <div id="profileThemes" class="profile-theme-list"></div>
         </div>
+
+        <div class="card">
+            <h3>Lernfortschritt zurücksetzen</h3>
+            <p>Setzt deine XP, Level, gelernten Vokabeln, Statistiken und Freischaltcodes zurück. Deine eingescannten und selbst hinzugefügten Vokabeln sowie dein Benutzerkonto bleiben erhalten. Auch deine Wochen-XP werden auf 0 gesetzt.</p>
+            <button type="button" id="resetProgressButton" class="danger-button" onclick="resetLearningProgress()">Fortschritt zurücksetzen</button>
+            <p id="resetProgressStatus" class="theme-status" aria-live="polite"></p>
+        </div>
     </section>
 
     <!-- WOCHEN-BESTENLISTE -->
@@ -363,7 +370,7 @@
 
 </main>
 
-<script src="script.js?v=37"></script>
+<script src="script.js?v=38"></script>
 
 </body>
 </html>

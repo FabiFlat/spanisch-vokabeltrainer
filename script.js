@@ -88,6 +88,8 @@ function updateQuizModeStatus() {
         status.textContent = "Zeit-Challenge: " + quizTimeLeft + " Sekunden · " + quizModeCorrect + " richtig";
     } else if (quizMode === "errors") {
         status.textContent = "Fehlertraining: " + wrongVocabulary.length + " Vokabeln zum Wiederholen";
+    } else if (quizMode === "test") {
+        status.textContent = "Test: " + activeTestSet;
     } else {
         status.textContent = "Normaler Quizmodus";
     }
@@ -715,6 +717,7 @@ function updateSessionControls() {
         button.disabled = !ready ||
             quizMode === "marathon" ||
             quizMode === "errors" ||
+            quizMode === "test" ||
             quizMode === "time";
     }
 }
@@ -723,6 +726,7 @@ function finishLearningSession() {
     if (sessionActions < 5 ||
         quizMode === "marathon" ||
         quizMode === "errors" ||
+        quizMode === "test" ||
         quizMode === "time") return;
     sessionsCompleted++;
     addXP(20);
@@ -1111,12 +1115,13 @@ function createMultipleChoice(
     result
 ) {
     const property = spanishToGerman ? "german" : "spanish";
+    const answerPool = quizMode === "test" ? words.filter(word => word.testSet === activeTestSet) : words;
 
     let options = [correctAnswer];
 
     const possibleAnswers = [
         ...new Set(
-            words
+            answerPool
                 .map(word => word[property])
                 .filter(answer => answer !== correctAnswer)
         )

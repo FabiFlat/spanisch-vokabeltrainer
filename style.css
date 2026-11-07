@@ -992,3 +992,52 @@ input:disabled {
     border-color: #8295bd !important;
     box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
 }
+
+
+/* WOCHEN-BESTENLISTE */
+.leaderboard-week {
+    margin: 12px 0;
+    color: var(--sage-dark);
+    font-weight: 800;
+    text-align: center;
+}
+.leaderboard-table-wrap {
+    width: 100%;
+    margin-top: 16px;
+    overflow-x: auto;
+}
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text);
+    font-size: 14px;
+}
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 12px 9px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+.leaderboard-table th {
+    color: var(--brown);
+    font-weight: 800;
+}
+.leaderboard-table th:first-child,
+.leaderboard-table td:first-child {
+    width: 52px;
+    text-align: center;
+}
+.leaderboard-table th:last-child,
+.leaderboard-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+.leaderboard-table tbody tr.leaderboard-me {
+    background: color-mix(in srgb, var(--sage-dark) 22%, var(--card));
+    font-weight: 800;
+}
+.leaderboard-you {
+    color: var(--sage-dark);
+    font-size: 11px;
+    white-space: nowrap;
+}

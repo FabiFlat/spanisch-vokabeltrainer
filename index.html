@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=34">
+    <link rel="stylesheet" href="style.css?v=35">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -51,6 +51,7 @@
         <button onclick="showPage('quiz')">Quiz</button>
         <button onclick="showPage('manage')">Vokabeln</button>
         <button onclick="showPage('profile')">Profil</button>
+        <button onclick="showPage('leaderboard')">Bestenliste</button>
         <button onclick="showPage('scan')">Scanner</button>
         <button onclick="showPage('settings')">Einstellungen</button>
     </nav>
@@ -262,6 +263,18 @@
         </div>
     </section>
 
+    <!-- WOCHEN-BESTENLISTE -->
+    <section id="leaderboard" class="page hidden">
+        <h2>Wochen-Bestenliste</h2>
+        <div class="card leaderboard-card">
+            <p>Hier siehst du, wer in dieser Woche die meisten XP gesammelt hat. Es werden nur Anzeigenamen und Wochen-XP angezeigt.</p>
+            <p id="leaderboardWeek" class="leaderboard-week"></p>
+            <button type="button" onclick="loadWeeklyLeaderboard()">Bestenliste aktualisieren</button>
+            <div id="leaderboardStatus" class="theme-status" aria-live="polite">Lade Bestenliste ...</div>
+            <div id="leaderboardContent" class="leaderboard-table-wrap"></div>
+        </div>
+    </section>
+
     <!-- DESIGN-EINSTELLUNGEN -->
     <section id="settings" class="page hidden">
         <h2>Einstellungen &amp; Design</h2>
@@ -358,7 +371,7 @@
 
 </main>
 
-<script src="script.js?v=34"></script>
+<script src="script.js?v=35"></script>
 
 </body>
 </html>

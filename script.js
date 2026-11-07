@@ -282,6 +282,11 @@ async function signOut() {
 
     currentUser = null;
     syncReady = false;
+    userUnlocks = { beta_tester: false, all_designs: false };
+    profileDisplayName = "";
+    activeProfileTitle = "";
+    renderUnlockStatus();
+    updateXPDisplay();
 
     updateAuthPanel();
     setAuthStatus("Du wurdest abgemeldet.");
@@ -501,8 +506,12 @@ async function loadUserData() {
     }
 
     await loadUserUnlocks();
-    profileDisplayName = currentUser?.user_metadata?.display_name || localStorage.getItem("vocabProfileDisplayName") || "";
-    activeProfileTitle = currentUser?.user_metadata?.profile_title || localStorage.getItem("vocabActiveProfileTitle") || "";
+    profileDisplayName = currentUser
+        ? (currentUser.user_metadata?.display_name || "")
+        : (localStorage.getItem("vocabProfileDisplayName") || "");
+    activeProfileTitle = currentUser
+        ? (currentUser.user_metadata?.profile_title || "")
+        : (localStorage.getItem("vocabActiveProfileTitle") || "");
 
     if (data) {
         words = Array.isArray(data.words)
@@ -1792,6 +1801,7 @@ function setColorTheme(themeName) {
     if (status) status.textContent = "Aktuelles Design: " + theme.name +
         (themeSaved ? " · gespeichert" : " · Speichern im Browser nicht möglich");
     syncCustomColorInputs();
+    renderProfilePage();
 }
 
 function updateCustomColor(input) {

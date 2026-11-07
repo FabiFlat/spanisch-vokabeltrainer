@@ -295,6 +295,8 @@ async function signOut() {
 
 /* FREISCHALTCODES */
 let userUnlocks = { beta_tester: false, all_designs: false };
+let activeProfileTitle = localStorage.getItem("vocabActiveProfileTitle") || "";
+let profileDisplayName = localStorage.getItem("vocabProfileDisplayName") || "";
 
 function renderUnlockStatus() {
     const target = document.getElementById("unlockBadges");
@@ -305,6 +307,121 @@ function renderUnlockStatus() {
     target.innerHTML = badges.length
         ? badges.map(label => '<span class="unlock-badge">' + label + '</span>').join("")
         : '<span class="unlock-muted">Noch keine Codes eingelöst.</span>';
+}
+
+function getUnlockedProfileTitles() {
+    const titles = xpLevels
+        .filter(item => xp >= item.min || userUnlocks.beta_tester)
+        .map(item => item.name);
+    if (userUnlocks.beta_tester) titles.push("Beta-Tester");
+    return titles;
+}
+
+function renderProfilePage() {
+    const nameInput = document.getElementById("profileDisplayName");
+    const titleSelect = document.getElementById("profileTitleSelect");
+    const titlesList = document.getElementById("profileTitles");
+    const themesList = document.getElementById("profileThemes");
+    const activeLabel = document.getElementById("profileActiveTitle");
+    if (!nameInput || !titleSelect || !titlesList || !themesList) return;
+
+    const metadata = currentUser?.user_metadata || {};
+    if (document.activeElement !== nameInput) {
+        nameInput.value = profileDisplayName || metadata.display_name || "";
+    }
+
+    const unlockedTitles = getUnlockedProfileTitles();
+    if (!unlockedTitles.includes(activeProfileTitle)) {
+        activeProfileTitle = unlockedTitles.includes(metadata.profile_title)
+            ? metadata.profile_title
+            : (unlockedTitles.includes("Anfänger") ? "Anfänger" : unlockedTitles[0] || "");
+    }
+
+    titleSelect.innerHTML = unlockedTitles.length
+        ? unlockedTitles.map(title => '<option value="' + escapeHTML(title) + '">' + escapeHTML(title) + '</option>').join("")
+        : '<option value="">Noch keine Titel freigeschaltet</option>';
+    titleSelect.value = activeProfileTitle;
+
+    titlesList.innerHTML = xpLevels.map(item => {
+        const unlocked = xp >= item.min || userUnlocks.beta_tester;
+        return '<div class="profile-unlock-item ' + (unlocked ? 'unlocked' : 'locked') + '">' +
+            '<span><strong>' + escapeHTML(item.name) + '</strong><small>' +
+            (unlocked ? 'Titel freigeschaltet' : item.min.toLocaleString("de-DE") + ' XP erforderlich') +
+            '</small></span><span>' + (unlocked ? 'Freigeschaltet' : 'Gesperrt') + '</span></div>';
+    }).join("") + (userUnlocks.beta_tester
+        ? '<div class="profile-unlock-item unlocked"><span><strong>Beta-Tester</strong><small>Exklusiver Titel · Beta-Tester-Code</small></span><span>Freigeschaltet</span></div>'
+        : '<div class="profile-unlock-item locked"><span><strong>Beta-Tester</strong><small>Nur mit dem Beta-Tester-Code</small></span><span>Gesperrt</span></div>');
+
+    const themeEntries = Object.entries(colorThemes);
+    const selectedTheme = readSavedTheme();
+    themesList.innerHTML = themeEntries.map(([key, theme], index) => {
+        const unlocked = isThemeUnlocked(key);
+        const active = selectedTheme === key;
+        const requirement = index === 0 ? 'Startdesign' : (index * 250).toLocaleString("de-DE") + ' XP';
+        return '<div class="profile-theme-item ' + (unlocked ? 'unlocked' : 'locked') + '">' +
+            '<span class="profile-theme-name"><strong>' + escapeHTML(theme.name) + '</strong><small>' +
+            (unlocked ? (active ? 'Aktuelles Design' : 'Freigeschaltet') : requirement + ' erforderlich') +
+            '</small></span>' +
+            '<button type="button" ' + (unlocked ? 'onclick="setColorTheme(\'' + key + '\')"' : 'disabled') + '>' +
+            (active ? 'Aktiv' : unlocked ? 'Auswählen' : 'Gesperrt') + '</button></div>';
+    }).join("") + '<div class="profile-theme-item ' + (selectedTheme === 'custom' ? 'unlocked' : 'locked') + '">' +
+        '<span class="profile-theme-name"><strong>Eigene Farben</strong><small>' +
+        (selectedTheme === 'custom' ? 'Aktuelles Design' : 'In Einstellungen selbst erstellen') +
+        '</small></span><button type="button" onclick="showPage(\'settings\')">Bearbeiten</button></div>';
+
+    if (activeLabel) activeLabel.textContent = activeProfileTitle
+        ? 'Dein aktiver Titel: ' + activeProfileTitle
+        : 'Wähle einen freigeschalteten Titel aus.';
+}
+
+function selectProfileTitle(title) {
+    if (!getUnlockedProfileTitles().includes(title)) return;
+    activeProfileTitle = title;
+    const label = document.getElementById("profileActiveTitle");
+    if (label) label.textContent = "Dein aktiver Titel: " + title;
+}
+
+async function saveProfileSettings() {
+    const nameInput = document.getElementById("profileDisplayName");
+    const status = document.getElementById("profileStatus");
+    const title = document.getElementById("profileTitleSelect")?.value || "";
+    const name = (nameInput?.value || "").trim();
+
+    if (name.length > 24) {
+        if (status) status.textContent = "Der Anzeigename darf höchstens 24 Zeichen lang sein.";
+        return;
+    }
+    if (!getUnlockedProfileTitles().includes(title)) {
+        if (status) status.textContent = "Dieser Titel ist nicht freigeschaltet.";
+        return;
+    }
+
+    profileDisplayName = name;
+    activeProfileTitle = title;
+    try {
+        localStorage.setItem("vocabProfileDisplayName", profileDisplayName);
+        localStorage.setItem("vocabActiveProfileTitle", activeProfileTitle);
+    } catch (error) {
+        console.error("Profil konnte lokal nicht gespeichert werden:", error);
+    }
+
+    if (currentUser && supabaseClient) {
+        const { data, error } = await supabaseClient.auth.updateUser({
+            data: {
+                ...(currentUser.user_metadata || {}),
+                display_name: profileDisplayName,
+                profile_title: activeProfileTitle
+            }
+        });
+        if (error) {
+            if (status) status.textContent = "Lokal gespeichert. Cloud-Speicherung fehlgeschlagen: " + error.message;
+            return;
+        }
+        if (data?.user) currentUser = data.user;
+    }
+
+    if (status) status.textContent = "Profil gespeichert.";
+    renderProfilePage();
 }
 
 async function loadUserUnlocks() {
@@ -384,6 +501,8 @@ async function loadUserData() {
     }
 
     await loadUserUnlocks();
+    profileDisplayName = currentUser?.user_metadata?.display_name || localStorage.getItem("vocabProfileDisplayName") || "";
+    activeProfileTitle = currentUser?.user_metadata?.profile_title || localStorage.getItem("vocabActiveProfileTitle") || "";
 
     if (data) {
         words = Array.isArray(data.words)
@@ -532,6 +651,7 @@ function updateXPDisplay() {
         : "");
     updateSessionControls();
     updateThemeUnlocks();
+    renderProfilePage();
 }
 
 function persistXP() {
@@ -605,6 +725,10 @@ function showPage(page) {
 
     if (page === "manage") {
         showWordList();
+    }
+
+    if (page === "profile") {
+        renderProfilePage();
     }
 
     updateStats();

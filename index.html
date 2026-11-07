@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=35">
+    <link rel="stylesheet" href="style.css?v=36">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -59,19 +59,13 @@
     <!-- STARTSEITE -->
     <section id="home" class="page active">
 
-        <h2>Dein Lernbereich</h2>
-
-        <div class="card xp-card">
-            <h3>Dein Lernfortschritt</h3>
-            <div class="xp-summary"><strong id="xpTotal">0 XP</strong><span id="xpLevel">Anfänger</span></div>
+<div class="card xp-card">
+<div class="xp-summary"><strong id="xpTotal">0 XP</strong></div>
             <div class="xp-progress-track"><div id="xpProgressBar" class="xp-progress-bar"></div></div>
             <p id="xpProgressText" class="xp-progress-text">Noch 100 XP bis zum nächsten Level</p>
-            <div class="xp-roadmap-heading">
-                <h4>Alle Level &amp; Belohnungen</h4>
-                <span id="xpOverallProgressText">0 von 4.500 XP</span>
-            </div>
             <div class="xp-overall-track"><div id="xpOverallProgressBar" class="xp-overall-bar"></div></div>
-            <div id="xpBadges" class="xp-roadmap"></div>
+            <span id="xpOverallProgressText" class="xp-progress-text">0 von 5.000 XP</span>
+            <div id="xpBadges" class="xp-roadmap hidden"></div>
         </div>
 
         <div class="stats">
@@ -87,10 +81,7 @@
         </div>
 
         <div class="card">
-            <h3>Weiterlernen</h3>
-            <p>Übe deine Spanisch-Vokabeln mit Lernkarten oder teste dein Wissen im Quiz.</p>
-
-            <button onclick="showPage('quiz')">Quiz starten</button>
+<button onclick="showPage('quiz')">Quiz starten</button>
             <button class="secondary" onclick="showPage('cards')">Lernkarten öffnen</button>
             <button class="secondary" onclick="showPage('settings')">Design &amp; Farben anpassen</button>
         </div>
@@ -348,9 +339,10 @@
             <div id="unlockBadges" class="unlock-badges"></div>
         </div>
 
-<div class="card">
+<div class="card" id="customColorsCard">
             <h3>Eigene Farben erstellen</h3>
-            <p>Wähle jede Farbe selbst aus. Die Änderungen werden sofort übernommen und automatisch gespeichert.</p>
+            <p>Diese Belohnung wird bei 5.000 XP freigeschaltet. Danach kannst du jede Farbe selbst bestimmen.</p>
+            <p id="customColorsLockMessage" class="theme-status" aria-live="polite"></p>
             <div class="custom-color-grid">
                 <label>Hintergrund <input type="color" data-css-var="--background" value="#f4f1e9" oninput="updateCustomColor(this)"></label>
                 <label>Karten <input type="color" data-css-var="--card" value="#fffdf7" oninput="updateCustomColor(this)"></label>
@@ -371,7 +363,7 @@
 
 </main>
 
-<script src="script.js?v=35"></script>
+<script src="script.js?v=36"></script>
 
 </body>
 </html>

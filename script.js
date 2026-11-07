@@ -1371,7 +1371,7 @@ function classifyVocabularyCategory(spanish, german) {
         ["Familie", /\b(familia|madre|padre|hermano|hermana|abuelo|abuela|hijo|hija|familie|mutter|vater|bruder|schwester|oma|opa|sohn|tochter)\b/],
         ["Wohnen", /\b(casa|habitación|cocina|baño|dormitorio|mesa|silla|puerta|ventana|haus|zimmer|küche|bad|schlafzimmer|tisch|stuhl|tür|fenster)\b/],
         ["Natur", /\b(árbol|flor|animal|perro|gato|sol|lluvia|mar|montaña|naturaleza|baum|blume|tier|hund|katze|sonne|regen|meer|berg|natur)\b/],
-        ["Alltag", /\b(hola|adiós|gracias|por favor|buenos días|buenas noches|hoy|mañana|ayer|día|semana|tschüss|danke|bitte|guten morgen|guten abend|heute|gestern|tag|woche)\b/]
+        ["Alltag", /\b(hola|adiós|hasta luego|hasta pronto|hasta mañana|buenas tardes|buenas noches|buenos días|qué lenguas hablas|que lenguas hablas|qué idiomas hablas|que idiomas hablas|hablas español|hablo español|hablo inglés|cómo estás|como estas|cómo te llamas|como te llamas|de dónde eres|de donde eres|gracias|muchas gracias|por favor|de nada|perdón|perdon|disculpa|bienvenido|bienvenida|buen provecho|hasta la vista|tschüss|auf wiedersehen|bis später|bis bald|bis morgen|guten morgen|guten tag|guten abend|gute nacht|hallo|hi|danke|vielen dank|bitte|gern geschehen|entschuldigung|wie geht es dir|wie heißt du|wie heisst du|woher kommst du|welche sprachen sprichst du|heute|morgen|gestern|tag|woche)\b/]
     ];
     for (const [category, pattern] of rules) if (pattern.test(value)) return category;
     return "Allgemein";
@@ -1408,7 +1408,7 @@ function renderTestSets() {
     const sets=[...getTestSets().entries()];
     displayedTestSetNames=sets.map(([name])=>name);
     if(!sets.length){target.innerHTML='<p>Noch keine Testgruppen vorhanden. Wähle beim Hinzufügen „Klausur / Test“ und gib einen Namen ein.</p>';return;}
-    target.innerHTML=sets.map(([name,indexes],index)=>'<div class="test-set-item"><div><strong>'+escapeHTML(name)+'</strong><span>'+indexes.length+' Vokabeln</span></div><button type="button" onclick="startTestQuizByIndex('+index+')">Test lernen</button></div>').join("");
+    target.innerHTML=sets.map(([name,indexes],index)=>'<div class="test-set-item"><div><strong>'+escapeHTML(name)+'</strong><span>'+indexes.length+' Vokabeln</span></div><div class="test-set-actions"><button type="button" onclick="startTestQuizByIndex('+index+')">Test lernen</button><button type="button" class="test-edit-button" onclick="renameTestSetByIndex('+index+')">Umbenennen</button><button type="button" class="test-delete-button" onclick="deleteTestSetByIndex('+index+')">Gruppe löschen</button></div></div>').join("");
 }
 function startTestQuizByIndex(index) {
     const name=displayedTestSetNames[index];
@@ -1416,6 +1416,31 @@ function startTestQuizByIndex(index) {
     activeTestSet=name;
     showPage("quiz");
     startQuizMode("test");
+}
+function renameTestSetByIndex(index) {
+    const oldName=displayedTestSetNames[index];
+    if(!oldName)return;
+    const newName=prompt("Neuer Name für die Testgruppe:",oldName);
+    if(newName===null)return;
+    const cleanName=newName.trim().slice(0,50);
+    if(!cleanName){alert("Der Name darf nicht leer sein.");return;}
+    if(cleanName!==oldName && getTestSets().has(cleanName)){alert("Eine Testgruppe mit diesem Namen gibt es bereits.");return;}
+    words.forEach(word=>{if((word.testSet||"").trim()===oldName)word.testSet=cleanName;});
+    if(activeTestSet===oldName)activeTestSet=cleanName;
+    saveData();
+    renderTestSets();
+    showWordList();
+}
+function deleteTestSetByIndex(index) {
+    const name=displayedTestSetNames[index];
+    if(!name)return;
+    const count=getTestSets().get(name)?.length||0;
+    if(!confirm('Testgruppe "'+name+'" mit '+count+' Vokabeln löschen? Die Vokabeln bleiben erhalten und werden zu allgemeinen Vokabeln.'))return;
+    words.forEach(word=>{if((word.testSet||"").trim()===name)word.testSet="";});
+    if(activeTestSet===name)activeTestSet="";
+    saveData();
+    renderTestSets();
+    showWordList();
 }
 function updateOfflineStatus() {
     const status=document.getElementById("offlineStatus"); if(!status)return;
@@ -1527,6 +1552,8 @@ function addWord() {
     toggleTestNameField();
     showWordList();
     updateStats();
+    renderCategoryOverview();
+    renderTestSets();
 }
 
 

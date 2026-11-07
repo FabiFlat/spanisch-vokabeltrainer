@@ -1068,3 +1068,30 @@ input:disabled {
     border-color: #8295bd !important;
     box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
 }
+
+
+/* KATEGORIEN, TESTGRUPPEN UND OFFLINE-STATUS */
+.offline-status{display:inline-block;margin:6px auto 0;padding:6px 11px;border-radius:999px;background:var(--card);border:1px solid var(--border);color:var(--sage-dark);font-size:12px;font-weight:800}
+.offline-status.is-offline{background:#26334d;color:#fff;border-color:#26334d}
+#newWordCategory,#newWordCollection{display:block;width:100%;margin:9px 0 14px;padding:13px 14px;border:1px solid #465a82;border-radius:12px;background:#26334d!important;color:#fff!important;font:inherit}
+#newWordCategory option,#newWordCollection option{background:#26334d;color:#fff}
+#newTestName{background:#26334d!important;color:#fff!important;border-color:#465a82!important}
+#newTestName::placeholder{color:#c5ccda!important;opacity:1}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.category-tile{display:flex;flex-direction:column;gap:5px;align-items:flex-start;min-height:82px}
+.category-tile strong{font-size:16px}.category-tile span{font-size:13px;opacity:.85}
+.category-words{margin-top:18px}
+.category-word-row{padding:9px 0;margin:0;border-bottom:1px solid var(--border);color:var(--text)}
+.test-set-list{display:grid;gap:10px}
+.test-set-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.test-set-item>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.test-set-item strong{color:var(--brown);overflow-wrap:anywhere}
+.test-set-item span{color:var(--muted);font-size:13px}
+.test-set-item button{width:auto;min-width:120px;margin:0}
+.leaderboard-hint{color:var(--muted);font-size:13px;text-align:center}
+.leaderboard-title{display:block;margin-top:3px;color:var(--sage-dark);font-size:12px;font-weight:800}
+.leaderboard-rank{display:inline-grid;place-items:center;min-width:27px;height:27px;border-radius:50%;background:var(--border);color:var(--text);font-weight:800}
+.leaderboard-rank.rank-1{background:#c9ad57;color:#282313}
+.leaderboard-rank.rank-2{background:#9da8b2;color:#17202a}
+.leaderboard-rank.rank-3{background:#b98260;color:#24150e}
+@media(max-width:520px){.test-set-item{align-items:stretch;flex-direction:column}.test-set-item button{width:100%}}

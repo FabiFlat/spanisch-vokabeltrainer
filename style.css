@@ -1041,3 +1041,9 @@ input:disabled {
     font-size: 11px;
     white-space: nowrap;
 }
+
+
+/* Eigene Farben: letzte XP-Belohnung */
+#customColorsCard.custom-colors-locked .custom-color-grid { opacity: 0.45; }
+#customColorsCard .custom-color-grid input:disabled { cursor: not-allowed; }
+#customColorsCard.custom-colors-locked button:disabled { opacity: 0.55; cursor: not-allowed; }

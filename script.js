@@ -354,7 +354,10 @@ function renderProfilePage() {
             '</small></span><span>' + (unlocked ? 'Freigeschaltet' : 'Gesperrt') + '</span></div>';
     }).join("") + (userUnlocks.beta_tester
         ? '<div class="profile-unlock-item unlocked"><span><strong>Beta-Tester</strong><small>Exklusiver Titel · Beta-Tester-Code</small></span><span>Freigeschaltet</span></div>'
-        : '<div class="profile-unlock-item locked"><span><strong>Beta-Tester</strong><small>Nur mit dem Beta-Tester-Code</small></span><span>Gesperrt</span></div>');
+        : '<div class="profile-unlock-item locked"><span><strong>Beta-Tester</strong><small>Nur mit dem Beta-Tester-Code</small></span><span>Gesperrt</span></div>') +
+        '<div class="profile-unlock-item ' + (isCustomColorsUnlocked() ? 'unlocked' : 'locked') + '">' +
+        '<span><strong>Eigene Farben einstellen</strong><small>' + (isCustomColorsUnlocked() ? 'Letzte Belohnung freigeschaltet' : CUSTOM_COLORS_UNLOCK_XP.toLocaleString("de-DE") + ' XP erforderlich') + '</small></span>' +
+        '<span>' + (isCustomColorsUnlocked() ? 'Freigeschaltet' : 'Gesperrt') + '</span></div>';
 
     const themeEntries = Object.entries(colorThemes);
     const selectedTheme = readSavedTheme();
@@ -368,10 +371,10 @@ function renderProfilePage() {
             '</small></span>' +
             '<button type="button" ' + (unlocked ? 'onclick="setColorTheme(\'' + key + '\')"' : 'disabled') + '>' +
             (active ? 'Aktiv' : unlocked ? 'Auswählen' : 'Gesperrt') + '</button></div>';
-    }).join("") + '<div class="profile-theme-item ' + (selectedTheme === 'custom' ? 'unlocked' : 'locked') + '">' +
+    }).join("") + '<div class="profile-theme-item ' + (isCustomColorsUnlocked() ? 'unlocked' : 'locked') + '">' +
         '<span class="profile-theme-name"><strong>Eigene Farben</strong><small>' +
-        (selectedTheme === 'custom' ? 'Aktuelles Design' : 'In Einstellungen selbst erstellen') +
-        '</small></span><button type="button" onclick="showPage(\'settings\')">Bearbeiten</button></div>';
+        (isCustomColorsUnlocked() ? (selectedTheme === 'custom' ? 'Aktuelles Design' : 'Freigeschaltet') : CUSTOM_COLORS_UNLOCK_XP.toLocaleString("de-DE") + ' XP erforderlich') +
+        '</small></span><button type="button" ' + (isCustomColorsUnlocked() ? 'onclick="showPage(\'settings\')"' : 'disabled') + '>' + (isCustomColorsUnlocked() ? 'Bearbeiten' : 'Gesperrt') + '</button></div>';
 
     if (activeLabel) activeLabel.textContent = activeProfileTitle
         ? 'Dein aktiver Titel: ' + activeProfileTitle
@@ -591,6 +594,8 @@ function updateStats() {
 }
 
 /* XP, LEVEL UND LERNEINHEITEN */
+const CUSTOM_COLORS_UNLOCK_XP = 5000;
+
 const xpLevels = [
     { name: "Anfänger", min: 0, badge: "Erster Schritt" },
     { name: "Wortsammler", min: 500, badge: "Wortsammler" },
@@ -618,13 +623,13 @@ function updateXPDisplay() {
         ? Math.max(0, Math.min(100, ((xp - previous) / (next.min - previous)) * 100))
         : 100;
     total.textContent = xp + " XP";
-    document.getElementById("xpLevel").textContent =
-        userUnlocks.beta_tester ? "Beta-Tester · alle Level" : level.name;
+    const levelLabel = document.getElementById("xpLevel");
+    if (levelLabel) levelLabel.textContent = userUnlocks.beta_tester ? "Beta-Tester · alle Level" : level.name;
     document.getElementById("xpProgressBar").style.width = progress + "%";
     document.getElementById("xpProgressText").textContent = next
         ? (next.min - xp) + " XP bis Level " + next.name
         : "Höchstes Level erreicht";
-    const maxXP = xpLevels[xpLevels.length - 1].min;
+    const maxXP = CUSTOM_COLORS_UNLOCK_XP;
     const overallProgress = Math.max(0, Math.min(100, (xp / maxXP) * 100));
     const overallBar = document.getElementById("xpOverallProgressBar");
     const overallText = document.getElementById("xpOverallProgressText");
@@ -659,6 +664,7 @@ function updateXPDisplay() {
         : "");
     updateSessionControls();
     updateThemeUnlocks();
+    updateCustomColorsUnlock();
     renderProfilePage();
 }
 
@@ -1780,6 +1786,23 @@ const colorThemes = {
     },
 };
 
+function isCustomColorsUnlocked() {
+    return xp >= CUSTOM_COLORS_UNLOCK_XP || userUnlocks.beta_tester;
+}
+
+function updateCustomColorsUnlock() {
+    const card = document.getElementById("customColorsCard");
+    const message = document.getElementById("customColorsLockMessage");
+    const unlocked = isCustomColorsUnlocked();
+    if (card) card.classList.toggle("custom-colors-locked", !unlocked);
+    document.querySelectorAll("#customColorsCard [data-css-var], #customColorsCard button").forEach(control => {
+        control.disabled = !unlocked;
+    });
+    if (message) message.textContent = unlocked
+        ? "Freigeschaltet! Du kannst jetzt alle Farben selbst einstellen."
+        : (CUSTOM_COLORS_UNLOCK_XP - xp).toLocaleString("de-DE") + " XP bis zur letzten Belohnung: Eigene Farben einstellen.";
+}
+
 function isThemeUnlocked(themeName) {
     const themeNames = Object.keys(colorThemes);
     const themeIndex = themeNames.indexOf(themeName);
@@ -1873,6 +1896,7 @@ function setColorTheme(themeName) {
 }
 
 function updateCustomColor(input) {
+    if (!isCustomColorsUnlocked()) { updateCustomColorsUnlock(); return; }
     const property = input.dataset.cssVar;
     if (!property) return;
 
@@ -1896,6 +1920,7 @@ function updateCustomColor(input) {
 }
 
 function resetCustomColors() {
+    if (!isCustomColorsUnlocked()) { updateCustomColorsUnlock(); return; }
     try {
         localStorage.removeItem("vocabCustomColors");
     } catch (error) {
@@ -1917,7 +1942,7 @@ function loadColorTheme() {
     updateThemeUnlocks();
     const savedTheme = readSavedTheme();
 
-    if (savedTheme === "custom") {
+    if (savedTheme === "custom" && isCustomColorsUnlocked()) {
         try {
             const custom = JSON.parse(localStorage.getItem("vocabCustomColors") || "{}");
             Object.entries(custom).forEach(([property, value]) => {

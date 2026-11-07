@@ -1047,3 +1047,24 @@ input:disabled {
 #customColorsCard.custom-colors-locked .custom-color-grid { opacity: 0.45; }
 #customColorsCard .custom-color-grid input:disabled { cursor: not-allowed; }
 #customColorsCard.custom-colors-locked button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+
+/* DUNKLE EINGABEFELDER BEIM HINZUFÜGEN VON VOKABELN */
+#newSpanish,
+#newGerman {
+    background: #26334d !important;
+    color: #ffffff !important;
+    border-color: #1b263d !important;
+}
+
+#newSpanish::placeholder,
+#newGerman::placeholder {
+    color: #c5ccda !important;
+    opacity: 1;
+}
+
+#newSpanish:focus,
+#newGerman:focus {
+    border-color: #8295bd !important;
+    box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
+}

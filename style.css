@@ -1095,3 +1095,9 @@ input:disabled {
 .leaderboard-rank.rank-2{background:#9da8b2;color:#17202a}
 .leaderboard-rank.rank-3{background:#b98260;color:#24150e}
 @media(max-width:520px){.test-set-item{align-items:stretch;flex-direction:column}.test-set-item button{width:100%}}
+
+.test-set-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px}
+.test-set-actions button{width:auto;min-width:0;margin:0;padding:9px 12px}
+.test-set-actions .test-edit-button{background:#405477!important;color:#fff!important;border-color:#344563!important}
+.test-set-actions .test-delete-button{background:#6b3943!important;color:#fff!important;border-color:#552c35!important}
+@media(max-width:620px){.test-set-actions{display:grid;grid-template-columns:1fr;width:100%}.test-set-actions button{width:100%}}

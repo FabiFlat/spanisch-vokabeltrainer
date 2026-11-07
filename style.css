@@ -976,3 +976,19 @@ input:disabled {
         display: none;
     }
 }
+
+
+/* Anzeigename im Profil: dunkles Eingabefeld */
+#profileDisplayName {
+    background: #26334d !important;
+    color: #ffffff !important;
+    border-color: #1b263d !important;
+}
+#profileDisplayName::placeholder {
+    color: #c5ccda !important;
+    opacity: 1;
+}
+#profileDisplayName:focus {
+    border-color: #8295bd !important;
+    box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
+}

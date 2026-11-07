@@ -43,6 +43,7 @@ function loadLocalWords() {
 const VOCAB_CATEGORIES = ["Schule","Freizeit","Essen","Reisen","Familie","Wohnen","Natur","Alltag","Allgemein"];
 let words = loadLocalWords().map(word => ({...word, category: VOCAB_CATEGORIES.includes(word.category) ? word.category : classifyVocabularyCategory(word.spanish, word.german), testSet: typeof word.testSet === "string" ? word.testSet : ""}));
 let activeTestSet = "";
+let displayedTestSetNames = [];
 let currentCard = 0;
 let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
@@ -1399,11 +1400,18 @@ function showCategoryWords(category) {
 }
 function renderTestSets() {
     const target=document.getElementById("testSetList"); if(!target)return;
-    const sets=getTestSets();
-    if(!sets.size){target.innerHTML='<p>Noch keine Testgruppen vorhanden. Wähle beim Hinzufügen „Klausur / Test“ und gib einen Namen ein.</p>';return;}
-    target.innerHTML=[...sets.entries()].map(([name,indexes])=>'<div class="test-set-item"><div><strong>'+escapeHTML(name)+'</strong><span>'+indexes.length+' Vokabeln</span></div><button type="button" onclick="startTestQuiz(\''+name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\')">Test lernen</button></div>').join("");
+    const sets=[...getTestSets().entries()];
+    displayedTestSetNames=sets.map(([name])=>name);
+    if(!sets.length){target.innerHTML='<p>Noch keine Testgruppen vorhanden. Wähle beim Hinzufügen „Klausur / Test“ und gib einen Namen ein.</p>';return;}
+    target.innerHTML=sets.map(([name,indexes],index)=>'<div class="test-set-item"><div><strong>'+escapeHTML(name)+'</strong><span>'+indexes.length+' Vokabeln</span></div><button type="button" onclick="startTestQuizByIndex('+index+')">Test lernen</button></div>').join("");
 }
-function startTestQuiz(name) { activeTestSet=name; showPage("quiz"); startQuizMode("test"); }
+function startTestQuizByIndex(index) {
+    const name=displayedTestSetNames[index];
+    if(!name)return;
+    activeTestSet=name;
+    showPage("quiz");
+    startQuizMode("test");
+}
 function updateOfflineStatus() {
     const status=document.getElementById("offlineStatus"); if(!status)return;
     const online=navigator.onLine;

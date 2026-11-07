@@ -40,7 +40,9 @@ function loadLocalWords() {
     }
 }
 
-let words = loadLocalWords();
+const VOCAB_CATEGORIES = ["Schule","Freizeit","Essen","Reisen","Familie","Wohnen","Natur","Alltag","Allgemein"];
+let words = loadLocalWords().map(word => ({...word, category: VOCAB_CATEGORIES.includes(word.category) ? word.category : classifyVocabularyCategory(word.spanish, word.german), testSet: typeof word.testSet === "string" ? word.testSet : ""}));
+let activeTestSet = "";
 let currentCard = 0;
 let currentQuestion = null;
 let correct = Number(localStorage.getItem("correct")) || 0;
@@ -536,6 +538,8 @@ async function loadUserData() {
         await saveDataToCloud();
     }
 
+    words.forEach(word => { word.category=getWordCategory(word); if(typeof word.testSet!=="string")word.testSet=""; });
+    words.forEach(word=>{word.category=getWordCategory(word);if(typeof word.testSet!=="string")word.testSet="";});
     localStorage.setItem("words", JSON.stringify(words));
     localStorage.setItem("correct", String(correct));
     localStorage.setItem("vocabXP", String(xp));
@@ -546,6 +550,7 @@ async function loadUserData() {
     updateXPDisplay();
     showCard();
     showWordList();
+    renderCategoryOverview(); renderTestSets();
     updateAuthPanel();
 }
 
@@ -756,6 +761,8 @@ function showPage(page) {
         showWordList();
     }
 
+    if (page === "categories") { renderCategoryOverview(); document.getElementById("categoryWords")?.classList.add("hidden"); }
+    if (page === "tests") renderTestSets();
     if (page === "profile") {
         renderProfilePage();
     }
@@ -882,10 +889,10 @@ async function loadWeeklyLeaderboard() {
     }
 
     status.textContent = rows.length + " Teilnehmer";
-    content.innerHTML = '<table class="leaderboard-table"><thead><tr><th>Platz</th><th>Anzeigename</th><th>Wochen-XP</th></tr></thead><tbody>' +
+    content.innerHTML = '<table class="leaderboard-table"><thead><tr><th>Platz</th><th>Lernprofil</th><th>Wochen-XP</th></tr></thead><tbody>' +
         rows.map((row, index) => {
             const isMe = row.user_id === currentUser.id;
-            return '<tr' + (isMe ? ' class="leaderboard-me"' : '') + '><td>' + (index + 1) + '</td><td>' + escapeHTML(row.display_name || "Lernender") + (row.profile_title ? ' <span class="leaderboard-title">· ' + escapeHTML(row.profile_title) + '</span>' : '') + (isMe ? ' <span class="leaderboard-you">(Du)</span>' : '') + '</td><td>' + (Number(row.weekly_xp) || 0).toLocaleString("de-DE") + ' XP</td></tr>';
+            return '<tr' + (isMe ? ' class="leaderboard-me"' : '') + '><td>' + (index + 1) + '</td><td>' + escapeHTML(row.display_name || "Lernender") + (row.profile_title ? '<span class="leaderboard-title">' + escapeHTML(row.profile_title) + '</span>' : '') + (isMe ? ' <span class="leaderboard-you">(Du)</span>' : '') + '</td><td>' + (Number(row.weekly_xp) || 0).toLocaleString("de-DE") + ' XP</td></tr>';
         }).join("") + '</tbody></table>';
 }
 
@@ -1021,6 +1028,7 @@ function nextQuestion() {
     }
 
     let availableIndexes = words.map((word, index) => index);
+    if (quizMode === "test") availableIndexes = availableIndexes.filter(index => words[index].testSet === activeTestSet);
     if (quizMode === "errors") {
         availableIndexes = availableIndexes.filter(index =>
             wrongVocabulary.some(item =>
@@ -1347,6 +1355,63 @@ function escapeHTML(text) {
     })[character]);
 }
 
+function classifyVocabularyCategory(spanish, german) {
+    const value = (String(spanish || "") + " " + String(german || "")).toLocaleLowerCase("de");
+    const rules = [
+        ["Essen", /\b(comida|comer|beber|agua|pan|leche|queso|manzana|fruta|verdura|carne|pescado|arroz|desayuno|almuerzo|cena|essen|trinken|wasser|brot|milch|käse|apfel|obst|gemüse|fleisch|fisch|reis|frühstück|mittagessen|abendessen)\b/],
+        ["Schule", /\b(escuela|colegio|clase|profesor|profesora|estudiar|libro|cuaderno|lápiz|bolígrafo|examen|tarea|schule|unterricht|lehrer|lehrerin|lernen|buch|heft|stift|klausur|prüfung|hausaufgabe)\b/],
+        ["Reisen", /\b(viajar|viaje|avión|aeropuerto|tren|estación|hotel|playa|pasaporte|maleta|vacaciones|reise|reisen|flugzeug|flughafen|bahnhof|urlaub|koffer|pass)\b/],
+        ["Freizeit", /\b(jugar|deporte|fútbol|música|leer|bailar|cantar|cine|película|amigo|amiga|hobby|sport|fußball|musik|lesen|tanzen|singen|kino|film|freund|freundin|freizeit)\b/],
+        ["Familie", /\b(familia|madre|padre|hermano|hermana|abuelo|abuela|hijo|hija|familie|mutter|vater|bruder|schwester|oma|opa|sohn|tochter)\b/],
+        ["Wohnen", /\b(casa|habitación|cocina|baño|dormitorio|mesa|silla|puerta|ventana|haus|zimmer|küche|bad|schlafzimmer|tisch|stuhl|tür|fenster)\b/],
+        ["Natur", /\b(árbol|flor|animal|perro|gato|sol|lluvia|mar|montaña|naturaleza|baum|blume|tier|hund|katze|sonne|regen|meer|berg|natur)\b/],
+        ["Alltag", /\b(hola|adiós|gracias|por favor|buenos días|buenas noches|hoy|mañana|ayer|día|semana|tschüss|danke|bitte|guten morgen|guten abend|heute|gestern|tag|woche)\b/]
+    ];
+    for (const [category, pattern] of rules) if (pattern.test(value)) return category;
+    return "Allgemein";
+}
+function toggleTestNameField() {
+    const select = document.getElementById("newWordCollection"), field = document.getElementById("newTestName");
+    if (!select || !field) return;
+    field.classList.toggle("hidden", select.value !== "test");
+    if (select.value !== "test") field.value = "";
+}
+function getWordCategory(word) {
+    if (!VOCAB_CATEGORIES.includes(word.category)) word.category = classifyVocabularyCategory(word.spanish, word.german);
+    return word.category;
+}
+function getTestSets() {
+    const sets = new Map();
+    words.forEach((word,index) => { const name=(word.testSet||"").trim(); if(name){if(!sets.has(name))sets.set(name,[]);sets.get(name).push(index);} });
+    return sets;
+}
+function renderCategoryOverview() {
+    const target=document.getElementById("categoryOverview"); if(!target)return;
+    const counts=Object.fromEntries(VOCAB_CATEGORIES.map(name=>[name,0]));
+    words.forEach(word=>counts[getWordCategory(word)]++);
+    target.innerHTML=VOCAB_CATEGORIES.map(name=>'<button type="button" class="category-tile" onclick="showCategoryWords(\''+name+'\')"><strong>'+escapeHTML(name)+'</strong><span>'+counts[name]+' Vokabeln</span></button>').join("");
+}
+function showCategoryWords(category) {
+    const target=document.getElementById("categoryWords"); if(!target)return;
+    const list=words.filter(word=>getWordCategory(word)===category);
+    target.classList.remove("hidden");
+    target.innerHTML='<h3>'+escapeHTML(category)+'</h3>'+(list.length?list.map(word=>'<p class="category-word-row"><strong>'+escapeHTML(word.spanish)+'</strong> – '+escapeHTML(word.german)+'</p>').join(""):'<p>Noch keine Vokabeln in dieser Kategorie.</p>');
+}
+function renderTestSets() {
+    const target=document.getElementById("testSetList"); if(!target)return;
+    const sets=getTestSets();
+    if(!sets.size){target.innerHTML='<p>Noch keine Testgruppen vorhanden. Wähle beim Hinzufügen „Klausur / Test“ und gib einen Namen ein.</p>';return;}
+    target.innerHTML=[...sets.entries()].map(([name,indexes])=>'<div class="test-set-item"><div><strong>'+escapeHTML(name)+'</strong><span>'+indexes.length+' Vokabeln</span></div><button type="button" onclick="startTestQuiz(\''+name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\')">Test lernen</button></div>').join("");
+}
+function startTestQuiz(name) { activeTestSet=name; showPage("quiz"); startQuizMode("test"); }
+function updateOfflineStatus() {
+    const status=document.getElementById("offlineStatus"); if(!status)return;
+    const online=navigator.onLine;
+    status.textContent=online?"Online · Offline-Lernen vorbereitet":"Offline-Modus · gespeicherte Vokabeln verfügbar";
+    status.classList.toggle("is-offline",!online);
+}
+
+
 
 /* ==========================================
    RECHTSCHREIBUNG BEI VOKABELN
@@ -1434,16 +1499,19 @@ function addWord() {
             "\n\nBitte prüfe die Vokabel vor dem Speichern.");
     }
 
-    words.push({
-        spanish: spanish,
-        german: german
-    });
+    const categoryChoice=document.getElementById("newWordCategory")?.value||"auto";
+    const collection=document.getElementById("newWordCollection")?.value||"general";
+    const testName=document.getElementById("newTestName")?.value.trim()||"";
+    if(collection==="test"&&!testName){alert("Bitte gib einen Namen für die Klausur oder den Test ein.");return;}
+    words.push({spanish,german,category:categoryChoice==="auto"?classifyVocabularyCategory(spanish,german):categoryChoice,testSet:collection==="test"?testName:""});
 
     saveData();
 
     spanishInput.value = "";
     germanInput.value = "";
-
+    const testField=document.getElementById("newTestName"); if(testField)testField.value="";
+    const collectionField=document.getElementById("newWordCollection"); if(collectionField)collectionField.value="general";
+    toggleTestNameField();
     showWordList();
     updateStats();
 }
@@ -1479,7 +1547,7 @@ function showWordList() {
 
         const text = document.createElement("span");
         text.className = "word-item-text";
-        text.textContent = word.spanish + " – " + word.german;
+        text.textContent = word.spanish + " – " + word.german + " · " + getWordCategory(word) + (word.testSet ? " · Test: " + word.testSet : "");
 
         const actions = document.createElement("div");
         actions.className = "word-item-actions";
@@ -1564,7 +1632,7 @@ function editWord(index) {
                 "\n\nBitte prüfe die Vokabel vor dem Speichern.");
         }
 
-        words[index] = { spanish, german };
+        words[index] = { ...word, spanish, german, category: classifyVocabularyCategory(spanish, german) };
         saveData();
         showWordList();
         showCard();
@@ -1707,10 +1775,7 @@ function importScannedWords() {
         );
 
         if (!exists) {
-            words.push({
-                spanish: spanish,
-                german: german
-            });
+            words.push({spanish,german,category:classifyVocabularyCategory(spanish,german),testSet:""});
 
             imported++;
         }
@@ -1719,6 +1784,7 @@ function importScannedWords() {
     saveData();
     updateStats();
     showWordList();
+    renderCategoryOverview(); renderTestSets();
 
     document.getElementById("scanStatus").textContent =
         imported + " neue Vokabeln wurden übernommen.";
@@ -1742,112 +1808,112 @@ const colorThemes = {
         "--muted": "#a3acc2", "--border": "#424d65", "--wrong": "#d58b82",
         "--correct": "#91b89a",
         "--button-text": "#ffffff", "--button-bg": "#26334d", "--button-hover": "#1b263d", name: "Mitternacht"
-    },,
+    },
     sage: {
         "--background": "#f4f1e9", "--card": "#fffdf7", "--sage": "#9eaa91",
         "--sage-dark": "#78866c", "--brown": "#625b4e", "--text": "#45443d",
         "--muted": "#999487", "--border": "#e6e1d6", "--wrong": "#c77d70",
         "--correct": "#829879",
         "--button-text": "#30352d", name: "LoFi Sage"
-    },,
+    },
     lavender: {
         "--background": "#f2eff8", "--card": "#fffaff", "--sage": "#b7a9d2",
         "--sage-dark": "#8877ad", "--brown": "#625875", "--text": "#484253",
         "--muted": "#958ca4", "--border": "#e4ddec", "--wrong": "#c77d8e",
         "--correct": "#829b91",
         "--button-text": "#332d40", name: "Lavendel"
-    },,
+    },
     ocean: {
         "--background": "#edf4f5", "--card": "#fbffff", "--sage": "#91b8bf",
         "--sage-dark": "#608f98", "--brown": "#49666d", "--text": "#354b50",
         "--muted": "#81969a", "--border": "#d8e6e8", "--wrong": "#c77d70",
         "--correct": "#719b91",
         "--button-text": "#263b40", name: "Ozean"
-    },,
+    },
     rose: {
         "--background": "#f8eeee", "--card": "#fffafa", "--sage": "#d6adb4",
         "--sage-dark": "#ad7f89", "--brown": "#765860", "--text": "#514247",
         "--muted": "#a18e93", "--border": "#eadcdf", "--wrong": "#bd716f",
         "--correct": "#829879",
         "--button-text": "#49363b", name: "Rosé"
-    },,
+    },
     dark: {
         "--background": "#25272b", "--card": "#32363b", "--sage": "#82988b",
         "--sage-dark": "#a2b9aa", "--brown": "#d5cfc3", "--text": "#eeeae2",
         "--muted": "#aaa69e", "--border": "#494d51", "--wrong": "#d58b82",
         "--correct": "#9ab895",
         "--button-text": "#f5f5f2", "--button-bg": "#536d60", "--button-hover": "#40564b", name: "Dunkel"
-    },,
+    },
     forest: {
         "--background": "#edf1e8", "--card": "#fbfff8", "--sage": "#8fa88b",
         "--sage-dark": "#607c60", "--brown": "#455b48", "--text": "#344338",
         "--muted": "#829184", "--border": "#dce5d8", "--wrong": "#c77d70",
         "--correct": "#668d6c",
         "--button-text": "#26372a", name: "Wald"
-    },,
+    },
     peach: {
         "--background": "#fbf0e7", "--card": "#fffaf5", "--sage": "#e5ad8c",
         "--sage-dark": "#bd8061", "--brown": "#805d4b", "--text": "#57463d",
         "--muted": "#a58d80", "--border": "#efdfd2", "--wrong": "#c87975",
         "--correct": "#829879",
         "--button-text": "#493326", name: "Pfirsich"
-    },,
+    },
     matcha: {
         "--background": "#f0f2e5", "--card": "#fcfdf5", "--sage": "#b4bd83",
         "--sage-dark": "#87945b", "--brown": "#626b43", "--text": "#414833",
         "--muted": "#92977b", "--border": "#e1e5cf", "--wrong": "#c77d70",
         "--correct": "#829879",
         "--button-text": "#343b24", name: "Matcha"
-    },,
+    },
     midnightPurple: {
         "--background": "#211d35", "--card": "#302a49", "--sage": "#8f80b8",
         "--sage-dark": "#b2a5d2", "--brown": "#e2dcf0", "--text": "#f1edf8",
         "--muted": "#b1a9c2", "--border": "#514967", "--wrong": "#d58b91",
         "--correct": "#91b89a", "--button-text": "#ffffff",
         "--button-bg": "#393052", "--button-hover": "#29223e", name: "Midnight Purple"
-    },,
+    },
     arcticBlue: {
         "--background": "#172b3a", "--card": "#223b4d", "--sage": "#789eb5",
         "--sage-dark": "#a5c4d5", "--brown": "#dceaf0", "--text": "#edf5f8",
         "--muted": "#a9c0cc", "--border": "#3b596b", "--wrong": "#d58b82",
         "--correct": "#8fb8a8", "--button-text": "#ffffff",
         "--button-bg": "#29485b", "--button-hover": "#1d3646", name: "Arctic Blue"
-    },,
+    },
     emerald: {
         "--background": "#19372f", "--card": "#25483d", "--sage": "#78a58b",
         "--sage-dark": "#a2c6ad", "--brown": "#dcebe1", "--text": "#eff7f0",
         "--muted": "#aec4b4", "--border": "#416454", "--wrong": "#d58b82",
         "--correct": "#a6c99d", "--button-text": "#ffffff",
         "--button-bg": "#315b4b", "--button-hover": "#234638", name: "Emerald"
-    },,
+    },
     oceanNight: {
         "--background": "#142c3b", "--card": "#1d3d4c", "--sage": "#438a91",
         "--sage-dark": "#79b6b7", "--brown": "#d2e8e7", "--text": "#edf7f6",
         "--muted": "#a5c4c5", "--border": "#365968", "--wrong": "#d58b82",
         "--correct": "#8fb8a8", "--button-text": "#ffffff",
         "--button-bg": "#1f5060", "--button-hover": "#173d4a", name: "Ocean Night"
-    },,
+    },
     cyberBlue: {
         "--background": "#151d36", "--card": "#202d4d", "--sage": "#526fb5",
         "--sage-dark": "#8299d2", "--brown": "#dce4ff", "--text": "#f0f3ff",
         "--muted": "#aab7dc", "--border": "#3b4b70", "--wrong": "#d58b91",
         "--correct": "#91b89a", "--button-text": "#ffffff",
         "--button-bg": "#293c69", "--button-hover": "#1d2d52", name: "Cyber Blue"
-    },,
+    },
     sakura: {
         "--background": "#f4e5e9", "--card": "#fff8fa", "--sage": "#c995a7",
         "--sage-dark": "#a66f83", "--brown": "#713f50", "--text": "#513943",
         "--muted": "#987b86", "--border": "#e7cbd4", "--wrong": "#bd716f",
         "--correct": "#829879", "--button-text": "#ffffff",
         "--button-bg": "#855a6b", "--button-hover": "#684352", name: "Sakura"
-    },,
+    },
     sunset: {
         "--background": "#f5e2cf", "--card": "#fff9f2", "--sage": "#d99872",
         "--sage-dark": "#b86f51", "--brown": "#80513f", "--text": "#633d32",
         "--muted": "#a68170", "--border": "#ead0bd", "--wrong": "#bd716f",
         "--correct": "#829879", "--button-text": "#ffffff",
         "--button-bg": "#a45f49", "--button-hover": "#824936", name: "Sunset"
-    },,
+    },
     vanilla: {
         "--background": "#f7f0e2", "--card": "#fffdf7", "--sage": "#c9b99f",
         "--sage-dark": "#a18d72", "--brown": "#6b5b49", "--text": "#554b40",
@@ -2033,7 +2099,7 @@ function loadColorTheme() {
 
     // Beim Laden darf ein gespeichertes Design nicht wegen noch
     // nicht geladener Cloud-XP auf LoFi zurückgesetzt werden.
-    const themeToApply = colorThemes[savedTheme] ? savedTheme : "sage";
+    const themeToApply = colorThemes[savedTheme] ? savedTheme : "midnight";
     const theme = colorThemes[themeToApply];
     Object.entries(theme).forEach(([property, value]) => {
         if (property.startsWith("--")) {
@@ -2055,9 +2121,14 @@ function loadColorTheme() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     loadColorTheme();
+    updateOfflineStatus();
+    window.addEventListener("online",updateOfflineStatus);
+    window.addEventListener("offline",updateOfflineStatus);
+    if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(error=>console.warn("Offline-Modus:",error));
     updateStats();
     showWordList();
     showCard();
+    renderCategoryOverview(); renderTestSets();
 
     if (!supabaseClient) {
         updateAuthPanel();

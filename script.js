@@ -1,4 +1,3 @@
-undefined
 /* ==========================================
    SUPABASE VERBINDUNG
 ========================================== */
@@ -674,6 +673,21 @@ function persistXP() {
 function addXP(amount) {
     xp += amount;
     persistXP();
+    syncWeeklyXP(amount);
+}
+
+async function syncWeeklyXP(amount) {
+    if (!currentUser || !supabaseClient || !Number.isFinite(Number(amount)) || Number(amount) <= 0) return;
+    const displayName = (profileDisplayName || currentUser.user_metadata?.display_name || "Lernender").trim().slice(0, 24) || "Lernender";
+    const { error } = await supabaseClient.rpc("increment_weekly_xp", {
+        p_amount: Math.floor(Number(amount)),
+        p_display_name: displayName
+    });
+    if (error) {
+        console.error("Wöchentliche XP konnten nicht gespeichert werden:", error);
+        const status = document.getElementById("leaderboardStatus");
+        if (status) status.textContent = "Wochen-XP konnten nicht gespeichert werden. Bitte Datenbank-SQL einrichten.";
+    }
 }
 
 function updateSessionControls() {
@@ -740,9 +754,63 @@ function showPage(page) {
         renderProfilePage();
     }
 
+    if (page === "leaderboard") {
+        loadWeeklyLeaderboard();
+    }
+
     updateStats();
 }
 
+
+
+
+/* ==========================================
+   WOCHEN-BESTENLISTE
+========================================== */
+
+async function loadWeeklyLeaderboard() {
+    const status = document.getElementById("leaderboardStatus");
+    const content = document.getElementById("leaderboardContent");
+    const weekLabel = document.getElementById("leaderboardWeek");
+    if (!status || !content) return;
+
+    if (!currentUser || !supabaseClient) {
+        status.textContent = "Bitte melde dich an, um die Wochen-Bestenliste zu sehen.";
+        content.innerHTML = "";
+        if (weekLabel) weekLabel.textContent = "";
+        return;
+    }
+
+    status.textContent = "Bestenliste wird geladen ...";
+    content.innerHTML = "";
+    const { data, error } = await supabaseClient.rpc("get_weekly_leaderboard");
+    if (error) {
+        status.textContent = "Bestenliste noch nicht verfügbar. Bitte führe zuerst das SQL für die Bestenliste in Supabase aus.";
+        console.error("Bestenliste konnte nicht geladen werden:", error);
+        return;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    if (weekLabel && rows.length && rows[0].week_start) {
+        const weekDate = new Date(rows[0].week_start + "T12:00:00");
+        weekLabel.textContent = "Woche ab " + weekDate.toLocaleDateString("de-DE");
+    } else if (weekLabel) {
+        weekLabel.textContent = "Aktuelle Kalenderwoche";
+    }
+
+    if (!rows.length) {
+        status.textContent = "Es gibt noch keine angemeldeten Teilnehmer."; 
+        content.innerHTML = "";
+        return;
+    }
+
+    status.textContent = rows.length + " Teilnehmer";
+    content.innerHTML = '<table class="leaderboard-table"><thead><tr><th>Platz</th><th>Anzeigename</th><th>Wochen-XP</th></tr></thead><tbody>' +
+        rows.map((row, index) => {
+            const isMe = row.user_id === currentUser.id;
+            return '<tr' + (isMe ? ' class="leaderboard-me"' : '') + '><td>' + (index + 1) + '</td><td>' + escapeHTML(row.display_name || "Lernender") + (isMe ? ' <span class="leaderboard-you">(Du)</span>' : '') + '</td><td>' + (Number(row.weekly_xp) || 0).toLocaleString("de-DE") + ' XP</td></tr>';
+        }).join("") + '</tbody></table>';
+}
 
 /* ==========================================
    SPRACHAUSGABE UND AUSSPRACHE-TRAINING

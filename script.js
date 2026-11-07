@@ -771,6 +771,76 @@ function showPage(page) {
 
 
 /* ==========================================
+   FORTSCHRITT ZURÜCKSETZEN
+========================================== */
+
+async function resetLearningProgress() {
+    const status = document.getElementById("resetProgressStatus");
+    if (!currentUser || !supabaseClient) {
+        if (status) status.textContent = "Bitte melde dich zuerst an.";
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Möchtest du wirklich deinen gesamten Lernfortschritt und deine Freischaltcodes zurücksetzen? Deine eingescannten und selbst hinzugefügten Vokabeln sowie dein Benutzerkonto bleiben erhalten. Deine Wochen-XP werden ebenfalls auf 0 gesetzt. Dieser Vorgang kann nicht rückgängig gemacht werden."
+    );
+    if (!confirmed) return;
+
+    const button = document.getElementById("resetProgressButton");
+    if (button) button.disabled = true;
+    if (status) status.textContent = "Fortschritt wird zurückgesetzt ...";
+
+    try {
+        const { error } = await supabaseClient.rpc("reset_my_learning_progress");
+        if (error) throw error;
+
+        xp = 0;
+        correct = 0;
+        flashcardsLearned = 0;
+        sessionsCompleted = 0;
+        sessionActions = 0;
+        learnedCardsThisSession = new Set();
+        wrongVocabulary = [];
+        userUnlocks = { beta_tester: false, all_designs: false };
+        activeProfileTitle = "Anfänger";
+
+        localStorage.setItem("vocabXP", "0");
+        localStorage.setItem("correct", "0");
+        localStorage.setItem("flashcardsLearned", "0");
+        localStorage.setItem("sessionsCompleted", "0");
+        localStorage.setItem("wrongVocabulary", "[]");
+        localStorage.setItem("vocabActiveProfileTitle", "Anfänger");
+
+        const { error: profileError } = await supabaseClient.auth.updateUser({
+            data: { profile_title: "Anfänger" }
+        });
+        if (profileError) console.warn("Profil-Titel konnte nicht aktualisiert werden:", profileError);
+
+        renderUnlockStatus();
+        updateStats();
+        updateXPDisplay();
+        renderProfilePage();
+        updateSessionControls();
+        showWordList();
+        showCard();
+
+        if (syncReady) await saveDataToCloud();
+        await loadWeeklyLeaderboard();
+
+        if (status) {
+            status.textContent = profileError
+                ? "Fortschritt zurückgesetzt. Der aktive Titel konnte nicht automatisch aktualisiert werden."
+                : "Fortschritt und Freischaltcodes wurden zurückgesetzt. Deine Vokabeln sind erhalten geblieben.";
+        }
+    } catch (error) {
+        console.error("Fortschritt konnte nicht zurückgesetzt werden:", error);
+        if (status) status.textContent = "Zurücksetzen fehlgeschlagen: " + (error.message || "Unbekannter Fehler") + ". Bitte prüfe, ob du das SQL eingerichtet hast.";
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+
+/* ==========================================
    WOCHEN-BESTENLISTE
 ========================================== */
 

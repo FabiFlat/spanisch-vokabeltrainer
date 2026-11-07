@@ -814,7 +814,7 @@ async function loadWeeklyLeaderboard() {
     content.innerHTML = '<table class="leaderboard-table"><thead><tr><th>Platz</th><th>Anzeigename</th><th>Wochen-XP</th></tr></thead><tbody>' +
         rows.map((row, index) => {
             const isMe = row.user_id === currentUser.id;
-            return '<tr' + (isMe ? ' class="leaderboard-me"' : '') + '><td>' + (index + 1) + '</td><td>' + escapeHTML(row.display_name || "Lernender") + (isMe ? ' <span class="leaderboard-you">(Du)</span>' : '') + '</td><td>' + (Number(row.weekly_xp) || 0).toLocaleString("de-DE") + ' XP</td></tr>';
+            return '<tr' + (isMe ? ' class="leaderboard-me"' : '') + '><td>' + (index + 1) + '</td><td>' + escapeHTML(row.display_name || "Lernender") + (row.profile_title ? ' <span class="leaderboard-title">· ' + escapeHTML(row.profile_title) + '</span>' : '') + (isMe ? ' <span class="leaderboard-you">(Du)</span>' : '') + '</td><td>' + (Number(row.weekly_xp) || 0).toLocaleString("de-DE") + ' XP</td></tr>';
         }).join("") + '</tbody></table>';
 }
 

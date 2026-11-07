@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=40">
+    <link rel="stylesheet" href="style.css?v=41">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -17,6 +17,7 @@
 <header>
     <h1>Español</h1>
     <p>Dein persönlicher Spanisch-Vokabeltrainer</p>
+    <p id="offlineStatus" class="offline-status" aria-live="polite">Verbindungsstatus wird geprüft ...</p>
 </header>
 
 <main>
@@ -50,6 +51,8 @@
         <button onclick="showPage('cards')">Lernkarten</button>
         <button onclick="showPage('quiz')">Quiz</button>
         <button onclick="showPage('manage')">Vokabeln</button>
+        <button onclick="showPage('categories')">Kategorien</button>
+        <button onclick="showPage('tests')">Klausuren &amp; Tests</button>
         <button onclick="showPage('profile')">Profil</button>
         <button onclick="showPage('leaderboard')">Bestenliste</button>
         <button onclick="showPage('scan')">Scanner</button>
@@ -154,9 +157,18 @@
             <h3>Neue Vokabel hinzufügen</h3>
 
             <input type="text" id="newSpanish" placeholder="Spanisches Wort" lang="es" spellcheck="true" autocorrect="on">
-
             <input type="text" id="newGerman" placeholder="Deutsche Übersetzung" lang="de" spellcheck="true" autocorrect="on">
-
+            <label for="newWordCategory">Kategorie</label>
+            <select id="newWordCategory">
+                <option value="auto">Automatisch zuordnen</option>
+                <option>Schule</option><option>Freizeit</option><option>Essen</option><option>Reisen</option>
+                <option>Familie</option><option>Wohnen</option><option>Natur</option><option>Alltag</option><option>Allgemein</option>
+            </select>
+            <label for="newWordCollection">Zuordnung</label>
+            <select id="newWordCollection" onchange="toggleTestNameField()">
+                <option value="general">Allgemeine Vokabeln</option><option value="test">Klausur / Test</option>
+            </select>
+            <input type="text" id="newTestName" class="hidden" maxlength="50" placeholder="Name des Tests, z. B. Unit 3 – Klassenarbeit">
             <button onclick="addWord()">Vokabel hinzufügen</button>
 
         </div>
@@ -165,6 +177,16 @@
 
     </section>
 
+    <section id="categories" class="page hidden">
+        <h2>Vokabel-Kategorien</h2>
+        <p class="section-intro">Deine Vokabeln werden automatisch nach Themen sortiert. Wähle eine Kategorie.</p>
+        <div id="categoryOverview" class="category-grid"></div>
+        <div id="categoryWords" class="card category-words hidden"></div>
+    </section>
+    <section id="tests" class="page hidden">
+        <h2>Klausuren &amp; Tests</h2>
+        <div class="card"><p>Hier kannst du jede angelegte Testgruppe gezielt wiederholen.</p><div id="testSetList" class="test-set-list"></div></div>
+    </section>
     <!-- SCANNER -->
     <section id="scan" class="page hidden">
 
@@ -268,6 +290,7 @@
             <p>Hier siehst du, wer in dieser Woche die meisten XP gesammelt hat. Es werden nur Anzeigenamen und Wochen-XP angezeigt.</p>
             <p id="leaderboardWeek" class="leaderboard-week"></p>
             <button type="button" onclick="loadWeeklyLeaderboard()">Bestenliste aktualisieren</button>
+            <p class="leaderboard-hint">Die Rangliste zeigt deine Platzierung, deinen Titel und deine Wochen-XP.</p>
             <div id="leaderboardStatus" class="theme-status" aria-live="polite">Lade Bestenliste ...</div>
             <div id="leaderboardContent" class="leaderboard-table-wrap"></div>
         </div>
@@ -370,7 +393,7 @@
 
 </main>
 
-<script src="script.js?v=39"></script>
+<script src="script.js?v=40"></script>
 
 </body>
 </html>

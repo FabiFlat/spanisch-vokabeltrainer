@@ -1101,3 +1101,81 @@ input:disabled {
 .test-set-actions .test-edit-button{background:#405477!important;color:#fff!important;border-color:#344563!important}
 .test-set-actions .test-delete-button{background:#6b3943!important;color:#fff!important;border-color:#552c35!important}
 @media(max-width:620px){.test-set-actions{display:grid;grid-template-columns:1fr;width:100%}.test-set-actions button{width:100%}}
+
+
+/* ANMELDEBEREICH: GUT LESBARE EINGABEFELDER IN ALLEN DESIGNS */
+.auth-panel {
+    max-width: 560px;
+    margin: 0 auto 25px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+#authControls {
+    width: 100%;
+}
+
+#authControls h2 {
+    color: var(--brown);
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+#authControls > p {
+    color: var(--text);
+    opacity: 0.9;
+    margin: 0 0 18px;
+}
+
+#authEmail,
+#authPassword {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    margin: 11px 0;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    background: #26334d !important;
+    background-color: #26334d !important;
+    color: #ffffff !important;
+    border: 1px solid #60749b !important;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 16px;
+    caret-color: #ffffff;
+}
+
+#authEmail::placeholder,
+#authPassword::placeholder {
+    color: #d5ddec !important;
+    opacity: 1;
+}
+
+#authEmail:focus,
+#authPassword:focus {
+    background: #26334d !important;
+    color: #ffffff !important;
+    border-color: #a9bee8 !important;
+    outline: 2px solid rgba(169, 190, 232, 0.35);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
+}
+
+#authControls button {
+    min-height: 46px;
+}
+
+#authStatus {
+    color: var(--text);
+    text-align: center;
+    line-height: 1.5;
+}
+
+@media (max-width: 500px) {
+    .auth-panel {
+        padding: 19px;
+    }
+}

@@ -192,6 +192,11 @@ function updateAuthPanel() {
     authControls.classList.toggle("hidden", loggedIn);
     signOutButton.classList.toggle("hidden", !loggedIn);
 
+    const migrationPanel = document.getElementById("legacyMigration");
+    const currentEmail = currentUser?.email || "";
+    const needsMigration = loggedIn && currentEmail && !currentEmail.endsWith("@accounts.spanisch-vokabeltrainer.invalid");
+    if (migrationPanel) migrationPanel.classList.toggle("hidden", !needsMigration);
+
     const accountLabel = currentUser?.user_metadata?.username || currentUser?.email || "Konto";
     setAuthStatus(
         loggedIn
@@ -305,6 +310,42 @@ async function signIn() {
 
     currentUser = data.user;
     await loadUserData();
+}
+
+async function migrateLegacyAccount() {
+    const status = document.getElementById("migrationStatus");
+    const usernameInput = document.getElementById("migrationUsername");
+    const username = normalizeUsername(usernameInput?.value || "");
+
+    if (!supabaseClient || !currentUser) {
+        if (status) status.textContent = "Bitte melde dich zuerst mit deinem bisherigen Konto an.";
+        return;
+    }
+    if (!validateUsername(username)) {
+        if (status) status.textContent = "Der Benutzername muss 3–20 Zeichen lang sein und darf nur Buchstaben, Zahlen, Punkt, _ oder - enthalten.";
+        return;
+    }
+
+    if (status) status.textContent = "Konto wird sicher umgestellt ...";
+    const result = await supabaseClient.functions.invoke("migrate-username", { body: { username } });
+    if (result.error || !result.data?.success) {
+        let message = result.data?.error || result.error?.message || "Unbekannter Fehler.";
+        if (result.error?.context && typeof result.error.context.json === "function") {
+            try { const details = await result.error.context.json(); if (details?.error) message = details.error; } catch (_) {}
+        }
+        if (status) status.textContent = "Umstellung fehlgeschlagen: " + message;
+        return;
+    }
+
+    const refreshed = await supabaseClient.auth.getUser();
+    if (refreshed.error) {
+        if (status) status.textContent = "Umstellung gespeichert. Melde dich jetzt mit deinem neuen Benutzernamen an.";
+        return;
+    }
+    currentUser = refreshed.data.user;
+    updateAuthPanel();
+    if (status) status.textContent = "Erfolgreich umgestellt. Ab jetzt kannst du dich mit Benutzername und Passwort anmelden.";
+    if (usernameInput) usernameInput.value = "";
 }
 
 async function signOut() {

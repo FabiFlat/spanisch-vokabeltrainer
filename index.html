@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=42">
+    <link rel="stylesheet" href="style.css?v=43">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -29,12 +29,14 @@
             <h2>Willkommen zurück</h2>
             <p>Melde dich an, um deine Vokabeln auf allen Geräten zu synchronisieren.</p>
 
-            <input type="email" id="authEmail" placeholder="E-Mail-Adresse">
+            <input type="text" id="authUsername" placeholder="Benutzername" autocomplete="username" maxlength="20" autocapitalize="none">
 
-            <input type="password" id="authPassword" placeholder="Passwort">
+            <input type="password" id="authPassword" placeholder="Passwort" autocomplete="current-password">
 
             <button onclick="signIn()">Anmelden</button>
             <button class="secondary" onclick="signUp()">Konto erstellen</button>
+            <p class="auth-hint">Benutzername: 3–20 Zeichen, Buchstaben, Zahlen, Punkt, _ oder -. Jeder Name ist nur einmal verfügbar.</p>
+            <p class="auth-hint">Bestehende Konten können vorerst weiterhin mit ihrer bisherigen E-Mail-Adresse angemeldet werden.</p>
         </div>
 
         <p id="authStatus">Du bist nicht angemeldet.</p>
@@ -393,7 +395,7 @@
 
 </main>
 
-<script src="script.js?v=42"></script>
+<script src="script.js?v=43"></script>
 
 </body>
 </html>

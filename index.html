@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=44">
+    <link rel="stylesheet" href="style.css?v=45">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -39,6 +39,14 @@
             <p class="auth-hint">Bestehende Konten können vorerst weiterhin mit ihrer bisherigen E-Mail-Adresse angemeldet werden.</p>
         </div>
 
+        <div id="legacyMigration" class="card hidden" style="margin-top:16px;">
+            <h3>Auf Benutzername umstellen</h3>
+            <p>Dein bisheriges Konto ist noch mit einer E-Mail-Adresse verknüpft. Du kannst es auf Benutzername und Passwort umstellen. Dein Lernfortschritt bleibt erhalten.</p>
+            <label for="migrationUsername">Neuer Benutzername</label>
+            <input type="text" id="migrationUsername" maxlength="20" autocomplete="username" autocapitalize="none" placeholder="Neuer Benutzername">
+            <button type="button" onclick="migrateLegacyAccount()">Konto umstellen</button>
+            <p id="migrationStatus" class="auth-hint" aria-live="polite"></p>
+        </div>
         <p id="authStatus">Du bist nicht angemeldet.</p>
 
         <button id="signOutButton" class="secondary hidden" onclick="signOut()">
@@ -395,7 +403,7 @@
 
 </main>
 
-<script src="script.js?v=44"></script>
+<script src="script.js?v=45"></script>
 
 </body>
 </html>

@@ -1171,3 +1171,30 @@ select:disabled {
     cursor: not-allowed;
 }
 
+
+
+/* iOS/Safari: Migrationsfeld in allen Designs lesbar halten */
+#legacyMigration input[type="text"] {
+    background: var(--card) !important;
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    caret-color: var(--text) !important;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: none !important;
+}
+
+#legacyMigration input[type="text"]::placeholder {
+    color: var(--muted) !important;
+    -webkit-text-fill-color: var(--muted) !important;
+    opacity: 1 !important;
+}
+
+#legacyMigration input[type="text"]:-webkit-autofill,
+#legacyMigration input[type="text"]:-webkit-autofill:hover,
+#legacyMigration input[type="text"]:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text) !important;
+    -webkit-box-shadow: 0 0 0 1000px var(--card) inset !important;
+    caret-color: var(--text) !important;
+}

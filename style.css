@@ -1020,34 +1020,9 @@ input:disabled {
 #customColorsCard.custom-colors-locked button:disabled { opacity: 0.55; cursor: not-allowed; }
 
 
-/* DUNKLE EINGABEFELDER BEIM HINZUFÜGEN VON VOKABELN */
-#newSpanish,
-#newGerman {
-    background: #26334d !important;
-    color: #ffffff !important;
-    border-color: #1b263d !important;
-}
-
-#newSpanish::placeholder,
-#newGerman::placeholder {
-    color: #c5ccda !important;
-    opacity: 1;
-}
-
-#newSpanish:focus,
-#newGerman:focus {
-    border-color: #8295bd !important;
-    box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
-}
-
-
 /* KATEGORIEN, TESTGRUPPEN UND OFFLINE-STATUS */
 .offline-status{display:inline-block;margin:6px auto 0;padding:6px 11px;border-radius:999px;background:var(--card);border:1px solid var(--border);color:var(--sage-dark);font-size:12px;font-weight:800}
 .offline-status.is-offline{background:#26334d;color:#fff;border-color:#26334d}
-#newWordCategory,#newWordCollection{display:block;width:100%;margin:9px 0 14px;padding:13px 14px;border:1px solid #465a82;border-radius:12px;background:#26334d!important;color:#fff!important;font:inherit}
-#newWordCategory option,#newWordCollection option{background:#26334d;color:#fff}
-#newTestName{background:#26334d!important;color:#fff!important;border-color:#465a82!important}
-#newTestName::placeholder{color:#c5ccda!important;opacity:1}
 .category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
 .category-tile{display:flex;flex-direction:column;gap:5px;align-items:flex-start;min-height:82px}
 .category-tile strong{font-size:16px}.category-tile span{font-size:13px;opacity:.85}
@@ -1101,39 +1076,6 @@ input:disabled {
     margin: 0 0 18px;
 }
 
-#authUsername,
-#authPassword {
-    display: block;
-    width: 100%;
-    min-height: 50px;
-    margin: 11px 0;
-    padding: 14px 16px;
-    box-sizing: border-box;
-    background: #26334d !important;
-    background-color: #26334d !important;
-    color: #ffffff !important;
-    border: 1px solid #60749b !important;
-    border-radius: 12px;
-    font: inherit;
-    font-size: 16px;
-    caret-color: #ffffff;
-}
-
-#authUsername::placeholder,
-#authPassword::placeholder {
-    color: #d5ddec !important;
-    opacity: 1;
-}
-
-#authUsername:focus,
-#authPassword:focus {
-    background: #26334d !important;
-    color: #ffffff !important;
-    border-color: #a9bee8 !important;
-    outline: 2px solid rgba(169, 190, 232, 0.35);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 3px rgba(130, 149, 189, 0.22) !important;
-}
 
 #authControls button {
     min-height: 46px;
@@ -1169,6 +1111,41 @@ select {
     background-color: var(--card) !important;
     color: var(--text) !important;
     border-color: var(--border) !important;
+    font-family: inherit;
+}
+
+input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"])::placeholder,
+textarea::placeholder {
+    color: var(--muted) !important;
+    opacity: 1;
+}
+
+input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):focus,
+textarea:focus,
+select:focus {
+    background-color: var(--card) !important;
+    color: var(--text) !important;
+    border-color: var(--sage) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sage) 22%, transparent) !important;
+}
+
+input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):disabled,
+textarea:disabled,
+select:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+
+
+/* EINHEITLICHE, THEME-ABHAENGIGE EINGABEFELDER
+   Gilt fuer vorhandene und spaeter hinzugefuegte Textfelder. */
+input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+textarea,
+select {
+    background-color: var(--card) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
     font-family: inherit;
 }
 

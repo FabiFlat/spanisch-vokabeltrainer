@@ -1179,3 +1179,12 @@ input:disabled {
         padding: 19px;
     }
 }
+
+
+/* HINWEISE IM BENUTZERNAME-LOGIN */
+.auth-hint {
+    margin: 8px 0 0 !important;
+    color: var(--muted) !important;
+    font-size: 12px;
+    line-height: 1.45;
+}

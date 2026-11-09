@@ -186,18 +186,36 @@ function setAuthStatus(message) {
 
 function updateAuthPanel() {
     const loggedIn = Boolean(currentUser);
-
     const authControls = document.getElementById("authControls");
     const signOutButton = document.getElementById("signOutButton");
 
     authControls.classList.toggle("hidden", loggedIn);
     signOutButton.classList.toggle("hidden", !loggedIn);
 
+    const accountLabel = currentUser?.user_metadata?.username || currentUser?.email || "Konto";
     setAuthStatus(
         loggedIn
-            ? "Angemeldet: " + currentUser.email + " – Synchronisierung aktiv."
+            ? "Angemeldet: " + accountLabel + " – Synchronisierung aktiv."
             : "Du bist nicht angemeldet."
     );
+}
+
+function normalizeUsername(value) {
+    return value.trim().toLowerCase();
+}
+
+function getAuthIdentifier() {
+    return document.getElementById("authUsername").value.trim();
+}
+
+function usernameToInternalEmail(username) {
+    // Supabase Auth benötigt für E-Mail/Passwort-Anmeldung eine E-Mail-Adresse.
+    // Der interne Alias wird nicht als Kontaktadresse verwendet oder angezeigt.
+    return normalizeUsername(username) + "@accounts.spanisch-vokabeltrainer.invalid";
+}
+
+function validateUsername(username) {
+    return /^[a-zA-Z0-9_.-]{3,20}$/.test(username);
 }
 
 async function signUp() {
@@ -206,11 +224,16 @@ async function signUp() {
         return;
     }
 
-    const email = document.getElementById("authEmail").value.trim();
+    const username = getAuthIdentifier();
     const password = document.getElementById("authPassword").value;
 
-    if (!email || !password) {
-        setAuthStatus("Bitte E-Mail und Passwort eingeben.");
+    if (!username || !password) {
+        setAuthStatus("Bitte Benutzernamen und Passwort eingeben.");
+        return;
+    }
+
+    if (!validateUsername(username)) {
+        setAuthStatus("Der Benutzername muss 3–20 Zeichen lang sein und darf nur Buchstaben, Zahlen, Punkt, _ oder - enthalten.");
         return;
     }
 
@@ -222,12 +245,22 @@ async function signUp() {
     setAuthStatus("Konto wird erstellt ...");
 
     const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password
+        email: usernameToInternalEmail(username),
+        password,
+        options: {
+            data: { username: normalizeUsername(username) }
+        }
     });
 
     if (error) {
-        setAuthStatus("Fehler: " + error.message);
+        const message = String(error.message || "").toLowerCase();
+        if (error.code === "email_exists" || error.code === "user_already_exists" ||
+            message.includes("already registered") || message.includes("already been registered") ||
+            message.includes("already exists")) {
+            setAuthStatus("Dieser Benutzername ist bereits vergeben. Bitte wähle einen anderen.");
+        } else {
+            setAuthStatus("Konto konnte nicht erstellt werden: " + error.message);
+        }
         return;
     }
 
@@ -235,9 +268,7 @@ async function signUp() {
         currentUser = data.user;
         await loadUserData();
     } else {
-        setAuthStatus(
-            "Konto erstellt. Bitte bestätige deine E-Mail-Adresse und melde dich danach an."
-        );
+        setAuthStatus("Konto wurde angelegt. Für die Anmeldung mit Benutzernamen muss in Supabase die E-Mail-Bestätigung deaktiviert sein. Bitte prüfe die Auth-Einstellungen.");
     }
 }
 
@@ -247,11 +278,21 @@ async function signIn() {
         return;
     }
 
-    const email = document.getElementById("authEmail").value.trim();
+    const identifier = getAuthIdentifier();
     const password = document.getElementById("authPassword").value;
 
-    if (!email || !password) {
-        setAuthStatus("Bitte E-Mail und Passwort eingeben.");
+    if (!identifier || !password) {
+        setAuthStatus("Bitte Benutzernamen und Passwort eingeben.");
+        return;
+    }
+
+    // Rückwärtskompatibilität: bisherige Konten können sich weiterhin per E-Mail anmelden.
+    const email = identifier.includes("@")
+        ? identifier
+        : (validateUsername(identifier) ? usernameToInternalEmail(identifier) : "");
+
+    if (!email) {
+        setAuthStatus("Bitte einen gültigen Benutzernamen eingeben (3–20 Zeichen).");
         return;
     }
 
@@ -263,7 +304,7 @@ async function signIn() {
     });
 
     if (error) {
-        setAuthStatus("Anmeldung fehlgeschlagen: " + error.message);
+        setAuthStatus("Anmeldung fehlgeschlagen. Prüfe Benutzername/E-Mail und Passwort.");
         return;
     }
 

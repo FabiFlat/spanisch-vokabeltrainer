@@ -405,7 +405,6 @@ async function signOut() {
     currentUser = null;
     syncReady = false;
     userUnlocks = { beta_tester: false, all_designs: false };
-    profileDisplayName = "";
     activeProfileTitle = "";
     renderUnlockStatus();
     updateXPDisplay();
@@ -423,7 +422,6 @@ async function signOut() {
 /* FREISCHALTCODES */
 let userUnlocks = { beta_tester: false, all_designs: false };
 let activeProfileTitle = localStorage.getItem("vocabActiveProfileTitle") || "";
-let profileDisplayName = localStorage.getItem("vocabProfileDisplayName") || "";
 
 function renderUnlockStatus() {
     const target = document.getElementById("unlockBadges");
@@ -445,17 +443,13 @@ function getUnlockedProfileTitles() {
 }
 
 function renderProfilePage() {
-    const nameInput = document.getElementById("profileDisplayName");
     const titleSelect = document.getElementById("profileTitleSelect");
     const titlesList = document.getElementById("profileTitles");
     const themesList = document.getElementById("profileThemes");
     const activeLabel = document.getElementById("profileActiveTitle");
-    if (!nameInput || !titleSelect || !titlesList || !themesList) return;
+    if (!titleSelect || !titlesList || !themesList) return;
 
     const metadata = currentUser?.user_metadata || {};
-    if (document.activeElement !== nameInput) {
-        nameInput.value = profileDisplayName || metadata.display_name || "";
-    }
 
     const unlockedTitles = getUnlockedProfileTitles();
     if (!unlockedTitles.includes(activeProfileTitle)) {
@@ -512,24 +506,17 @@ function selectProfileTitle(title) {
 }
 
 async function saveProfileSettings() {
-    const nameInput = document.getElementById("profileDisplayName");
     const status = document.getElementById("profileStatus");
     const title = document.getElementById("profileTitleSelect")?.value || "";
-    const name = (nameInput?.value || "").trim();
 
-    if (name.length > 24) {
-        if (status) status.textContent = "Der Anzeigename darf höchstens 24 Zeichen lang sein.";
-        return;
-    }
     if (!getUnlockedProfileTitles().includes(title)) {
         if (status) status.textContent = "Dieser Titel ist nicht freigeschaltet.";
         return;
     }
 
-    profileDisplayName = name;
     activeProfileTitle = title;
     try {
-        localStorage.setItem("vocabProfileDisplayName", profileDisplayName);
+        localStorage.removeItem("vocabProfileDisplayName");
         localStorage.setItem("vocabActiveProfileTitle", activeProfileTitle);
     } catch (error) {
         console.error("Profil konnte lokal nicht gespeichert werden:", error);
@@ -539,12 +526,11 @@ async function saveProfileSettings() {
         const { data, error } = await supabaseClient.auth.updateUser({
             data: {
                 ...(currentUser.user_metadata || {}),
-                display_name: profileDisplayName,
                 profile_title: activeProfileTitle
             }
         });
         if (error) {
-            if (status) status.textContent = "Lokal gespeichert. Cloud-Speicherung fehlgeschlagen: " + error.message;
+            if (status) status.textContent = "Titel lokal gespeichert. Cloud-Speicherung fehlgeschlagen: " + error.message;
             return;
         }
         if (data?.user) currentUser = data.user;
@@ -631,9 +617,6 @@ async function loadUserData() {
     }
 
     await loadUserUnlocks();
-    profileDisplayName = currentUser
-        ? (currentUser.user_metadata?.display_name || "")
-        : (localStorage.getItem("vocabProfileDisplayName") || "");
     activeProfileTitle = currentUser
         ? (currentUser.user_metadata?.profile_title || "")
         : (localStorage.getItem("vocabActiveProfileTitle") || "");
@@ -810,7 +793,7 @@ function addXP(amount) {
 
 async function syncWeeklyXP(amount) {
     if (!currentUser || !supabaseClient || !Number.isFinite(Number(amount)) || Number(amount) <= 0) return;
-    const displayName = (profileDisplayName || currentUser.user_metadata?.display_name || "Lernender").trim().slice(0, 24) || "Lernender";
+    const displayName = String(currentUser.user_metadata?.username || "").trim().slice(0, 24) || "Lernender";
     const { error } = await supabaseClient.rpc("increment_weekly_xp", {
         p_amount: Math.floor(Number(amount)),
         p_display_name: displayName

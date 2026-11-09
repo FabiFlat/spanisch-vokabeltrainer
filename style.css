@@ -1130,7 +1130,7 @@ input:disabled {
     margin: 0 0 18px;
 }
 
-#authEmail,
+#authUsername,
 #authPassword {
     display: block;
     width: 100%;
@@ -1148,13 +1148,13 @@ input:disabled {
     caret-color: #ffffff;
 }
 
-#authEmail::placeholder,
+#authUsername::placeholder,
 #authPassword::placeholder {
     color: #d5ddec !important;
     opacity: 1;
 }
 
-#authEmail:focus,
+#authUsername:focus,
 #authPassword:focus {
     background: #26334d !important;
     color: #ffffff !important;

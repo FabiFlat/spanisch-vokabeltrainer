@@ -197,7 +197,8 @@ function updateAuthPanel() {
     const needsMigration = loggedIn && currentEmail && !currentEmail.endsWith("@accounts.spanisch-vokabeltrainer.invalid");
     if (migrationPanel) migrationPanel.classList.toggle("hidden", !needsMigration);
 
-    const accountLabel = currentUser?.user_metadata?.username || currentUser?.email || "Konto";
+    const accountLabel = currentUser?.user_metadata?.username ||
+        (needsMigration ? "Altes Konto – Umstellung erforderlich" : "Konto");
     setAuthStatus(
         loggedIn
             ? "Angemeldet: " + accountLabel + " – Synchronisierung aktiv."
@@ -286,30 +287,52 @@ async function signIn() {
         return;
     }
 
-    // Rückwärtskompatibilität: bisherige Konten können sich weiterhin per E-Mail anmelden.
-    const email = identifier.includes("@")
-        ? identifier
-        : (validateUsername(identifier) ? usernameToInternalEmail(identifier) : "");
-
-    if (!email) {
-        setAuthStatus("Bitte einen gültigen Benutzernamen eingeben (3–20 Zeichen).");
+    if (identifier.includes("@") || !validateUsername(identifier)) {
+        setAuthStatus("Bitte gib deinen Benutzernamen ein. Bestehende Konten werden über „Altes Konto umstellen“ migriert.");
         return;
     }
 
     setAuthStatus("Anmeldung läuft ...");
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
+        email: usernameToInternalEmail(identifier),
         password
     });
 
     if (error) {
-        setAuthStatus("Anmeldung fehlgeschlagen. Prüfe Benutzername/E-Mail und Passwort.");
+        setAuthStatus("Anmeldung fehlgeschlagen. Prüfe Benutzernamen und Passwort.");
         return;
     }
 
     currentUser = data.user;
     await loadUserData();
+}
+
+async function signInLegacyForMigration() {
+    if (!supabaseClient) {
+        setAuthStatus("Supabase konnte nicht geladen werden. Bitte Seite neu laden.");
+        return;
+    }
+
+    const email = document.getElementById("legacyEmail")?.value.trim() || "";
+    const password = document.getElementById("legacyPassword")?.value || "";
+    if (!email || !email.includes("@") || !password) {
+        setAuthStatus("Gib die bisherige E-Mail-Adresse und das bisherige Passwort ein.");
+        return;
+    }
+
+    setAuthStatus("Altes Konto wird geprüft ...");
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+        setAuthStatus("Anmeldung des alten Kontos fehlgeschlagen. Prüfe E-Mail-Adresse und Passwort.");
+        return;
+    }
+
+    currentUser = data.user;
+    await loadUserData();
+    if (currentUser?.email?.endsWith("@accounts.spanisch-vokabeltrainer.invalid")) {
+        setAuthStatus("Dieses Konto wurde bereits umgestellt. Melde dich ab und nutze die normale Anmeldung mit deinem Benutzernamen.");
+    }
 }
 
 async function migrateLegacyAccount() {

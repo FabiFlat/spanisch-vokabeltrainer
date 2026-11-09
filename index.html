@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Español – Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="style.css?v=47">
+    <link rel="stylesheet" href="style.css?v=48">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -271,8 +271,6 @@
 
         <div class="card profile-card">
             <h3>Profil bearbeiten</h3>
-            <label for="profileDisplayName">Anzeigename</label>
-            <input type="text" id="profileDisplayName" maxlength="24" placeholder="Dein Anzeigename" autocomplete="nickname">
             <label for="profileTitleSelect">Aktiver Titel</label>
             <select id="profileTitleSelect" onchange="selectProfileTitle(this.value)"></select>
             <button type="button" onclick="saveProfileSettings()">Profil speichern</button>
@@ -304,7 +302,7 @@
     <section id="leaderboard" class="page hidden">
         <h2>Wochen-Bestenliste</h2>
         <div class="card leaderboard-card">
-            <p>Hier siehst du, wer in dieser Woche die meisten XP gesammelt hat. Es werden nur Anzeigenamen und Wochen-XP angezeigt.</p>
+            <p>Hier siehst du, wer in dieser Woche die meisten XP gesammelt hat. Es werden Benutzernamen, Titel und Wochen-XP angezeigt.</p>
             <p id="leaderboardWeek" class="leaderboard-week"></p>
             <button type="button" onclick="loadWeeklyLeaderboard()">Bestenliste aktualisieren</button>
             <p class="leaderboard-hint">Die Rangliste zeigt deine Platzierung, deinen Titel und deine Wochen-XP.</p>
@@ -410,7 +408,7 @@
 
 </main>
 
-<script src="script.js?v=47"></script>
+<script src="script.js?v=48"></script>
 
 </body>
 </html>

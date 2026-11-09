@@ -356,6 +356,24 @@ async function migrateLegacyAccount() {
         if (result.error?.context && typeof result.error.context.json === "function") {
             try { const details = await result.error.context.json(); if (details?.error) message = details.error; } catch (_) {}
         }
+
+        // Der Server bestätigt, dass dieses Konto bereits auf Benutzername umgestellt ist.
+        // In diesem Fall das Formular auch dann schließen, wenn die lokale Sitzung veraltet ist.
+        if (message.toLowerCase().includes("verwendet bereits einen benutzernamen")) {
+            const refreshed = await supabaseClient.auth.getUser();
+            if (!refreshed.error && refreshed.data.user) currentUser = refreshed.data.user;
+            if (currentUser) {
+                currentUser.email = currentUser.email?.endsWith("@accounts.spanisch-vokabeltrainer.invalid")
+                    ? currentUser.email
+                    : usernameToInternalEmail(username);
+            }
+            const panel = document.getElementById("legacyMigration");
+            if (panel) panel.classList.add("hidden");
+            if (usernameInput) usernameInput.value = "";
+            setAuthStatus("Dieses Konto ist bereits auf Benutzername und Passwort umgestellt. Die Synchronisierung ist aktiv.");
+            return;
+        }
+
         if (status) status.textContent = "Umstellung fehlgeschlagen: " + message;
         return;
     }
@@ -367,8 +385,8 @@ async function migrateLegacyAccount() {
     }
     currentUser = refreshed.data.user;
     updateAuthPanel();
-    if (status) status.textContent = "Erfolgreich umgestellt. Ab jetzt kannst du dich mit Benutzername und Passwort anmelden.";
     if (usernameInput) usernameInput.value = "";
+    setAuthStatus("Konto erfolgreich umgestellt. Ab jetzt kannst du dich mit Benutzername und Passwort anmelden.");
 }
 
 async function signOut() {

@@ -36,7 +36,14 @@
             <button type="button" onclick="signIn()">Anmelden</button>
             <button type="button" class="secondary" onclick="signUp()">Konto erstellen</button>
             <p class="auth-hint">Benutzername: 3–20 Zeichen, Buchstaben, Zahlen, Punkt, _ oder -. Jeder Name ist nur einmal verfügbar.</p>
-            <p class="auth-hint">Bestehende Konten können vorerst weiterhin mit ihrer bisherigen E-Mail-Adresse angemeldet werden.</p>
+
+            <div class="card" style="margin-top:16px;">
+                <h3>Altes Konto umstellen</h3>
+                <p class="auth-hint">Nur wenn du bereits ein Konto mit E-Mail-Adresse hast: Melde dich hier einmalig mit deinen bisherigen Zugangsdaten an. Danach legst du deinen Benutzernamen fest. Dein Lernfortschritt bleibt erhalten.</p>
+                <input type="email" id="legacyEmail" placeholder="Bisherige E-Mail-Adresse" autocomplete="email">
+                <input type="password" id="legacyPassword" placeholder="Bisheriges Passwort" autocomplete="current-password">
+                <button type="button" class="secondary" onclick="signInLegacyForMigration()">Altes Konto anmelden</button>
+            </div>
         </div>
 
         <div id="legacyMigration" class="card hidden" style="margin-top:16px;">
@@ -403,7 +410,7 @@
 
 </main>
 
-<script src="script.js?v=45"></script>
+<script src="script.js?v=46"></script>
 
 </body>
 </html>

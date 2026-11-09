@@ -237,11 +237,6 @@ async function signUp() {
         return;
     }
 
-    if (password.length < 8) {
-        setAuthStatus("Das Passwort muss mindestens 8 Zeichen haben.");
-        return;
-    }
-
     setAuthStatus("Konto wird erstellt ...");
 
     const { data, error } = await supabaseClient.auth.signUp({
